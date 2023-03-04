@@ -1,0 +1,28 @@
+{
+	"compilerOptions": {
+		"outDir": "build",
+		"baseUrl": "./src",
+		"typeRoots": [
+			"src/types",
+			"node_modules/@types"
+		],
+		"sourceMap": false,
+		"allowSyntheticDefaultImports": true,
+		"lib": [
+			"ES2021"
+		],
+		"module": "ES2022",
+		"moduleResolution": "node",
+		"target": "ES2021",
+		"strictFunctionTypes": true,
+		"noImplicitAny": true,
+		"importsNotUsedAsValues": "error",
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"allowJs": true,
+		"checkJs": true
+	},
+	"include": [
+		"src"
+	]
+}

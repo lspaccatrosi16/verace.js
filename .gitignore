@@ -1,0 +1,10 @@
+out
+build
+dist
+bin
+
+
+runxact
+runxact.exe
+
+node_modules/
