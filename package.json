@@ -36,5 +36,5 @@
 		"go",
 		"exe"
 	],
-	"bin": "dist/fingo.cjs"
+	"bin": "./dist/fingo.cjs"
 }

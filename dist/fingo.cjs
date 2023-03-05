@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -38294,7 +38295,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
             callback(null, obj);
           });
         }
-        function readFileSync2(file, options) {
+        function readFileSync3(file, options) {
           options = options || {};
           if (typeof options === "string") {
             options = { encoding: options };
@@ -38362,7 +38363,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
         }
         var jsonfile = {
           readFile,
-          readFileSync: readFileSync2,
+          readFileSync: readFileSync3,
           writeFile,
           writeFileSync: writeFileSync3
         };
@@ -62385,7 +62386,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
           return obj;
         }
         var readFile = universalify.fromPromise(_readFile);
-        function readFileSync2(file, options = {}) {
+        function readFileSync3(file, options = {}) {
           if (typeof options === "string") {
             options = { encoding: options };
           }
@@ -62417,7 +62418,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
         }
         var jsonfile = {
           readFile,
-          readFileSync: readFileSync2,
+          readFileSync: readFileSync3,
           writeFile,
           writeFileSync: writeFileSync3
         };
@@ -71541,6 +71542,10 @@ exec.default(config);
               `npx esbuild build/index.cjs --outfile="dist/${config2.name}.cjs" --bundle --platform=node --target=node14`,
               { stdio: "inherit" }
             );
+            const oFile = (0, import_fs_extra2.readFileSync)(`dist/${config2.name}.cjs`).toString();
+            const nFile = `#!/usr/bin/env node
+` + oFile;
+            (0, import_fs_extra2.writeFileSync)(`dist/${config2.name}.cjs`, nFile);
             (0, import_fs_extra2.rmSync)("build", { recursive: true, force: true });
             spinnies.succeed("esb");
             if (config2.skipPkg) {

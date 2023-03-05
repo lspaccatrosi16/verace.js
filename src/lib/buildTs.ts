@@ -1,7 +1,7 @@
 import { execSync } from "child_process";
 import { runShellCmd, handleExecError } from "lib/common";
 import make_logger from "lib/log";
-import { existsSync, rmSync, writeFileSync } from "fs-extra";
+import { existsSync, readFileSync, rmSync, writeFileSync } from "fs-extra";
 import Spinnies from "spinnies";
 
 import type { BaseConfig } from "./types";
@@ -35,6 +35,12 @@ export default function (config: BaseConfig): Promise<void> {
 					`npx esbuild build/index.cjs --outfile="dist/${config.name}.cjs" --bundle --platform=node --target=node14`,
 					{ stdio: "inherit" }
 				);
+
+				const oFile = readFileSync(`dist/${config.name}.cjs`).toString();
+
+				const nFile = `#!/usr/bin/env node\n` + oFile;
+
+				writeFileSync(`dist/${config.name}.cjs`, nFile);
 
 				rmSync("build", { recursive: true, force: true });
 
