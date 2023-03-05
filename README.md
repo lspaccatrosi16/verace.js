@@ -11,6 +11,8 @@
 
 ## Install
 
+
+### Installing a binary
 Add a compiled stand-alone binary to your local path `$PATH`
 
 ```bash
@@ -21,6 +23,17 @@ export FINGO_DIR="/path/to/fingo"
 export PATH="$PATH:FINGO_DIR"
 ...
 ```
+
+### Using npx
+
+It is also possible to use `npx` to avoid a permanent install:
+
+```bash
+$ npx fingo.js
+```
+
+> **Note** <br />
+> All commands assume a permanent system binary is installed. If `npx` is used instead. Replace all mentions of `fingo` with `npx fingo.js`
 
 ## Basic Usage
 
