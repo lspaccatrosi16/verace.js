@@ -1,6 +1,6 @@
 {
 	"name": "verace.js",
-	"version": "0.2.2",
+	"version": "0.2.3-0",
 	"repository": "github:lspaccatrosi16/verace.js",
 	"license": "AGPL-3.0-only",
 	"author": {
@@ -37,5 +37,7 @@
 		"go",
 		"exe"
 	],
-	"bin": {"verace": "./dist/verace.cjs"}
+	"bin": {
+		"verace": "./dist/verace.cjs"
+	}
 }
