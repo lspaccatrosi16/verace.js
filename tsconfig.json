@@ -4,6 +4,7 @@
     "baseUrl": "./src",
     "typeRoots": ["src/types", "node_modules/@types"],
     "sourceMap": false,
+    "declaration": true,
     "allowSyntheticDefaultImports": true,
     "lib": ["ES2021"],
     "module": "ES2022",

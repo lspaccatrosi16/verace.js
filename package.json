@@ -28,5 +28,13 @@
 		"esbuild": "0.16.12",
 		"pkg": "^5.8.0",
 		"typescript": "^4.9.4"
-	}
+	},
+	"keywords": [
+		"cli",
+		"pkg",
+		"binary",
+		"go",
+		"exe"
+	],
+	"bin": "dist/fingo.cjs"
 }

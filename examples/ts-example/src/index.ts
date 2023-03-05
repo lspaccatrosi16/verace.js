@@ -1,3 +1,4 @@
+
 //See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
 
 export interface FingoEnv {

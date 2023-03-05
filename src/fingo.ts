@@ -8,6 +8,7 @@ import createExe from "commands/create-exe";
 import buildExe from "commands/build-exe";
 import runExe from "commands/run-exe";
 import type { FingoEnv } from "index";
+import version from "commands/version";
 
 inquirer.registerPrompt("command", iqr);
 
@@ -33,10 +34,6 @@ const init = async (version: string) => {
 	log().bold().citrus("The multi-platform multi-language build tool");
 
 	log(`v${version}`);
-
-	if (process.argv[2] == "version") {
-		process.exit(0);
-	}
 };
 
 export default function (env: FingoEnv) {
@@ -49,6 +46,7 @@ export default function (env: FingoEnv) {
 		program.addCommand(createExe());
 		program.addCommand(buildExe());
 		program.addCommand(runExe());
+		program.addCommand(version());
 
 		program
 			.command("help")

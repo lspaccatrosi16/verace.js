@@ -2,26 +2,33 @@ import type { BaseConfig } from "./types";
 
 //CORE
 export const baseconfig: BaseConfig = {
-  lang: "ts",
-  name: "my-project",
-  version: "0.0.1",
-  targets: ["win64", "linux64"],
+	lang: "ts",
+	name: "my-project",
+	version: "0.0.1",
+	targets: ["win64", "linux64"],
+	data: {
+		foo: "bar",
+	},
 };
 
 //Typescript basic starter
 
-export const tsFile = `export interface FingoEnv {
+export const tsFile = `
+//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+
+export interface FingoEnv {
   name: string;
   version: string;
+  data: Record<string, unknown>;
 }
 
 export default function (env: FingoEnv) {
   console.log(\`Hello world from \${env.name} v\${env.version}\`);
+  console.log("Data:", env.data);
 }
 `;
 
 export const tsGI = `
-dist
 bin
 node_modules
 `;
@@ -30,10 +37,71 @@ node_modules
 
 export const goFile = `package main
 
-import "fmt"
+//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+
+import (
+  _ "embed"
+	"encoding/json"
+  "fmt"
+  )
+
+//go:embed fingo.json
+var fingoJSON []byte
+
+type PACKAGE struct {
+	Name    string \`json:"name"\`
+	Version string \`json:"version"\`
+  Data CUSTOMDATA \`json:"data"\`
+}
+
+type CUSTOMDATA struct {
+  Foo string \`json:"foo"\`
+}
 
 func main() {
-    fmt.Println("Hello world!")
+    var fingo PACKAGE
+    json.Unmarshal(fingoJSON, &fingo)
+
+    fmt.Printf("Hello world from %s v%s\n", fingo.Name, fingo.Version)
+    fmt.Println(fingo.Data.Foo)
 }`;
 
 export const goGI = "dist";
+
+export const tsConfig = {
+	compilerOptions: {
+		outDir: "build",
+		baseUrl: "./src",
+		typeRoots: ["src/types", "node_modules/@types"],
+		sourceMap: false,
+		declaration: true,
+		allowSyntheticDefaultImports: true,
+		lib: ["ES2021"],
+		module: "ES2022",
+		moduleResolution: "node",
+		target: "ES2021",
+		strictFunctionTypes: true,
+		noImplicitAny: true,
+		importsNotUsedAsValues: "error",
+		experimentalDecorators: true,
+		emitDecoratorMetadata: true,
+		allowJs: true,
+		checkJs: true,
+	},
+	include: ["src"],
+};
+
+export const makePackageJson = (bc: BaseConfig) => {
+	return {
+		name: bc.name,
+		devDependencies: {
+			"@types/node": "^16.17",
+			typescript: "^4.9",
+			pkg: "^5.8",
+			esbuild: "^0.16",
+		},
+		author: "",
+		licence: "UNLICENCED",
+		private: true,
+	};
+};
