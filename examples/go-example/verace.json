@@ -9,5 +9,5 @@
 	"data": {
 		"foo": "bar"
 	},
-	"gomod": "lspaccatrosi16/fingo.js/examples/go-example"
+	"gomod": "lspaccatrosi16/verace.js/examples/go-example"
 }

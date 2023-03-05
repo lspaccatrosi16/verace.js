@@ -1,5 +1,5 @@
 
-//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+//See https://github.com/lspaccatrosi16/verace.js/#readme for detailed documentation
 
 export interface FingoEnv {
   name: string;

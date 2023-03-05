@@ -4,8 +4,8 @@ import make_logger from "lib/log";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "fs-extra";
 import Spinnies from "spinnies";
 
-import type { BaseConfig } from "./types";
-import fingoTempJS from "./fingoTempJS";
+import type { BaseConfig } from "./veraceConfig";
+import veraceTempJS from "./veraceTempJS";
 
 const log = make_logger();
 
@@ -25,11 +25,11 @@ export default function (config: BaseConfig): Promise<void> {
 				spinnies.add("esb", { text: "1. Bundling with ESBuild" });
 
 				execSync(
-					`npx esbuild src/index.ts --outfile="build/fingoTemp.cjs" --bundle --platform=node --target=node14 && npx tsc --emitDeclarationOnly`,
+					`npx esbuild src/index.ts --outfile="build/veraceTemp.cjs" --bundle --platform=node --target=node14 && npx tsc --emitDeclarationOnly`,
 					{ stdio: "inherit" }
 				);
 
-				writeFileSync("build/index.cjs", fingoTempJS);
+				writeFileSync("build/index.cjs", veraceTempJS);
 
 				execSync(
 					`npx esbuild build/index.cjs --outfile="dist/${config.name}.cjs" --bundle --platform=node --target=node14`,

@@ -1,10 +1,10 @@
-import fingo from "fingo";
+import verace from "verace";
 
-export interface FingoEnv {
-  name: string;
-  version: string;
+export interface VeraceEnv {
+	name: string;
+	version: string;
 }
 
-export default function (env: FingoEnv) {
-  fingo(env);
+export default function (env: VeraceEnv) {
+	verace(env);
 }

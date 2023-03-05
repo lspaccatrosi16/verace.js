@@ -1,4 +1,4 @@
-import type { BaseConfig } from "./types";
+import type { BaseConfig } from "./veraceConfig";
 
 //CORE
 export const baseconfig: BaseConfig = {
@@ -14,7 +14,7 @@ export const baseconfig: BaseConfig = {
 //Typescript basic starter
 
 export const tsFile = `
-//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+//See https://github.com/lspaccatrosi16/verace.js/#readme for detailed documentation
 
 export interface FingoEnv {
   name: string;
@@ -37,7 +37,7 @@ node_modules
 
 export const goFile = `package main
 
-//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+//See https://github.com/lspaccatrosi16/verace.js/#readme for detailed documentation
 
 import (
   _ "embed"
@@ -45,8 +45,8 @@ import (
   "fmt"
   )
 
-//go:embed fingo.json
-var fingoJSON []byte
+//go:embed verace.json
+var veraceJSON []byte
 
 type PACKAGE struct {
 	Name    string \`json:"name"\`
@@ -59,11 +59,11 @@ type CUSTOMDATA struct {
 }
 
 func main() {
-    var fingo PACKAGE
-    json.Unmarshal(fingoJSON, &fingo)
+    var verace PACKAGE
+    json.Unmarshal(veraceJSON, &verace)
 
-    fmt.Printf("Hello world from %s v%s\n", fingo.Name, fingo.Version)
-    fmt.Println(fingo.Data.Foo)
+    fmt.Printf("Hello world from %s v%s\\n", verace.Name, verace.Version)
+    fmt.Println(verace.Data.Foo)
 }`;
 
 export const goGI = "dist";

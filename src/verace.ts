@@ -7,7 +7,7 @@ import iqr from "inquirer-command-prompt";
 import createExe from "commands/create-exe";
 import buildExe from "commands/build-exe";
 import runExe from "commands/run-exe";
-import type { FingoEnv } from "index";
+import type { VeraceEnv as VeraceEnv } from "index";
 import version from "commands/version";
 
 inquirer.registerPrompt("command", iqr);
@@ -17,28 +17,28 @@ const program = new Command();
 const log = Logger();
 process.on("exit", (code) => {
 	log("\n");
-	if (code == 0) log().success("Fingo CLI exited without errors.");
-	else log().danger("Fingo CLI exited with errors.");
+	if (code == 0) log().success("Verace.js CLI exited without errors.");
+	else log().danger("Verace.js CLI exited with errors.");
 });
 
 const init = async (version: string) => {
 	log("\u2500".repeat(80));
 
 	figlet.parseFont("Standard", Standard);
-	const fingojs = figlet.textSync("fingo.js", {
+	const veracejs = figlet.textSync("verace.js", {
 		font: "Standard",
-		verticalLayout: "full",
+		horizontalLayout: "fitted",
 	});
 
-	log().citrus(fingojs);
-	log().bold().citrus("The multi-platform multi-language build tool");
+	log().citrus(veracejs);
+	log().bold().citrus("The multi-platform, multi-language build tool");
 
 	log(`v${version}`);
 };
 
-export default function (env: FingoEnv) {
+export default function (env: VeraceEnv) {
 	init(env.version).then(() => {
-		program.name(env.name).description("The fingo CLI Toolchain").version(env.version);
+		program.name(env.name).description("The Verace.js CLI Toolchain").version(env.version);
 		program.action(async () => {
 			log(program.helpInformation());
 		});

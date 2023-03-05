@@ -10,7 +10,7 @@ const log = make_logger();
 
 export default function () {
 	const be = new Command("build-exe").description(
-		"Builds the project according to the fingo.json file"
+		"Builds the project according to the verace.json file"
 	);
 
 	be.action(build);

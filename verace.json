@@ -1,7 +1,7 @@
 {
 	"lang": "ts",
-	"name": "fingo",
-	"version": "0.2.1",
+	"name": "verace",
+	"version": "0.2.2",
 	"targets": [
 		"win64",
 		"linux64"

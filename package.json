@@ -1,7 +1,7 @@
 {
-	"name": "fingo.js",
+	"name": "verace.js",
 	"version": "0.2.1",
-	"repository": "github:lspaccatrosi16/fingo.js",
+	"repository": "github:lspaccatrosi16/verace.js",
 	"license": "AGPL-3.0-only",
 	"author": {
 		"name": "Luca Spaccatrosi",
@@ -16,7 +16,8 @@
 		"inquirer": "^9.1.4",
 		"inquirer-command-prompt": "^0.1.0",
 		"semver": "^7.3.8",
-		"spinnies": "^0.5.1"
+		"spinnies": "^0.5.1",
+		"zod": "^3.21.0"
 	},
 	"devDependencies": {
 		"@types/figlet": "^1.5.5",
@@ -36,5 +37,5 @@
 		"go",
 		"exe"
 	],
-	"bin": "./dist/fingo.cjs"
+	"bin": "./dist/verace.cjs"
 }

@@ -1,30 +1,30 @@
 package main
 
-//See https://github.com/lspaccatrosi16/fingo.js/#readme for detailed documentation
+//See https://github.com/lspaccatrosi16/verace.js/#readme for detailed documentation
 
 import (
-  _ "embed"
+	_ "embed"
 	"encoding/json"
-  "fmt"
-  )
+	"fmt"
+)
 
-//go:embed fingo.json
-var fingoJSON []byte
+//go:embed verace.json
+var veraceJSON []byte
 
 type PACKAGE struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
-  Data CUSTOMDATA `json:"data"`
+	Name    string     `json:"name"`
+	Version string     `json:"version"`
+	Data    CUSTOMDATA `json:"data"`
 }
 
 type CUSTOMDATA struct {
-  Foo string `json:"foo"`
+	Foo string `json:"foo"`
 }
 
 func main() {
-    var fingo PACKAGE
-    json.Unmarshal(fingoJSON, &fingo)
+	var verace PACKAGE
+	json.Unmarshal(veraceJSON, &verace)
 
-    fmt.Printf("Hello world from %s v%s\n", fingo.Name, fingo.Version)
-    fmt.Println(fingo.Data.Foo)
+	fmt.Printf("Hello world from %s v%s\n", verace.Name, verace.Version)
+	fmt.Println(verace.Data.Foo)
 }

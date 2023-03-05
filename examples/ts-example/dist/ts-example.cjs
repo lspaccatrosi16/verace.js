@@ -1,11 +1,12 @@
+#!/usr/bin/env node
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
-// build/fingoTemp.cjs
-var require_fingoTemp = __commonJS({
-  "build/fingoTemp.cjs"(exports2, module2) {
+// build/veraceTemp.cjs
+var require_veraceTemp = __commonJS({
+  "build/veraceTemp.cjs"(exports2, module2) {
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames2 = Object.getOwnPropertyNames;
@@ -35,9 +36,9 @@ var require_fingoTemp = __commonJS({
   }
 });
 
-// fingo.json
-var require_fingo = __commonJS({
-  "fingo.json"(exports2, module2) {
+// verace.json
+var require_verace = __commonJS({
+  "verace.json"(exports2, module2) {
     module2.exports = {
       lang: "ts",
       name: "ts-example",
@@ -54,6 +55,6 @@ var require_fingo = __commonJS({
 });
 
 // build/index.cjs
-var exec = require_fingoTemp();
-var config = require_fingo();
+var exec = require_veraceTemp();
+var config = require_verace();
 exec.default(config);

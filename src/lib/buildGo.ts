@@ -3,7 +3,7 @@ import make_logger from "lib/log";
 import { existsSync } from "fs-extra";
 import Spinnies from "spinnies";
 
-import type { BaseConfig } from "./types";
+import type { BaseConfig } from "./veraceConfig";
 
 const log = make_logger();
 

@@ -5,7 +5,7 @@ import inquirer from "inquirer";
 import { baseconfig, goFile, goGI, makePackageJson, tsConfig, tsFile, tsGI } from "lib/baseConfig";
 import make_logger from "lib/log";
 
-import type { BaseConfig } from "lib/types";
+import type { BaseConfig } from "lib/veraceConfig";
 
 const log = make_logger();
 
@@ -102,7 +102,7 @@ const collectInfo = async () => {
 		}
 	}
 
-	await fs.writeFile("fingo.json", JSON.stringify(userSelection, null, "\t"));
+	await fs.writeFile("verace.json", JSON.stringify(userSelection, null, "\t"));
 
 	return;
 };
