@@ -37,5 +37,5 @@
 		"go",
 		"exe"
 	],
-	"bin": "./dist/verace.cjs"
+	"bin": {"verace": "./dist/verace.cjs"}
 }
