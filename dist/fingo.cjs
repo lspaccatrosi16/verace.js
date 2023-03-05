@@ -71840,7 +71840,7 @@ var require_fingo = __commonJS({
     module2.exports = {
       lang: "ts",
       name: "fingo",
-      version: "0.2.0",
+      version: "0.2.1",
       targets: [
         "win64",
         "linux64"
