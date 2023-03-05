@@ -12,7 +12,7 @@
 ## Install
 
 
-### Installing a binary
+### Installing a prebuilt binary
 Add a compiled stand-alone binary to your local path `$PATH`
 
 ```bash
@@ -22,6 +22,12 @@ Add a compiled stand-alone binary to your local path `$PATH`
 export VERACE="/path/to/verace"
 export PATH="$PATH:VERACE_DIR"
 ...
+```
+
+### Installing using npm
+
+```bash
+$ npm i verace.js -g
 ```
 
 ### Using npx
