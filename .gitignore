@@ -2,5 +2,8 @@ out
 build
 bin
 
+dist
 node_modules/
 coverage
+build.sh
+tsc-build

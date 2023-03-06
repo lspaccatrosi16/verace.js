@@ -1,19 +1,20 @@
-import type { LoggerType } from "lib/log";
-import { existsSync, readFileSync } from "fs-extra";
+import fs from "fs-extra";
 import path from "path";
 import { BaseConfig, validate } from "./veraceConfig";
+import type { ExecutionEnvironment } from "lib/executionEnvironment";
 
-export function parseConfig(log: LoggerType, command: string): Promise<BaseConfig> {
+export function parseConfig(env: ExecutionEnvironment, command: string): Promise<BaseConfig> {
+	const { log } = env;
 	return new Promise((resolve, reject) => {
-		const expectedPath = path.join(process.cwd(), "verace.json");
+		const expectedPath = path.join(process.cwd(), env.confPath);
 
-		if (!existsSync(expectedPath)) {
+		if (!fs.existsSync(expectedPath)) {
 			reject("verace.json not found in the current directory");
 			return;
 		}
 
 		try {
-			const unparsed: unknown = JSON.parse(readFileSync(expectedPath).toString());
+			const unparsed: unknown = JSON.parse(fs.readFileSync(expectedPath).toString());
 
 			validate(unparsed)
 				.then((config) => {

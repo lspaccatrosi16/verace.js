@@ -24,12 +24,12 @@ var require_veraceTemp = __commonJS({
       return to;
     };
     var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-    var src_exports = {};
-    __export(src_exports, {
-      default: () => src_default
+    var tsc_build_exports = {};
+    __export(tsc_build_exports, {
+      default: () => tsc_build_default
     });
-    module2.exports = __toCommonJS(src_exports);
-    function src_default(env) {
+    module2.exports = __toCommonJS(tsc_build_exports);
+    function tsc_build_default(env) {
       console.log(`Hello world from ${env.name} v${env.version}`);
       console.log("Data:", env.data);
     }
@@ -43,13 +43,11 @@ var require_verace = __commonJS({
       lang: "ts",
       name: "ts-example",
       version: "0.0.1",
-      targets: [
-        "win64",
-        "linux64"
-      ],
+      targets: ["win64", "linux64"],
       data: {
         foo: "bar"
-      }
+      },
+      test: ""
     };
   }
 });
