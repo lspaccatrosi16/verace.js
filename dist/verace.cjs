@@ -13,7 +13,6 @@ var require_veraceTemp = __commonJS({
     var __getOwnPropNames2 = Object.getOwnPropertyNames;
     var __getProtoOf = Object.getPrototypeOf;
     var __hasOwnProp = Object.prototype.hasOwnProperty;
-    var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
     var __commonJS2 = (cb, mod) => function __require() {
       return mod || (0, cb[__getOwnPropNames2(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
     };
@@ -34,36 +33,6 @@ var require_veraceTemp = __commonJS({
       mod
     ));
     var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
-    var __publicField = (obj, key, value) => {
-      __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-      return value;
-    };
-    var __accessCheck = (obj, member, msg) => {
-      if (!member.has(obj))
-        throw TypeError("Cannot " + msg);
-    };
-    var __privateGet = (obj, member, getter) => {
-      __accessCheck(obj, member, "read from private field");
-      return getter ? getter.call(obj) : member.get(obj);
-    };
-    var __privateAdd = (obj, member, value) => {
-      if (member.has(obj))
-        throw TypeError("Cannot add the same private member more than once");
-      member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-    };
-    var __privateSet = (obj, member, value, setter) => {
-      __accessCheck(obj, member, "write to private field");
-      setter ? setter.call(obj, value) : member.set(obj, value);
-      return value;
-    };
-    var __privateWrapper = (obj, member, setter, getter) => ({
-      set _(value) {
-        __privateSet(obj, member, value, setter);
-      },
-      get _() {
-        return __privateGet(obj, member, getter);
-      }
-    });
     var require_error = __commonJS2({
       "node_modules/commander/lib/error.js"(exports3) {
         var CommanderError2 = class extends Error {
@@ -4765,7 +4734,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
             this.id = (_a = this.id) !== null && _a !== void 0 ? _a : this.requestAsyncId(scheduler, this.id, delay);
             return this;
           };
-          AsyncAction2.prototype.requestAsyncId = function(scheduler, _id2, delay) {
+          AsyncAction2.prototype.requestAsyncId = function(scheduler, _id, delay) {
             if (delay === void 0) {
               delay = 0;
             }
@@ -58523,9 +58492,9 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
     }
     var ansiStyles = assembleStyles();
     var ansi_styles_default = ansiStyles;
-    var import_node_process = __toESM(require("process"), 1);
-    var import_node_os = __toESM(require("os"), 1);
-    var import_node_tty = __toESM(require("tty"), 1);
+    var import_node_process = __toESM(require("node:process"), 1);
+    var import_node_os = __toESM(require("node:os"), 1);
+    var import_node_tty = __toESM(require("node:tty"), 1);
     function hasFlag(flag, argv = globalThis.Deno ? globalThis.Deno.args : import_node_process.default.argv) {
       const prefix = flag.startsWith("-") ? "" : flag.length === 1 ? "-" : "--";
       const position = argv.indexOf(prefix + flag);
@@ -61202,8 +61171,8 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
  $\\___/$ @
          @@
          `;
-    var import_node_process3 = __toESM(require("process"), 1);
-    var import_node_process2 = __toESM(require("process"), 1);
+    var import_node_process3 = __toESM(require("node:process"), 1);
+    var import_node_process2 = __toESM(require("node:process"), 1);
     function isUnicodeSupported() {
       if (import_node_process2.default.platform !== "win32") {
         return import_node_process2.default.env.TERM !== "linux";
@@ -61491,8 +61460,8 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
     var shouldUseMain = isUnicodeSupported();
     var figures = shouldUseMain ? mainSymbols : fallbackSymbols;
     var figures_default = figures;
-    var import_node_process5 = __toESM(require("process"), 1);
-    var import_node_process4 = __toESM(require("process"), 1);
+    var import_node_process5 = __toESM(require("node:process"), 1);
+    var import_node_process4 = __toESM(require("node:process"), 1);
     var import_onetime = __toESM(require_onetime(), 1);
     var import_signal_exit = __toESM(require_signal_exit(), 1);
     var restoreCursor = (0, import_onetime.default)(() => {
@@ -61535,7 +61504,7 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
     var import_clone = __toESM(require_clone(), 1);
     var import_run_async = __toESM(require_run_async(), 1);
     var import_rxjs = __toESM(require_cjs(), 1);
-    var import_node_assert = __toESM(require("assert"), 1);
+    var import_node_assert = __toESM(require("node:assert"), 1);
     var import_lodash = __toESM(require_lodash(), 1);
     var Separator = class {
       constructor(line) {
@@ -61637,7 +61606,7 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         return this.choices;
       }
     };
-    var import_node_process6 = __toESM(require("process"), 1);
+    var import_node_process6 = __toESM(require("node:process"), 1);
     var ESC = "\x1B[";
     var OSC = "\x1B]";
     var BEL = "\x07";
@@ -62143,7 +62112,7 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
     function wrapAnsi(string, columns, options) {
       return String(string).normalize().replace(/\r\n/g, "\n").split("\n").map((line) => exec2(line, columns, options)).join("\n");
     }
-    var import_node_process8 = __toESM(require("process"), 1);
+    var import_node_process8 = __toESM(require("node:process"), 1);
     var import_cli_spinners = __toESM(require_cli_spinners(), 1);
     var main = {
       info: source_default.blue("\u2139"),
@@ -62165,49 +62134,45 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         stream && stream.isTTY && process.env.TERM !== "dumb" && !("CI" in process.env)
       );
     }
-    var import_node_process7 = __toESM(require("process"), 1);
-    var import_node_readline = __toESM(require("readline"), 1);
+    var import_node_process7 = __toESM(require("node:process"), 1);
+    var import_node_readline = __toESM(require("node:readline"), 1);
     var import_bl = __toESM(require_bl(), 1);
     var ASCII_ETX_CODE = 3;
-    var _requests;
-    var _mutedStream;
-    var _ourEmit;
-    var _rl;
     var StdinDiscarder = class {
+      #requests = 0;
+      #mutedStream = new import_bl.BufferListStream();
+      #ourEmit;
+      #rl;
       constructor() {
-        __privateAdd(this, _requests, 0);
-        __privateAdd(this, _mutedStream, new import_bl.BufferListStream());
-        __privateAdd(this, _ourEmit, void 0);
-        __privateAdd(this, _rl, void 0);
-        __privateGet(this, _mutedStream).pipe(import_node_process7.default.stdout);
+        this.#mutedStream.pipe(import_node_process7.default.stdout);
         const self2 = this;
-        __privateSet(this, _ourEmit, function(event, data, ...args) {
+        this.#ourEmit = function(event, data, ...args) {
           const { stdin } = import_node_process7.default;
-          if (__privateGet(self2, _requests) > 0 || stdin.emit === __privateGet(self2, _ourEmit)) {
+          if (self2.#requests > 0 || stdin.emit === self2.#ourEmit) {
             if (event === "keypress") {
               return;
             }
             if (event === "data" && data.includes(ASCII_ETX_CODE)) {
               import_node_process7.default.emit("SIGINT");
             }
-            Reflect.apply(__privateGet(self2, _ourEmit), this, [event, data, ...args]);
+            Reflect.apply(self2.#ourEmit, this, [event, data, ...args]);
           } else {
             Reflect.apply(import_node_process7.default.stdin.emit, this, [event, data, ...args]);
           }
-        });
+        };
       }
       start() {
-        __privateWrapper(this, _requests)._++;
-        if (__privateGet(this, _requests) === 1) {
+        this.#requests++;
+        if (this.#requests === 1) {
           this._realStart();
         }
       }
       stop() {
-        if (__privateGet(this, _requests) <= 0) {
+        if (this.#requests <= 0) {
           throw new Error("`stop` called more times than `start`");
         }
-        __privateWrapper(this, _requests)._--;
-        if (__privateGet(this, _requests) === 0) {
+        this.#requests--;
+        if (this.#requests === 0) {
           this._realStop();
         }
       }
@@ -62215,15 +62180,15 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         if (import_node_process7.default.platform === "win32") {
           return;
         }
-        __privateSet(this, _rl, import_node_readline.default.createInterface({
+        this.#rl = import_node_readline.default.createInterface({
           input: import_node_process7.default.stdin,
-          output: __privateGet(this, _mutedStream)
-        }));
-        __privateGet(this, _rl).on("SIGINT", () => {
+          output: this.#mutedStream
+        });
+        this.#rl.on("SIGINT", () => {
           if (import_node_process7.default.listenerCount("SIGINT") === 0) {
             import_node_process7.default.emit("SIGINT");
           } else {
-            __privateGet(this, _rl).close();
+            this.#rl.close();
             import_node_process7.default.kill(import_node_process7.default.pid, "SIGINT");
           }
         });
@@ -62232,46 +62197,28 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         if (import_node_process7.default.platform === "win32") {
           return;
         }
-        __privateGet(this, _rl).close();
-        __privateSet(this, _rl, void 0);
+        this.#rl.close();
+        this.#rl = void 0;
       }
     };
-    _requests = /* @__PURE__ */ new WeakMap();
-    _mutedStream = /* @__PURE__ */ new WeakMap();
-    _ourEmit = /* @__PURE__ */ new WeakMap();
-    _rl = /* @__PURE__ */ new WeakMap();
     var stdinDiscarder;
-    var _linesToClear;
-    var _isDiscardingStdin;
-    var _lineCount;
-    var _frameIndex;
-    var _options;
-    var _spinner;
-    var _stream;
-    var _id;
-    var _initialInterval;
-    var _isEnabled;
-    var _isSilent;
-    var _indent;
-    var _text;
-    var _prefixText;
     var Ora = class {
+      #linesToClear = 0;
+      #isDiscardingStdin = false;
+      #lineCount = 0;
+      #frameIndex = 0;
+      #options;
+      #spinner;
+      #stream;
+      #id;
+      #initialInterval;
+      #isEnabled;
+      #isSilent;
+      #indent;
+      #text;
+      #prefixText;
+      color;
       constructor(options) {
-        __privateAdd(this, _linesToClear, 0);
-        __privateAdd(this, _isDiscardingStdin, false);
-        __privateAdd(this, _lineCount, 0);
-        __privateAdd(this, _frameIndex, 0);
-        __privateAdd(this, _options, void 0);
-        __privateAdd(this, _spinner, void 0);
-        __privateAdd(this, _stream, void 0);
-        __privateAdd(this, _id, void 0);
-        __privateAdd(this, _initialInterval, void 0);
-        __privateAdd(this, _isEnabled, void 0);
-        __privateAdd(this, _isSilent, void 0);
-        __privateAdd(this, _indent, void 0);
-        __privateAdd(this, _text, void 0);
-        __privateAdd(this, _prefixText, void 0);
-        __publicField(this, "color");
         if (!stdinDiscarder) {
           stdinDiscarder = new StdinDiscarder();
         }
@@ -62280,97 +62227,97 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
             text: options
           };
         }
-        __privateSet(this, _options, {
+        this.#options = {
           color: "cyan",
           stream: import_node_process8.default.stderr,
           discardStdin: true,
           hideCursor: true,
           ...options
-        });
-        this.color = __privateGet(this, _options).color;
-        this.spinner = __privateGet(this, _options).spinner;
-        __privateSet(this, _initialInterval, __privateGet(this, _options).interval);
-        __privateSet(this, _stream, __privateGet(this, _options).stream);
-        __privateSet(this, _isEnabled, typeof __privateGet(this, _options).isEnabled === "boolean" ? __privateGet(this, _options).isEnabled : isInteractive({ stream: __privateGet(this, _stream) }));
-        __privateSet(this, _isSilent, typeof __privateGet(this, _options).isSilent === "boolean" ? __privateGet(this, _options).isSilent : false);
-        this.text = __privateGet(this, _options).text;
-        this.prefixText = __privateGet(this, _options).prefixText;
-        this.indent = __privateGet(this, _options).indent;
+        };
+        this.color = this.#options.color;
+        this.spinner = this.#options.spinner;
+        this.#initialInterval = this.#options.interval;
+        this.#stream = this.#options.stream;
+        this.#isEnabled = typeof this.#options.isEnabled === "boolean" ? this.#options.isEnabled : isInteractive({ stream: this.#stream });
+        this.#isSilent = typeof this.#options.isSilent === "boolean" ? this.#options.isSilent : false;
+        this.text = this.#options.text;
+        this.prefixText = this.#options.prefixText;
+        this.indent = this.#options.indent;
         if (import_node_process8.default.env.NODE_ENV === "test") {
-          this._stream = __privateGet(this, _stream);
-          this._isEnabled = __privateGet(this, _isEnabled);
+          this._stream = this.#stream;
+          this._isEnabled = this.#isEnabled;
           Object.defineProperty(this, "_linesToClear", {
             get() {
-              return __privateGet(this, _linesToClear);
+              return this.#linesToClear;
             },
             set(newValue) {
-              __privateSet(this, _linesToClear, newValue);
+              this.#linesToClear = newValue;
             }
           });
           Object.defineProperty(this, "_frameIndex", {
             get() {
-              return __privateGet(this, _frameIndex);
+              return this.#frameIndex;
             }
           });
           Object.defineProperty(this, "_lineCount", {
             get() {
-              return __privateGet(this, _lineCount);
+              return this.#lineCount;
             }
           });
         }
       }
       get indent() {
-        return __privateGet(this, _indent);
+        return this.#indent;
       }
       set indent(indent = 0) {
         if (!(indent >= 0 && Number.isInteger(indent))) {
           throw new Error("The `indent` option must be an integer from 0 and up");
         }
-        __privateSet(this, _indent, indent);
+        this.#indent = indent;
         this.updateLineCount();
       }
       get interval() {
-        return __privateGet(this, _initialInterval) || __privateGet(this, _spinner).interval || 100;
+        return this.#initialInterval || this.#spinner.interval || 100;
       }
       get spinner() {
-        return __privateGet(this, _spinner);
+        return this.#spinner;
       }
       set spinner(spinner3) {
-        __privateSet(this, _frameIndex, 0);
-        __privateSet(this, _initialInterval, void 0);
+        this.#frameIndex = 0;
+        this.#initialInterval = void 0;
         if (typeof spinner3 === "object") {
           if (spinner3.frames === void 0) {
             throw new Error("The given spinner must have a `frames` property");
           }
-          __privateSet(this, _spinner, spinner3);
+          this.#spinner = spinner3;
         } else if (!isUnicodeSupported()) {
-          __privateSet(this, _spinner, import_cli_spinners.default.line);
+          this.#spinner = import_cli_spinners.default.line;
         } else if (spinner3 === void 0) {
-          __privateSet(this, _spinner, import_cli_spinners.default.dots);
+          this.#spinner = import_cli_spinners.default.dots;
         } else if (spinner3 !== "default" && import_cli_spinners.default[spinner3]) {
-          __privateSet(this, _spinner, import_cli_spinners.default[spinner3]);
+          this.#spinner = import_cli_spinners.default[spinner3];
         } else {
           throw new Error(`There is no built-in spinner named '${spinner3}'. See https://github.com/sindresorhus/cli-spinners/blob/main/spinners.json for a full list.`);
         }
       }
       get text() {
-        return __privateGet(this, _text);
+        return this.#text;
       }
       set text(value) {
-        __privateSet(this, _text, value || "");
+        this.#text = value || "";
         this.updateLineCount();
       }
       get prefixText() {
-        return __privateGet(this, _prefixText);
+        return this.#prefixText;
       }
       set prefixText(value) {
-        __privateSet(this, _prefixText, value || "");
+        this.#prefixText = value || "";
         this.updateLineCount();
       }
       get isSpinning() {
-        return __privateGet(this, _id) !== void 0;
+        return this.#id !== void 0;
       }
-      getFullPrefixText(prefixText = __privateGet(this, _prefixText), postfix = " ") {
+      getFullPrefixText(prefixText = this.#prefixText, postfix = " ") {
         if (typeof prefixText === "string" && prefixText !== "") {
           return prefixText + postfix;
         }
@@ -62380,79 +62327,79 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         return "";
       }
       updateLineCount() {
-        const columns = __privateGet(this, _stream).columns || 80;
-        const fullPrefixText = this.getFullPrefixText(__privateGet(this, _prefixText), "-");
-        __privateSet(this, _lineCount, 0);
-        for (const line of stripAnsi(" ".repeat(__privateGet(this, _indent)) + fullPrefixText + "--" + __privateGet(this, _text)).split("\n")) {
-          __privateSet(this, _lineCount, __privateGet(this, _lineCount) + Math.max(1, Math.ceil((0, import_wcwidth.default)(line) / columns)));
+        const columns = this.#stream.columns || 80;
+        const fullPrefixText = this.getFullPrefixText(this.#prefixText, "-");
+        this.#lineCount = 0;
+        for (const line of stripAnsi(" ".repeat(this.#indent) + fullPrefixText + "--" + this.#text).split("\n")) {
+          this.#lineCount += Math.max(1, Math.ceil((0, import_wcwidth.default)(line) / columns));
         }
       }
       get isEnabled() {
-        return __privateGet(this, _isEnabled) && !__privateGet(this, _isSilent);
+        return this.#isEnabled && !this.#isSilent;
       }
       set isEnabled(value) {
         if (typeof value !== "boolean") {
           throw new TypeError("The `isEnabled` option must be a boolean");
         }
-        __privateSet(this, _isEnabled, value);
+        this.#isEnabled = value;
       }
       get isSilent() {
-        return __privateGet(this, _isSilent);
+        return this.#isSilent;
       }
       set isSilent(value) {
         if (typeof value !== "boolean") {
           throw new TypeError("The `isSilent` option must be a boolean");
         }
-        __privateSet(this, _isSilent, value);
+        this.#isSilent = value;
       }
       frame() {
-        const { frames } = __privateGet(this, _spinner);
-        let frame = frames[__privateGet(this, _frameIndex)];
+        const { frames } = this.#spinner;
+        let frame = frames[this.#frameIndex];
         if (this.color) {
           frame = source_default[this.color](frame);
         }
-        __privateSet(this, _frameIndex, ++__privateWrapper(this, _frameIndex)._ % frames.length);
-        const fullPrefixText = typeof __privateGet(this, _prefixText) === "string" && __privateGet(this, _prefixText) !== "" ? __privateGet(this, _prefixText) + " " : "";
+        this.#frameIndex = ++this.#frameIndex % frames.length;
+        const fullPrefixText = typeof this.#prefixText === "string" && this.#prefixText !== "" ? this.#prefixText + " " : "";
         const fullText = typeof this.text === "string" ? " " + this.text : "";
         return fullPrefixText + frame + fullText;
       }
       clear() {
-        if (!__privateGet(this, _isEnabled) || !__privateGet(this, _stream).isTTY) {
+        if (!this.#isEnabled || !this.#stream.isTTY) {
           return this;
         }
-        __privateGet(this, _stream).cursorTo(0);
-        for (let index = 0; index < __privateGet(this, _linesToClear); index++) {
+        this.#stream.cursorTo(0);
+        for (let index = 0; index < this.#linesToClear; index++) {
           if (index > 0) {
-            __privateGet(this, _stream).moveCursor(0, -1);
+            this.#stream.moveCursor(0, -1);
           }
-          __privateGet(this, _stream).clearLine(1);
+          this.#stream.clearLine(1);
         }
-        if (__privateGet(this, _indent) || this.lastIndent !== __privateGet(this, _indent)) {
-          __privateGet(this, _stream).cursorTo(__privateGet(this, _indent));
+        if (this.#indent || this.lastIndent !== this.#indent) {
+          this.#stream.cursorTo(this.#indent);
         }
-        this.lastIndent = __privateGet(this, _indent);
-        __privateSet(this, _linesToClear, 0);
+        this.lastIndent = this.#indent;
+        this.#linesToClear = 0;
         return this;
       }
       render() {
-        if (__privateGet(this, _isSilent)) {
+        if (this.#isSilent) {
           return this;
         }
         this.clear();
-        __privateGet(this, _stream).write(this.frame());
-        __privateSet(this, _linesToClear, __privateGet(this, _lineCount));
+        this.#stream.write(this.frame());
+        this.#linesToClear = this.#lineCount;
         return this;
       }
       start(text) {
         if (text) {
           this.text = text;
         }
-        if (__privateGet(this, _isSilent)) {
+        if (this.#isSilent) {
           return this;
         }
-        if (!__privateGet(this, _isEnabled)) {
+        if (!this.#isEnabled) {
           if (this.text) {
-            __privateGet(this, _stream).write(`- ${this.text}
+            this.#stream.write(`- ${this.text}
 `);
           }
           return this;
@@ -62460,31 +62407,31 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         if (this.isSpinning) {
           return this;
         }
-        if (__privateGet(this, _options).hideCursor) {
-          cli_cursor_default.hide(__privateGet(this, _stream));
+        if (this.#options.hideCursor) {
+          cli_cursor_default.hide(this.#stream);
         }
-        if (__privateGet(this, _options).discardStdin && import_node_process8.default.stdin.isTTY) {
-          __privateSet(this, _isDiscardingStdin, true);
+        if (this.#options.discardStdin && import_node_process8.default.stdin.isTTY) {
+          this.#isDiscardingStdin = true;
           stdinDiscarder.start();
         }
         this.render();
-        __privateSet(this, _id, setInterval(this.render.bind(this), this.interval));
+        this.#id = setInterval(this.render.bind(this), this.interval);
         return this;
       }
       stop() {
-        if (!__privateGet(this, _isEnabled)) {
+        if (!this.#isEnabled) {
           return this;
         }
-        clearInterval(__privateGet(this, _id));
-        __privateSet(this, _id, void 0);
-        __privateSet(this, _frameIndex, 0);
+        clearInterval(this.#id);
+        this.#id = void 0;
+        this.#frameIndex = 0;
         this.clear();
-        if (__privateGet(this, _options).hideCursor) {
-          cli_cursor_default.show(__privateGet(this, _stream));
+        if (this.#options.hideCursor) {
+          cli_cursor_default.show(this.#stream);
         }
-        if (__privateGet(this, _options).discardStdin && import_node_process8.default.stdin.isTTY && __privateGet(this, _isDiscardingStdin)) {
+        if (this.#options.discardStdin && import_node_process8.default.stdin.isTTY && this.#isDiscardingStdin) {
           stdinDiscarder.stop();
-          __privateSet(this, _isDiscardingStdin, false);
+          this.#isDiscardingStdin = false;
         }
         return this;
       }
@@ -62501,32 +62448,18 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
         return this.stopAndPersist({ symbol: log_symbols_default.info, text });
       }
       stopAndPersist(options = {}) {
-        if (__privateGet(this, _isSilent)) {
+        if (this.#isSilent) {
           return this;
         }
-        const prefixText = options.prefixText || __privateGet(this, _prefixText);
+        const prefixText = options.prefixText || this.#prefixText;
         const text = options.text || this.text;
         const fullText = typeof text === "string" ? " " + text : "";
         this.stop();
-        __privateGet(this, _stream).write(`${this.getFullPrefixText(prefixText, " ")}${options.symbol || " "}${fullText}
+        this.#stream.write(`${this.getFullPrefixText(prefixText, " ")}${options.symbol || " "}${fullText}
 `);
         return this;
       }
     };
-    _linesToClear = /* @__PURE__ */ new WeakMap();
-    _isDiscardingStdin = /* @__PURE__ */ new WeakMap();
-    _lineCount = /* @__PURE__ */ new WeakMap();
-    _frameIndex = /* @__PURE__ */ new WeakMap();
-    _options = /* @__PURE__ */ new WeakMap();
-    _spinner = /* @__PURE__ */ new WeakMap();
-    _stream = /* @__PURE__ */ new WeakMap();
-    _id = /* @__PURE__ */ new WeakMap();
-    _initialInterval = /* @__PURE__ */ new WeakMap();
-    _isEnabled = /* @__PURE__ */ new WeakMap();
-    _isSilent = /* @__PURE__ */ new WeakMap();
-    _indent = /* @__PURE__ */ new WeakMap();
-    _text = /* @__PURE__ */ new WeakMap();
-    _prefixText = /* @__PURE__ */ new WeakMap();
     function ora(options) {
       return new Ora(options);
     }
@@ -63653,7 +63586,7 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
     };
     var import_through = __toESM(require_through(), 1);
     var import_mute_stream = __toESM(require_mute(), 1);
-    var import_node_readline2 = __toESM(require("readline"), 1);
+    var import_node_readline2 = __toESM(require("node:readline"), 1);
     var UI = class {
       constructor(opt) {
         if (!this.rl) {
@@ -68057,8 +67990,17 @@ var require_verace = __commonJS({
     module2.exports = {
       lang: "ts",
       name: "verace",
-      version: "0.2.3",
-      targets: ["win64", "linux64"],
+      version: "0.2.4",
+      targets: [
+        "win64",
+        "linux64"
+      ],
+      gomod: "",
+      skipPkg: false,
+      hooks: {
+        preBuild: "",
+        postBuild: ""
+      },
       produceTypes: true,
       test: "npx c8 ava",
       cleanAfterBuild: false

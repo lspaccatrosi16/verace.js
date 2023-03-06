@@ -2,9 +2,5 @@ out
 build
 bin
 
-
-runxact
-runxact.exe
-
 node_modules/
 coverage
