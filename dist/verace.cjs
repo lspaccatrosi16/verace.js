@@ -67990,7 +67990,7 @@ var require_verace = __commonJS({
     module2.exports = {
       lang: "ts",
       name: "verace",
-      version: "0.2.4",
+      version: "0.2.5",
       targets: [
         "win64",
         "linux64"
