@@ -1,10 +1,8 @@
 import { execSync, spawnSync } from "child_process";
 import { existsSync, readFileSync, rmSync, writeFileSync } from "fs-extra";
 import { handleExecError, runShellCmd } from "lib/common";
-import make_logger from "lib/log";
 import Spinnies from "spinnies";
 import veraceTempJS from "./veraceTempJS.js";
-const log = make_logger();
 const spinner = {
     interval: 50,
     frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"],
@@ -21,7 +19,7 @@ const cleanUp = (config) => {
     if (config.cleanAfterBuild && !config.skipPkg && existsSync("dist"))
         rmSync("dist", { recursive: true, force: true });
 };
-export default function (config) {
+export default function (config, log) {
     return new Promise((resolve, reject) => {
         if (existsSync("src/index.ts")) {
             try {
@@ -35,7 +33,9 @@ export default function (config) {
                 execSync(`npx ts-add-js-extension add --dir=tsc-build`);
                 if (config.test != "") {
                     const cmds = config.test.split(" ");
-                    const testRes = spawnSync(cmds[0], cmds.slice(1), { stdio: "inherit" });
+                    const testRes = spawnSync(cmds[0], cmds.slice(1), {
+                        stdio: "inherit",
+                    });
                     if (testRes.error) {
                         console.log(testRes.error);
                         process.exit(1);
@@ -60,10 +60,10 @@ export default function (config) {
                 try {
                     const promises = [];
                     if (config.targets.includes("linux64")) {
-                        promises.push(buildLinux(config));
+                        promises.push(buildLinux(config, log));
                     }
                     if (config.targets.includes("win64")) {
-                        promises.push(buildWin(config));
+                        promises.push(buildWin(config, log));
                     }
                     Promise.all(promises).then(() => {
                         log().success("All targets built for successfully.");
@@ -77,7 +77,7 @@ export default function (config) {
                 }
             }
             catch (e) {
-                handleExecError(e);
+                handleExecError(e, log);
                 reject(e);
                 cleanUp(config);
                 process.exit(1);
@@ -88,7 +88,7 @@ export default function (config) {
         return;
     });
 }
-const buildLinux = (config) => {
+const buildLinux = (config, log) => {
     return new Promise((resolve, reject) => {
         spinnies.add("buildlinux", { text: "Building for linux64" });
         runShellCmd(`npx pkg "dist/${config.name}.cjs" -o bin/${config.name} -t node16-linux -C GZIP`, "buildlinux", log, spinnies)
@@ -96,7 +96,7 @@ const buildLinux = (config) => {
             .catch(reject);
     });
 };
-const buildWin = (config) => {
+const buildWin = (config, log) => {
     return new Promise((resolve, reject) => {
         spinnies.add("buildwin", { text: "Building for win64" });
         runShellCmd(`npx pkg "dist/${config.name}.cjs" -o bin/${config.name} -t node16-win -C GZIP`, "buildwin", log, spinnies)

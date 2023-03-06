@@ -1,10 +1,8 @@
 import { z } from "zod";
-import make_logger from "./log.js";
 const hooks = z.object({
     preBuild: z.string().default(""),
     postBuild: z.string().default(""),
 });
-const log = make_logger();
 const defaultHook = {
     preBuild: "",
     postBuild: "",

@@ -101,7 +101,7 @@ export default function (config: BaseConfig, log: LoggerType): Promise<void> {
           throw e;
         }
       } catch (e) {
-        handleExecError(e);
+        handleExecError(e, log);
         reject(e);
 
         cleanUp(config);

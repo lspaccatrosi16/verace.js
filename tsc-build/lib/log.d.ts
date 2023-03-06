@@ -5,15 +5,16 @@ interface Opts {
 }
 export type uncalledFn = [Logger, string];
 export type LoggerType = (str?: string) => Logger;
-export default function make_logger(): (str?: string) => Logger;
+export default function make_logger(testMode?: boolean): (str?: string) => Logger;
 declare class Logger {
     _color: string;
     _bold: boolean;
     _underline: boolean;
     maxWidth: 75;
-    constructor(opts?: Opts);
+    testMode: boolean;
+    constructor(testMode: boolean, opts?: Opts);
     apply(str: string): Logger;
-    _self(opts?: {}, print?: boolean): Logger;
+    private _self;
     citrus(str?: string): Logger;
     grey(str?: string): Logger;
     bold(str?: string): Logger;
@@ -26,6 +27,8 @@ declare class Logger {
     private _logTree;
     private _log;
     private sanitiseString;
-    multi(parts: uncalledFn[]): void;
+    multi(parts: uncalledFn[]): string;
+    get dumpBuffer(): string;
+    private StdoutWrite;
 }
 export {};

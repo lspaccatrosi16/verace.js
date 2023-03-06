@@ -56,6 +56,6 @@ const execHookCommand = (cmd: string, log: LoggerType) => {
   } catch (e) {
     log().danger("Error executing hook command: ");
 
-    handleExecError(e);
+    handleExecError(e, log);
   }
 };

@@ -1,2 +1,3 @@
 import { Command } from "commander";
-export default function (): Command;
+import type { LoggerType } from "src/lib/log";
+export default function (log: LoggerType): Command;

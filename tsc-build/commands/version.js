@@ -1,16 +1,14 @@
 import { Command } from "commander";
 import { writeFileSync } from "fs-extra";
 import inquirer from "inquirer";
-import make_logger from "lib/log";
 import { parseConfig } from "lib/parseConfig";
 import semver from "semver";
-const log = make_logger();
-export default function () {
+export default function (log) {
     const v = new Command("version").description("Manage package versions");
-    v.action(version);
+    v.action(() => version(log));
     return v;
 }
-const version = () => {
+const version = (log) => {
     return new Promise((resolve, reject) => {
         parseConfig(log, "Version").then((cfg) => {
             const { version } = cfg;
@@ -18,7 +16,14 @@ const version = () => {
                 .prompt({
                 type: "list",
                 message: "Select version increment type",
-                choices: ["patch", "minor", "major", "prepatch", "preminor", "premajor"],
+                choices: [
+                    "patch",
+                    "minor",
+                    "major",
+                    "prepatch",
+                    "preminor",
+                    "premajor",
+                ],
                 name: "increment",
             })
                 .then(({ increment }) => {

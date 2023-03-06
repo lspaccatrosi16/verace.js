@@ -10,15 +10,14 @@ import runExe from "commands/run-exe";
 import version from "commands/version";
 inquirer.registerPrompt("command", iqr);
 const program = new Command();
-const log = Logger();
 process.on("exit", (code) => {
-    log("\n");
+    console.log("\n");
     if (code == 0)
-        log().success("Verace.js CLI exited without errors.");
+        console.log("Verace.js CLI exited without errors.");
     else
-        log().danger("Verace.js CLI exited with errors.");
+        console.log("Verace.js CLI exited with errors.");
 });
-const init = async (version) => {
+const init = async (version, log) => {
     log("\u2500".repeat(80));
     figlet.parseFont("Standard", Standard);
     const veracejs = figlet.textSync("verace.js", {
@@ -30,15 +29,19 @@ const init = async (version) => {
     log(`v${version}`);
 };
 export default function (env) {
-    init(env.version).then(() => {
-        program.name(env.name).description("The Verace.js CLI Toolchain").version(env.version);
+    const log = Logger();
+    init(env.version, log).then(() => {
+        program
+            .name(env.name)
+            .description("The Verace.js CLI Toolchain")
+            .version(env.version);
         program.action(async () => {
             log(program.helpInformation());
         });
-        program.addCommand(createExe());
-        program.addCommand(buildExe());
-        program.addCommand(runExe());
-        program.addCommand(version());
+        program.addCommand(createExe(log));
+        program.addCommand(buildExe(log));
+        program.addCommand(runExe(log));
+        program.addCommand(version(log));
         program
             .command("help")
             .description("Shows this message")

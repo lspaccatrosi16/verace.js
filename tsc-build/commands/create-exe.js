@@ -2,12 +2,10 @@ import child_process from "child_process";
 import { Command } from "commander";
 import fs from "fs-extra";
 import inquirer from "inquirer";
-import { baseconfig, goFile, goGI, makePackageJson, tsConfig, tsFile, tsGI } from "lib/baseConfig";
-import make_logger from "lib/log";
-const log = make_logger();
-export default function () {
+import { baseconfig, goFile, goGI, makePackageJson, tsConfig, tsFile, tsGI, } from "lib/baseConfig";
+export default function (log) {
     const ce = new Command("create-exe").description("Creates an executable.");
-    ce.action(collectInfo);
+    ce.action(() => collectInfo(log));
     return ce;
 }
 const errorDeleteFile = (files) => {
@@ -19,7 +17,7 @@ const errorDeleteFile = (files) => {
         resolve();
     });
 };
-const collectInfo = async () => {
+const collectInfo = async (log) => {
     const answers = await inquirer.prompt([
         {
             name: "lang",

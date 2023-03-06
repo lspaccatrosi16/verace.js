@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
 interface Opts {
   color: string;
@@ -10,8 +10,8 @@ export type uncalledFn = [Logger, string];
 
 export type LoggerType = (str?: string) => Logger;
 
-export default function make_logger() {
-  const log = new Logger();
+export default function make_logger(testMode = false) {
+  const log = new Logger(testMode);
 
   return (str?: string) => {
     if (str) {
@@ -20,13 +20,18 @@ export default function make_logger() {
   };
 }
 
+let devBuffer = "";
+
 class Logger {
   _color: string = "#FFFFFF";
   _bold: boolean = false;
   _underline: boolean = false;
   maxWidth: 75;
+  testMode: boolean;
 
-  constructor(opts?: Opts) {
+  constructor(testMode: boolean, opts?: Opts) {
+    this.testMode = testMode;
+
     if (opts) {
       this._color = opts.color;
       this._bold = opts.bold;
@@ -38,7 +43,7 @@ class Logger {
     return this._self()._log(str);
   }
 
-  _self(opts = {}, print = false) {
+  private _self(opts = {}, print = false) {
     const newOpts: Opts = {
       ...{ color: this._color, bold: this._bold, underline: this._underline },
       ...opts,
@@ -46,7 +51,7 @@ class Logger {
 
     // if (!print) console.log("self", this, opts, newOpts);
 
-    return new Logger(newOpts);
+    return new Logger(this.testMode, newOpts);
   }
 
   citrus(str?: string) {
@@ -126,11 +131,14 @@ class Logger {
   }
 
   private _log(str: string) {
-    process.stdout.write(this._logTree(this.sanitiseString(str) + "\n"));
+    const logOutput = this._logTree(this.sanitiseString(str) + "\n");
+
+    this.StdoutWrite(logOutput);
+
     return this._self({}, true);
   }
 
-  private sanitiseString(str: string, multi = false): string {
+  private sanitiseString(str: string): string {
     const maxW = 100;
     const newString: string[] = [];
 
@@ -141,7 +149,7 @@ class Logger {
 
     splitStr.forEach((el) => {
       // console.log("len:", el.length);
-      if (el.length > maxW) {
+      if (el.length > maxW && !this.testMode) {
         // console.log("len > max");
         newString.push(
           [el.slice(0, maxW), "\n", this.sanitiseString(el.slice(maxW))].join(
@@ -166,11 +174,25 @@ class Logger {
       const str = el[1];
 
       // console.log("fnres:", fn);
-      outstr += fn._logTree(this.sanitiseString(str, true));
+      outstr += fn._logTree(this.sanitiseString(str));
     });
 
     outstr += "\n";
 
-    process.stdout.write(outstr);
+    return this.StdoutWrite(outstr);
+  }
+
+  get dumpBuffer() {
+    if (this.testMode) return devBuffer;
+    else return null;
+  }
+
+  private StdoutWrite(data: string) {
+    if (!this.testMode) {
+      process.stdout.write(data);
+    } else {
+      devBuffer += data;
+      return data;
+    }
   }
 }

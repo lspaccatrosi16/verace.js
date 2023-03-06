@@ -1,11 +1,11 @@
 import child_process from "child_process";
 import os from "os";
-const convToWin = (cmd) => {
-    if (os.platform() == "win32") {
+export const convToWin = (cmd, override = false) => {
+    if (os.platform() == "win32" || override) {
         const strAsArr = cmd.split("");
         for (let i = 0, len = strAsArr.length; i < len; i++) {
             const currentLetter = strAsArr[i];
-            if (currentLetter == "/" && os.platform() == "win32") {
+            if (currentLetter == "/") {
                 strAsArr[i] = "\\";
             }
         }
@@ -30,12 +30,12 @@ export function runShellCmd(cmd, spinnerName, log, spinnies) {
         });
     });
 }
-export const handleExecError = (e) => {
-    console.log(e);
+export const handleExecError = (e, log) => {
+    log(e);
     if (e.stdout) {
-        console.log(e.stdout.toString());
+        log(e.stdout.toString());
     }
     if (e.stderr) {
-        console.log(e.stderr.toString());
+        log(e.stderr.toString());
     }
 };

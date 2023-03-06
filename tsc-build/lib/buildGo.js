@@ -1,8 +1,6 @@
 import { runShellCmd, handleExecError } from "lib/common";
-import make_logger from "lib/log";
 import { existsSync } from "fs-extra";
 import Spinnies from "spinnies";
-const log = make_logger();
 const spinner = {
     interval: 50,
     frames: ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"],
@@ -11,7 +9,7 @@ const spinnies = new Spinnies({
     spinner,
     succeedColor: "white",
 });
-export default function (config) {
+export default function (config, log) {
     return new Promise((resolve, reject) => {
         if (!existsSync("main.go")) {
             reject("main.go not found");
@@ -33,12 +31,12 @@ export default function (config) {
                 resolve();
             })
                 .catch((e) => {
-                handleExecError(e);
+                handleExecError(e, log);
                 reject(e);
             });
         }
         catch (e) {
-            handleExecError(e);
+            handleExecError(e, log);
             reject(e);
             return;
         }

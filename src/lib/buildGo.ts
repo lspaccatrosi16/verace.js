@@ -49,11 +49,11 @@ export default function (config: BaseConfig, log: LoggerType): Promise<void> {
           resolve();
         })
         .catch((e) => {
-          handleExecError(e);
+          handleExecError(e, log);
           reject(e);
         });
     } catch (e) {
-      handleExecError(e);
+      handleExecError(e, log);
       reject(e);
       return;
     }

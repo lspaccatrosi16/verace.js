@@ -1,6 +1,6 @@
-import chalk from 'chalk';
-export default function make_logger() {
-    const log = new Logger();
+import chalk from "chalk";
+export default function make_logger(testMode = false) {
+    const log = new Logger(testMode);
     return (str) => {
         if (str) {
             return log.apply(str);
@@ -9,11 +9,13 @@ export default function make_logger() {
             return log;
     };
 }
+let devBuffer = "";
 class Logger {
-    constructor(opts) {
+    constructor(testMode, opts) {
         this._color = "#FFFFFF";
         this._bold = false;
         this._underline = false;
+        this.testMode = testMode;
         if (opts) {
             this._color = opts.color;
             this._bold = opts.bold;
@@ -29,7 +31,7 @@ class Logger {
             ...opts,
         };
         // if (!print) console.log("self", this, opts, newOpts);
-        return new Logger(newOpts);
+        return new Logger(this.testMode, newOpts);
     }
     citrus(str) {
         const newAttr = { color: "F7FF00" };
@@ -111,10 +113,11 @@ class Logger {
             return chalk.hex(this._color)(str);
     }
     _log(str) {
-        process.stdout.write(this._logTree(this.sanitiseString(str) + "\n"));
+        const logOutput = this._logTree(this.sanitiseString(str) + "\n");
+        this.StdoutWrite(logOutput);
         return this._self({}, true);
     }
-    sanitiseString(str, multi = false) {
+    sanitiseString(str) {
         const maxW = 100;
         const newString = [];
         let newStr = "";
@@ -123,7 +126,7 @@ class Logger {
         const splitStr = newStr.split("\n");
         splitStr.forEach((el) => {
             // console.log("len:", el.length);
-            if (el.length > maxW) {
+            if (el.length > maxW && !this.testMode) {
                 // console.log("len > max");
                 newString.push([el.slice(0, maxW), "\n", this.sanitiseString(el.slice(maxW))].join(""));
             }
@@ -141,9 +144,24 @@ class Logger {
             const fn = el[0];
             const str = el[1];
             // console.log("fnres:", fn);
-            outstr += fn._logTree(this.sanitiseString(str, true));
+            outstr += fn._logTree(this.sanitiseString(str));
         });
         outstr += "\n";
-        process.stdout.write(outstr);
+        return this.StdoutWrite(outstr);
+    }
+    get dumpBuffer() {
+        if (this.testMode)
+            return devBuffer;
+        else
+            return null;
+    }
+    StdoutWrite(data) {
+        if (!this.testMode) {
+            process.stdout.write(data);
+        }
+        else {
+            devBuffer += data;
+            return data;
+        }
     }
 }

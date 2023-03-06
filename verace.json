@@ -3,7 +3,7 @@
   "name": "verace",
   "version": "0.2.5",
   "targets": ["win64", "linux64"],
-  "skipPkg": false,
+  "skipPkg": true,
   "hooks": {
     "preBuild": "",
     "postBuild": ""

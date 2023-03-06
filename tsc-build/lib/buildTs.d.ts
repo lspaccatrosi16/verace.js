@@ -1,2 +1,3 @@
 import type { BaseConfig } from "./veraceConfig";
-export default function (config: BaseConfig): Promise<void>;
+import type { LoggerType } from "./log";
+export default function (config: BaseConfig, log: LoggerType): Promise<void>;

@@ -1,35 +1,33 @@
 import { execSync } from "child_process";
 import { Command } from "commander";
-import make_logger from "lib/log";
 import buildTs from "lib/buildTs";
 import { parseConfig } from "lib/parseConfig";
 import { handleExecError } from "lib/common";
 import buildGo from "lib/buildGo";
-const log = make_logger();
-export default function () {
+export default function (log) {
     const be = new Command("build-exe").description("Builds the project according to the verace.json file");
-    be.action(build);
+    be.action(() => build(log));
     return be;
 }
-const build = () => {
+const build = (log) => {
     return new Promise((resolve) => {
         parseConfig(log, "Build")
             .then((cfg) => {
             if (cfg.hooks && cfg.hooks.preBuild != "")
-                execHookCommand(cfg.hooks.preBuild);
+                execHookCommand(cfg.hooks.preBuild, log);
             switch (cfg.lang) {
                 case "ts": {
-                    buildTs(cfg).then(() => {
+                    buildTs(cfg, log).then(() => {
                         if (cfg.hooks && cfg.hooks.postBuild != "")
-                            execHookCommand(cfg.hooks.postBuild);
+                            execHookCommand(cfg.hooks.postBuild, log);
                         resolve();
                     });
                     break;
                 }
                 case "go": {
-                    buildGo(cfg).then(() => {
+                    buildGo(cfg, log).then(() => {
                         if (cfg.hooks && cfg.hooks.postBuild != "")
-                            execHookCommand(cfg.hooks.postBuild);
+                            execHookCommand(cfg.hooks.postBuild, log);
                         resolve();
                     });
                     break;
@@ -42,13 +40,13 @@ const build = () => {
         });
     });
 };
-const execHookCommand = (cmd) => {
+const execHookCommand = (cmd, log) => {
     log().info(`Executing hook: ` + cmd);
     try {
         execSync(cmd, { stdio: "inherit" });
     }
     catch (e) {
         log().danger("Error executing hook command: ");
-        handleExecError(e);
+        handleExecError(e, log);
     }
 };

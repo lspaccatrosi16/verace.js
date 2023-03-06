@@ -58789,20 +58789,22 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
     var chalk = createChalk();
     var chalkStderr = createChalk({ level: stderrColor ? stderrColor.level : 0 });
     var source_default = chalk;
-    function make_logger() {
-      const log9 = new Logger();
+    function make_logger(testMode = false) {
+      const log = new Logger(testMode);
       return (str) => {
         if (str) {
-          return log9.apply(str);
+          return log.apply(str);
         } else
-          return log9;
+          return log;
       };
     }
+    var devBuffer = "";
     var Logger = class {
-      constructor(opts) {
+      constructor(testMode, opts) {
         this._color = "#FFFFFF";
         this._bold = false;
         this._underline = false;
+        this.testMode = testMode;
         if (opts) {
           this._color = opts.color;
           this._bold = opts.bold;
@@ -58817,7 +58819,7 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
           ...{ color: this._color, bold: this._bold, underline: this._underline },
           ...opts
         };
-        return new Logger(newOpts);
+        return new Logger(this.testMode, newOpts);
       }
       citrus(str) {
         const newAttr = { color: "F7FF00" };
@@ -58898,10 +58900,11 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
           return source_default.hex(this._color)(str);
       }
       _log(str) {
-        process.stdout.write(this._logTree(this.sanitiseString(str) + "\n"));
+        const logOutput = this._logTree(this.sanitiseString(str) + "\n");
+        this.StdoutWrite(logOutput);
         return this._self({}, true);
       }
-      sanitiseString(str, multi = false) {
+      sanitiseString(str) {
         const maxW = 100;
         const newString = [];
         let newStr = "";
@@ -58909,7 +58912,7 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
           newStr = str.toString();
         const splitStr = newStr.split("\n");
         splitStr.forEach((el) => {
-          if (el.length > maxW) {
+          if (el.length > maxW && !this.testMode) {
             newString.push(
               [el.slice(0, maxW), "\n", this.sanitiseString(el.slice(maxW))].join(
                 ""
@@ -58927,10 +58930,24 @@ ${breakLine(line.substring(columns - prefixLength - 1, line.length), 0)}` : line
         parts.forEach((el) => {
           const fn = el[0];
           const str = el[1];
-          outstr += fn._logTree(this.sanitiseString(str, true));
+          outstr += fn._logTree(this.sanitiseString(str));
         });
         outstr += "\n";
-        process.stdout.write(outstr);
+        return this.StdoutWrite(outstr);
+      }
+      get dumpBuffer() {
+        if (this.testMode)
+          return devBuffer;
+        else
+          return null;
+      }
+      StdoutWrite(data) {
+        if (!this.testMode) {
+          process.stdout.write(data);
+        } else {
+          devBuffer += data;
+          return data;
+        }
       }
     };
     var import_figlet = __toESM(require_node_figlet(), 1);
@@ -63947,10 +63964,9 @@ func main() {
       }
       return baseConfig;
     };
-    var log = make_logger();
-    function create_exe_default() {
+    function create_exe_default(log) {
       const ce = new Command("create-exe").description("Creates an executable.");
-      ce.action(collectInfo);
+      ce.action(() => collectInfo(log));
       return ce;
     }
     var errorDeleteFile = (files) => {
@@ -63962,7 +63978,7 @@ func main() {
         resolve();
       });
     };
-    var collectInfo = async () => {
+    var collectInfo = async (log) => {
       const answers = await inquirer_default.prompt([
         {
           name: "lang",
@@ -64007,7 +64023,10 @@ func main() {
           try {
             const pkg = makePackageJson(userSelection);
             await import_fs_extra.default.writeFile("package.json", JSON.stringify(pkg, null, "	"));
-            await import_fs_extra.default.writeFile("tsconfig.json", JSON.stringify(tsConfig, null, "	"));
+            await import_fs_extra.default.writeFile(
+              "tsconfig.json",
+              JSON.stringify(tsConfig, null, "	")
+            );
             await import_child_process.default.execSync("npm i");
             await import_fs_extra.default.mkdir("src");
             await import_fs_extra.default.writeFile("src/index.ts", tsFile);
@@ -64037,12 +64056,12 @@ func main() {
     var import_fs_extra2 = __toESM(require_lib3(), 1);
     var import_child_process2 = __toESM(require("child_process"), 1);
     var import_os = __toESM(require("os"), 1);
-    var convToWin = (cmd) => {
-      if (import_os.default.platform() == "win32") {
+    var convToWin = (cmd, override = false) => {
+      if (import_os.default.platform() == "win32" || override) {
         const strAsArr = cmd.split("");
         for (let i = 0, len = strAsArr.length; i < len; i++) {
           const currentLetter = strAsArr[i];
-          if (currentLetter == "/" && import_os.default.platform() == "win32") {
+          if (currentLetter == "/") {
             strAsArr[i] = "\\";
           }
         }
@@ -64050,7 +64069,7 @@ func main() {
       } else
         return cmd;
     };
-    function runShellCmd(cmd, spinnerName, log9, spinnies3) {
+    function runShellCmd(cmd, spinnerName, log, spinnies3) {
       const newCmd = convToWin(cmd);
       return new Promise((resolve, reject) => {
         import_child_process2.default.exec(
@@ -64059,9 +64078,9 @@ func main() {
           (err, stdout, stderr) => {
             if (err) {
               spinnies3.stopAll("fail");
-              log9().danger(err.toString());
-              log9().danger(stdout);
-              log9().danger(stderr);
+              log().danger(err.toString());
+              log().danger(stdout);
+              log().danger(stderr);
               reject();
             }
             spinnies3.succeed(spinnerName);
@@ -64070,13 +64089,13 @@ func main() {
         );
       });
     }
-    var handleExecError = (e) => {
-      console.log(e);
+    var handleExecError = (e, log) => {
+      log(e);
       if (e.stdout) {
-        console.log(e.stdout.toString());
+        log(e.stdout.toString());
       }
       if (e.stderr) {
-        console.log(e.stderr.toString());
+        log(e.stderr.toString());
       }
     };
     var import_spinnies = __toESM(require_spinnies(), 1);
@@ -64086,7 +64105,6 @@ const config = require("../verace.json");
 
 exec.default(config);
 `;
-    var log2 = make_logger();
     var spinner = {
       interval: 50,
       frames: ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"]
@@ -64103,7 +64121,7 @@ exec.default(config);
       if (config22.cleanAfterBuild && !config22.skipPkg && (0, import_fs_extra2.existsSync)("dist"))
         (0, import_fs_extra2.rmSync)("dist", { recursive: true, force: true });
     };
-    function buildTs_default(config22) {
+    function buildTs_default(config22, log) {
       return new Promise((resolve, reject) => {
         if ((0, import_fs_extra2.existsSync)("src/index.ts")) {
           try {
@@ -64116,7 +64134,9 @@ exec.default(config);
             (0, import_child_process3.execSync)(`npx ts-add-js-extension add --dir=tsc-build`);
             if (config22.test != "") {
               const cmds = config22.test.split(" ");
-              const testRes = (0, import_child_process3.spawnSync)(cmds[0], cmds.slice(1), { stdio: "inherit" });
+              const testRes = (0, import_child_process3.spawnSync)(cmds[0], cmds.slice(1), {
+                stdio: "inherit"
+              });
               if (testRes.error) {
                 console.log(testRes.error);
                 process.exit(1);
@@ -64147,13 +64167,13 @@ exec.default(config);
             try {
               const promises = [];
               if (config22.targets.includes("linux64")) {
-                promises.push(buildLinux(config22));
+                promises.push(buildLinux(config22, log));
               }
               if (config22.targets.includes("win64")) {
-                promises.push(buildWin(config22));
+                promises.push(buildWin(config22, log));
               }
               Promise.all(promises).then(() => {
-                log2().success("All targets built for successfully.");
+                log().success("All targets built for successfully.");
                 cleanUp(config22);
                 resolve();
                 return;
@@ -64162,7 +64182,7 @@ exec.default(config);
               throw e;
             }
           } catch (e) {
-            handleExecError(e);
+            handleExecError(e, log);
             reject(e);
             cleanUp(config22);
             process.exit(1);
@@ -64172,24 +64192,24 @@ exec.default(config);
         return;
       });
     }
-    var buildLinux = (config22) => {
+    var buildLinux = (config22, log) => {
       return new Promise((resolve, reject) => {
         spinnies.add("buildlinux", { text: "Building for linux64" });
         runShellCmd(
           `npx pkg "dist/${config22.name}.cjs" -o bin/${config22.name} -t node16-linux -C GZIP`,
           "buildlinux",
-          log2,
+          log,
           spinnies
         ).then(resolve).catch(reject);
       });
     };
-    var buildWin = (config22) => {
+    var buildWin = (config22, log) => {
       return new Promise((resolve, reject) => {
         spinnies.add("buildwin", { text: "Building for win64" });
         runShellCmd(
           `npx pkg "dist/${config22.name}.cjs" -o bin/${config22.name} -t node16-win -C GZIP`,
           "buildwin",
-          log2,
+          log,
           spinnies
         ).then(resolve).catch(reject);
       });
@@ -67723,7 +67743,6 @@ exec.default(config);
       preBuild: z.string().default(""),
       postBuild: z.string().default("")
     });
-    var log3 = make_logger();
     var defaultHook = {
       preBuild: "",
       postBuild: ""
@@ -67756,7 +67775,7 @@ ${err.toString()}`;
         }
       });
     };
-    function parseConfig(log9, command) {
+    function parseConfig(log, command) {
       return new Promise((resolve, reject) => {
         const expectedPath = import_path.default.join(process.cwd(), "verace.json");
         if (!(0, import_fs_extra3.existsSync)(expectedPath)) {
@@ -67766,9 +67785,9 @@ ${err.toString()}`;
         try {
           const unparsed = JSON.parse((0, import_fs_extra3.readFileSync)(expectedPath).toString());
           validate(unparsed).then((config22) => {
-            log9().multi([
-              [log9().info().context, `${command}: `],
-              [log9().context, `${config22.name}@${config22.version}`]
+            log().multi([
+              [log().info().context, `${command}: `],
+              [log().context, `${config22.name}@${config22.version}`]
             ]);
             resolve(config22);
             return;
@@ -67778,7 +67797,7 @@ ${err.toString()}`;
           });
         } catch (e) {
           if (e)
-            log9().danger(e.toString());
+            log().danger(e.toString());
           reject(e);
           return;
         }
@@ -67786,7 +67805,6 @@ ${err.toString()}`;
     }
     var import_fs_extra4 = __toESM(require_lib3(), 1);
     var import_spinnies2 = __toESM(require_spinnies(), 1);
-    var log4 = make_logger();
     var spinner2 = {
       interval: 50,
       frames: ["\u280B", "\u2819", "\u2839", "\u2838", "\u283C", "\u2834", "\u2826", "\u2827", "\u2807", "\u280F"]
@@ -67795,7 +67813,7 @@ ${err.toString()}`;
       spinner: spinner2,
       succeedColor: "white"
     });
-    function buildGo_default(config22) {
+    function buildGo_default(config22, log) {
       return new Promise((resolve, reject) => {
         if (!(0, import_fs_extra4.existsSync)("main.go")) {
           reject("main.go not found");
@@ -67806,110 +67824,113 @@ ${err.toString()}`;
           if (config22.targets.includes("linux64")) {
             spinnies2.add("linbuild", { text: "Building for linux64" });
             promises.push(
-              runShellCmd("GOOS=linux go build -o bin/ ", "linbuild", log4, spinnies2)
+              runShellCmd("GOOS=linux go build -o bin/ ", "linbuild", log, spinnies2)
             );
           }
           if (config22.targets.includes("win64")) {
             spinnies2.add("winbuild", { text: "Building for win64" });
             promises.push(
-              runShellCmd("GOOS=windows go build -o bin/ ", "winbuild", log4, spinnies2)
+              runShellCmd(
+                "GOOS=windows go build -o bin/ ",
+                "winbuild",
+                log,
+                spinnies2
+              )
             );
           }
           Promise.all(promises).then(() => {
-            log4().success("Build succeeded for all targets");
+            log().success("Build succeeded for all targets");
             resolve();
           }).catch((e) => {
-            handleExecError(e);
+            handleExecError(e, log);
             reject(e);
           });
         } catch (e) {
-          handleExecError(e);
+          handleExecError(e, log);
           reject(e);
           return;
         }
       });
     }
-    var log5 = make_logger();
-    function build_exe_default() {
+    function build_exe_default(log) {
       const be = new Command("build-exe").description(
         "Builds the project according to the verace.json file"
       );
-      be.action(build);
+      be.action(() => build(log));
       return be;
     }
-    var build = () => {
+    var build = (log) => {
       return new Promise((resolve) => {
-        parseConfig(log5, "Build").then((cfg) => {
+        parseConfig(log, "Build").then((cfg) => {
           if (cfg.hooks && cfg.hooks.preBuild != "")
-            execHookCommand(cfg.hooks.preBuild);
+            execHookCommand(cfg.hooks.preBuild, log);
           switch (cfg.lang) {
             case "ts": {
-              buildTs_default(cfg).then(() => {
+              buildTs_default(cfg, log).then(() => {
                 if (cfg.hooks && cfg.hooks.postBuild != "")
-                  execHookCommand(cfg.hooks.postBuild);
+                  execHookCommand(cfg.hooks.postBuild, log);
                 resolve();
               });
               break;
             }
             case "go": {
-              buildGo_default(cfg).then(() => {
+              buildGo_default(cfg, log).then(() => {
                 if (cfg.hooks && cfg.hooks.postBuild != "")
-                  execHookCommand(cfg.hooks.postBuild);
+                  execHookCommand(cfg.hooks.postBuild, log);
                 resolve();
               });
               break;
             }
           }
         }).catch((e) => {
-          log5().danger(e);
+          log().danger(e);
           process.exit(1);
         });
       });
     };
-    var execHookCommand = (cmd) => {
-      log5().info(`Executing hook: ` + cmd);
+    var execHookCommand = (cmd, log) => {
+      log().info(`Executing hook: ` + cmd);
       try {
         (0, import_child_process4.execSync)(cmd, { stdio: "inherit" });
       } catch (e) {
-        log5().danger("Error executing hook command: ");
-        handleExecError(e);
+        log().danger("Error executing hook command: ");
+        handleExecError(e, log);
       }
     };
     var import_child_process5 = require("child_process");
-    var log6 = make_logger();
-    function run_exe_default() {
+    function run_exe_default(log) {
       const re = new Command("run-exe").description("Runs the current project");
       re.argument("[options...]");
-      re.action((args) => run(args));
+      re.action((args) => run(args, log));
       return re;
     }
-    var run = (args) => {
+    var run = (args, log) => {
       return new Promise((resolve, reject) => {
-        parseConfig(log6, "Run").then((cfg) => {
+        parseConfig(log, "Run").then((cfg) => {
           try {
             switch (cfg.lang) {
               case "go":
-                log6(`
+                log(`
 
 Run Start:`);
                 (0, import_child_process5.execSync)(`go run main.go ${args.join(" ")}`, { stdio: "inherit" });
-                log6().success("Run End");
+                log().success("Run End");
                 resolve();
                 break;
               case "ts":
-                buildTs_default({ ...cfg, skipPkg: true });
-                log6(`
+                buildTs_default({ ...cfg, skipPkg: true }, log);
+                log(`
 
 Run Start:`);
                 (0, import_child_process5.execSync)(`node dist/${cfg.name}.cjs ${args.join(" ")}`, {
                   stdio: "inherit"
                 });
-                log6().success("Run End");
+                log().success("Run End");
                 resolve();
                 break;
             }
           } catch (e) {
-            handleExecError(e);
+            handleExecError(e, log);
             reject(e);
             return;
           }
@@ -67918,20 +67939,26 @@ Run Start:`);
     };
     var import_fs_extra5 = __toESM(require_lib3(), 1);
     var import_semver = __toESM(require_semver2(), 1);
-    var log7 = make_logger();
-    function version_default() {
+    function version_default(log) {
       const v = new Command("version").description("Manage package versions");
-      v.action(version);
+      v.action(() => version(log));
       return v;
     }
-    var version = () => {
+    var version = (log) => {
       return new Promise((resolve, reject) => {
-        parseConfig(log7, "Version").then((cfg) => {
+        parseConfig(log, "Version").then((cfg) => {
           const { version: version2 } = cfg;
           inquirer_default.prompt({
             type: "list",
             message: "Select version increment type",
-            choices: ["patch", "minor", "major", "prepatch", "preminor", "premajor"],
+            choices: [
+              "patch",
+              "minor",
+              "major",
+              "prepatch",
+              "preminor",
+              "premajor"
+            ],
             name: "increment"
           }).then(({ increment }) => {
             const newVer = import_semver.default.inc(version2, increment);
@@ -67943,37 +67970,37 @@ Run Start:`);
     };
     inquirer_default.registerPrompt("command", import_inquirer_command_prompt.default);
     var program2 = new Command();
-    var log8 = make_logger();
     process.on("exit", (code) => {
-      log8("\n");
+      console.log("\n");
       if (code == 0)
-        log8().success("Verace.js CLI exited without errors.");
+        console.log("Verace.js CLI exited without errors.");
       else
-        log8().danger("Verace.js CLI exited with errors.");
+        console.log("Verace.js CLI exited with errors.");
     });
-    var init = async (version2) => {
-      log8("\u2500".repeat(80));
+    var init = async (version2, log) => {
+      log("\u2500".repeat(80));
       import_figlet.default.parseFont("Standard", Standard_default);
       const veracejs = import_figlet.default.textSync("verace.js", {
         font: "Standard",
         horizontalLayout: "fitted"
       });
-      log8().citrus(veracejs);
-      log8().bold().citrus("The multi-platform, multi-language build tool");
-      log8(`v${version2}`);
+      log().citrus(veracejs);
+      log().bold().citrus("The multi-platform, multi-language build tool");
+      log(`v${version2}`);
     };
     function verace_default(env2) {
-      init(env2.version).then(() => {
+      const log = make_logger();
+      init(env2.version, log).then(() => {
         program2.name(env2.name).description("The Verace.js CLI Toolchain").version(env2.version);
         program2.action(async () => {
-          log8(program2.helpInformation());
+          log(program2.helpInformation());
         });
-        program2.addCommand(create_exe_default());
-        program2.addCommand(build_exe_default());
-        program2.addCommand(run_exe_default());
-        program2.addCommand(version_default());
+        program2.addCommand(create_exe_default(log));
+        program2.addCommand(build_exe_default(log));
+        program2.addCommand(run_exe_default(log));
+        program2.addCommand(version_default(log));
         program2.command("help").description("Shows this message").action(async () => {
-          log8(program2.helpInformation());
+          log(program2.helpInformation());
         });
         program2.parseAsync(process.argv);
       });
@@ -67992,7 +68019,7 @@ var require_verace = __commonJS({
       name: "verace",
       version: "0.2.5",
       targets: ["win64", "linux64"],
-      skipPkg: false,
+      skipPkg: true,
       hooks: {
         preBuild: "",
         postBuild: ""

@@ -3,7 +3,6 @@ import { Command } from "commander";
 import buildTs from "lib/buildTs";
 import { parseConfig } from "lib/parseConfig";
 import { handleExecError } from "lib/common";
-import buildGo from "lib/buildGo";
 import type { LoggerType } from "src/lib/log";
 
 export default function (log: LoggerType) {
@@ -37,7 +36,7 @@ const run = (args: string[], log: LoggerType): Promise<void> => {
             break;
         }
       } catch (e) {
-        handleExecError(e);
+        handleExecError(e, log);
         reject(e);
         return;
       }
