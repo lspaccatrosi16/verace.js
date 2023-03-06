@@ -38,6 +38,28 @@ $ npx verace.js build-exe
 <img src="./images/build-exe.png" width="500">
 </p>
 
+## Contents
+- [Install](#install)
+  * [Standalone installation](#standalone-installation)
+  * [Installing using npm](#installing-using-npm)
+  * [Running using `npx`](#running-using-npx)
+- [Why](#why)
+- [Examples](#examples)
+- [Versioning](#versioning)
+- [Configuring](#configuring)
+  * [Universal Options](#universal-options)
+  * [Typescript specific options](#typescript-specific-options)
+  * [Go specific options](#go-specific-options)
+- [Implementation Details](#implementation-details)
+  * [Data embedding in Typescipt](#data-embedding-in-typescipt)
+  * [Data embedding in Go](#data-embedding-in-go)
+- [Build Pipelines](#build-pipelines)
+  * [The Typescript Build Pipeline](#the-typescript-build-pipeline)
+  * [The Go Build Pipeline](#the-go-build-pipeline)
+- [Planned features](#planned-features)
+- [Licence](#licence)
+
+
 ## Install
 
 
