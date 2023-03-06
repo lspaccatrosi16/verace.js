@@ -1,8 +1,17 @@
 {
 	"lang": "ts",
 	"name": "verace",
-	"version": "0.2.3",
-	"targets": ["win64", "linux64"],
+	"version": "0.2.4",
+	"targets": [
+		"win64",
+		"linux64"
+	],
+	"gomod": "",
+	"skipPkg": false,
+	"hooks": {
+		"preBuild": "",
+		"postBuild": ""
+	},
 	"produceTypes": true,
 	"test": "npx c8 ava",
 	"cleanAfterBuild": false
