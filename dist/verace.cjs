@@ -67991,11 +67991,7 @@ var require_verace = __commonJS({
       lang: "ts",
       name: "verace",
       version: "0.2.5",
-      targets: [
-        "win64",
-        "linux64"
-      ],
-      gomod: "",
+      targets: ["win64", "linux64"],
       skipPkg: false,
       hooks: {
         preBuild: "",
