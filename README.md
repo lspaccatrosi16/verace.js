@@ -114,7 +114,7 @@ $ verace version
 
 ## Configuring
 
-All configuration for **Verace.js** lives in the `verace.json` file created in each project. Underlined properties are required.
+All configuration for **Verace.js** lives in the `verace.json` file created in each project. Properties prepended with an asterisk are required.
 
 ```jsonc
 //verace.json
@@ -145,16 +145,16 @@ All configuration for **Verace.js** lives in the `verace.json` file created in e
 ---
 ### Universal Options
 
-#### <u>`lang`</u>
+#### `*lang`
 The language of the project. Must be either `ts` or `go`
 
-#### <u>`name`</u>
+#### `*name`
 The package name.
 
-#### <u>`version` </u>
+#### `*version`
 The semver package version. See [versioning](#versioning) for more details.
 
-#### <u>`targets`</u>
+#### `*targets`
 The build targets for which package will be built for. Currently, building to only `win64` and `linux64` are supported due to the difficulty of testing other possible configurations.
 
 #### `data`
@@ -192,7 +192,7 @@ Similar to [build hooks](#hooks) in purpose. Instead of being run before/after t
 
 ### Go specific options
 
-#### <u>`gomod`</u>
+#### `*gomod`
 The go module path.
 
 
