@@ -70,7 +70,7 @@ export const goGI = "dist";
 
 export const tsConfig = {
 	compilerOptions: {
-		outDir: "build",
+		outDir: "tsc-build",
 		baseUrl: "./src",
 		typeRoots: ["src/types", "node_modules/@types"],
 		sourceMap: false,
@@ -87,12 +87,22 @@ export const tsConfig = {
 		emitDecoratorMetadata: true,
 		allowJs: true,
 		checkJs: true,
+		declarationDir: "typings",
 	},
 	include: ["src"],
 };
 
+interface PKGJSON {
+	name: string;
+	devDependencies: Record<string, string>;
+	author: string;
+	licence: string;
+	private: boolean;
+	typings?: string;
+}
+
 export const makePackageJson = (bc: BaseConfig) => {
-	return {
+	const baseConfig: PKGJSON = {
 		name: bc.name,
 		devDependencies: {
 			"@types/node": "^16.17",
@@ -104,4 +114,10 @@ export const makePackageJson = (bc: BaseConfig) => {
 		licence: "UNLICENCED",
 		private: true,
 	};
+
+	if (bc.produceTypes) {
+		baseConfig.typings = "typings/index.d.ts";
+	}
+
+	return baseConfig;
 };

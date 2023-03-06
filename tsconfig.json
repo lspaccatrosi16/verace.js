@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "outDir": "build",
+    "outDir": "tsc-build",
     "baseUrl": "./src",
     "typeRoots": ["src/types", "node_modules/@types"],
     "sourceMap": false,
@@ -17,6 +17,9 @@
     "emitDecoratorMetadata": true,
     "allowJs": true,
     "checkJs": true,
+    "paths": {
+      "src/*": ["*"]
+    }
   },
   "include": ["src"],
 }

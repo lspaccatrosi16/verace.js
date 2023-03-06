@@ -26,7 +26,6 @@ export function parseConfig(log: LoggerType, command: string): Promise<BaseConfi
 					return;
 				})
 				.catch((e) => {
-					if (e) log().danger(e.toString());
 					reject(e);
 					return;
 				});

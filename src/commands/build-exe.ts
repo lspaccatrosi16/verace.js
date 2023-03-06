@@ -22,11 +22,11 @@ const build = (): Promise<void> => {
 	return new Promise((resolve) => {
 		parseConfig(log, "Build")
 			.then((cfg) => {
-				if (cfg.hooks && cfg.hooks.preBuild) execHookCommand(cfg.hooks.preBuild);
+				if (cfg.hooks && cfg.hooks.preBuild != "") execHookCommand(cfg.hooks.preBuild);
 				switch (cfg.lang) {
 					case "ts": {
 						buildTs(cfg).then(() => {
-							if (cfg.hooks && cfg.hooks.postBuild)
+							if (cfg.hooks && cfg.hooks.postBuild != "")
 								execHookCommand(cfg.hooks.postBuild);
 							resolve();
 						});
@@ -35,7 +35,7 @@ const build = (): Promise<void> => {
 
 					case "go": {
 						buildGo(cfg).then(() => {
-							if (cfg.hooks && cfg.hooks.postBuild)
+							if (cfg.hooks && cfg.hooks.postBuild != "")
 								execHookCommand(cfg.hooks.postBuild);
 							resolve();
 						});

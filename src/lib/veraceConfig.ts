@@ -2,11 +2,16 @@ import { z, ZodError } from "zod";
 import make_logger from "./log";
 
 const hooks = z.object({
-	preBuild: z.optional(z.string()),
-	postBuild: z.optional(z.string()),
+	preBuild: z.string().default(""),
+	postBuild: z.string().default(""),
 });
 
 const log = make_logger();
+
+const defaultHook = {
+	preBuild: "",
+	postBuild: "",
+};
 
 const config = z
 	.object({
@@ -14,10 +19,13 @@ const config = z
 		name: z.string(),
 		version: z.string(),
 		targets: z.array(z.union([z.literal("win64"), z.literal("linux64")])),
-		gomod: z.optional(z.string()),
-		skipPkg: z.optional(z.boolean()),
-		hooks: z.optional(hooks),
+		gomod: z.string().default(""),
+		skipPkg: z.boolean().default(false),
+		hooks: hooks.default(defaultHook),
+		produceTypes: z.boolean().default(false),
 		data: z.unknown(),
+		test: z.string().default(""),
+		cleanAfterBuild: z.boolean().default(false),
 	})
 	.strict();
 
@@ -31,12 +39,9 @@ export const validate = (data: unknown): Promise<BaseConfig> => {
 			return;
 		} catch (e: any) {
 			const err = e as ZodError;
-			log().danger("Error found whilst parsing verace.json :");
+			const error = `Error found whilst parsing verace.json :\n${err.toString()}`;
 
-			log().danger(err.toString());
-
-			process.exit(1);
-
+			reject(error);
 			return;
 		}
 	});
