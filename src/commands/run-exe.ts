@@ -1,51 +1,56 @@
-import { execSync } from "child_process";
-import { Command } from "commander";
-import buildTs from "lib/buildTs";
-import { parseConfig } from "lib/parseConfig";
-import { handleExecError } from "lib/common";
-import { ExecutionEnvironment } from "lib/executionEnvironment";
+import { execSync } from "child_process"
+import { Command } from "commander"
+import buildTs from "lib/buildTs"
+import { parseConfig } from "lib/parseConfig"
+import { handleExecError } from "lib/common"
 
-export default function (env: ExecutionEnvironment) {
-	const re = new Command("run-exe").description("Runs the current project");
-	re.argument("[options...]");
-	re.action((args: string[]) => run(args, env));
+import envWrapper from "lib/executionEnvironment"
 
-	return re;
+export default function () {
+	const re = new Command("run-exe").description("Runs the current project")
+	re.argument("[options...]")
+	re.action((args: string[]) => run(args))
+
+	return re
 }
 
-const run = (args: string[], env: ExecutionEnvironment): Promise<void> => {
-	const { log } = env;
+const run = (args: string[]): Promise<void> => {
+	const env = envWrapper.getInstance()
+	const { log } = env
 	return new Promise((resolve, reject) => {
-		parseConfig(env, "Run").then((cfg) => {
-			env.setConfig(cfg);
+		parseConfig("Run").then(cfg => {
+			env.setConfig(cfg)
 			try {
 				switch (cfg.lang) {
 					case "go":
-						log(`\n\nRun Start:`);
-						execSync(`go run main.go ${args.join(" ")}`, { stdio: "inherit" });
-						log().success("Run End");
-						resolve();
-						break;
-					case "ts":
-						const runEnv = new ExecutionEnvironment(false, env.apiMode);
-						runEnv.setConfig({ ...cfg, skipPkg: true });
-						runEnv.setApiExecutionConfig(env.apiExecutionConfig);
-
-						buildTs(runEnv);
-
-						log(`\n\nRun Start:`);
-						execSync(`node dist/${cfg.name}.cjs ${args.join(" ")}`, {
+						log(`\n\nRun Start:`)
+						execSync(`go run main.go ${args.join(" ")}`, {
 							stdio: "inherit",
-						});
-						log().success("Run End");
-						resolve();
-						break;
+						})
+						log().success("Run End")
+						resolve()
+						break
+					case "ts":
+						env.setConfig({ ...cfg, skipPkg: true })
+
+						buildTs()
+
+						log(`\n\nRun Start:`)
+						execSync(
+							`node dist/${cfg.name}.cjs ${args.join(" ")}`,
+							{
+								stdio: "inherit",
+							}
+						)
+						log().success("Run End")
+						resolve()
+						break
 				}
 			} catch (e) {
-				handleExecError(e, env);
-				reject(e);
-				return;
+				handleExecError(e, env)
+				reject(e)
+				return
 			}
-		});
-	});
-};
+		})
+	})
+}

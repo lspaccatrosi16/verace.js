@@ -1,4 +1,4 @@
-import type { BaseConfig } from "./veraceConfig";
+import type { BaseConfig } from "./veraceConfig"
 
 //CORE
 export const baseconfig: BaseConfig = {
@@ -9,7 +9,7 @@ export const baseconfig: BaseConfig = {
 	data: {
 		foo: "bar",
 	},
-};
+}
 
 //Typescript basic starter
 
@@ -26,12 +26,12 @@ export default function (env: FingoEnv) {
   console.log(\`Hello world from \${env.name} v\${env.version}\`);
   console.log("Data:", env.data);
 }
-`;
+`
 
 export const tsGI = `
 bin
 node_modules
-`;
+`
 
 //Go basic starter
 
@@ -64,9 +64,9 @@ func main() {
 
     fmt.Printf("Hello world from %s v%s\\n", verace.Name, verace.Version)
     fmt.Println(verace.Data.Foo)
-}`;
+}`
 
-export const goGI = "dist";
+export const goGI = "dist"
 
 export const tsConfig = {
 	compilerOptions: {
@@ -87,18 +87,20 @@ export const tsConfig = {
 		emitDecoratorMetadata: true,
 		allowJs: true,
 		checkJs: true,
-		declarationDir: "typings",
+		paths: {
+			"src/*": ["*"],
+		},
 	},
 	include: ["src"],
-};
+}
 
 interface PKGJSON {
-	name: string;
-	devDependencies: Record<string, string>;
-	author: string;
-	licence: string;
-	private: boolean;
-	typings?: string;
+	name: string
+	devDependencies: Record<string, string>
+	author: string
+	licence: string
+	private: boolean
+	typings?: string
 }
 
 export const makePackageJson = (bc: BaseConfig) => {
@@ -106,18 +108,18 @@ export const makePackageJson = (bc: BaseConfig) => {
 		name: bc.name,
 		devDependencies: {
 			"@types/node": "^16.17",
-			typescript: "^4.9",
-			pkg: "^5.8",
-			esbuild: "^0.16",
+			"typescript": "^4.9",
+			"pkg": "^5.8",
+			"esbuild": "^0.16",
 		},
 		author: "",
 		licence: "UNLICENCED",
 		private: true,
-	};
-
-	if (bc.produceTypes) {
-		baseConfig.typings = "typings/index.d.ts";
 	}
 
-	return baseConfig;
-};
+	if (bc.produceTypes) {
+		baseConfig.typings = "typings/index.d.ts"
+	}
+
+	return baseConfig
+}

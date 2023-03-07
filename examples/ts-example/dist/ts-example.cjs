@@ -43,11 +43,13 @@ var require_verace = __commonJS({
       lang: "ts",
       name: "ts-example",
       version: "0.0.1",
-      targets: ["win64", "linux64"],
+      targets: [
+        "win64",
+        "linux64"
+      ],
       data: {
         foo: "bar"
-      },
-      test: ""
+      }
     };
   }
 });

@@ -2234,4 +2234,4 @@ Font modified May 20, 2012 by patorjk to add the 0xCA0 character
  | (_) | @
  $\\___/$ @
          @@
-         `;
+         `
