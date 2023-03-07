@@ -46,7 +46,7 @@
 		"typescript": "^4.9.4"
 	},
 	"scripts": {
-		"test": "c8 ava",
+		"test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava",
 		"lint": "prettier --write src",
 		"build": "verace build-exe"
 	},
