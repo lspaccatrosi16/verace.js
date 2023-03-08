@@ -102,7 +102,7 @@ const collectInfo = async () => {
 		{
 			type: "input",
 			message: "Enter go module path",
-			name: "gomod",
+			name: "go.gomod",
 			when: answers => {
 				return answers.lang && answers.lang == "go";
 			},
@@ -135,7 +135,7 @@ const collectInfo = async () => {
 			try {
 				child_process.execSync("go version");
 				child_process.execSync(
-					`cd ${env.wk} && go mod init ${userSelection.gomod}`
+					`cd ${env.wk} && go mod init ${userSelection.go.gomod}`
 				);
 
 				await fs.writeFile(env.resolveFromRoot("main.go"), goFile);

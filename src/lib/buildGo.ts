@@ -33,8 +33,9 @@ import envWrapper from "lib/executionEnvironment";
 export default function (): Promise<void> {
 	const env = envWrapper.getInstance();
 	return new Promise((resolve, reject) => {
-		if (!fs.existsSync(env.resolveFromRoot("main.go"))) {
-			reject("main.go not found");
+		const mainGoPath = env.resolveFromRoot(env.entryPointPath);
+		if (!fs.existsSync(mainGoPath)) {
+			reject(`entrypoint ${mainGoPath} was not found`);
 			return;
 		}
 
@@ -47,7 +48,7 @@ export default function (): Promise<void> {
 				spinnies.add("linbuild", { text: "Building for linux64" });
 				promises.push(
 					runShellCmd(
-						`cd ${env.wk} && GOOS=linux go build -o bin/ `,
+						`cd ${env.wk} && GOOS=linux go build -o ${config.outDir}/${config.name} ${env.entryPointPath}`,
 						"linbuild",
 						spinnies
 					)
@@ -58,7 +59,7 @@ export default function (): Promise<void> {
 				spinnies.add("winbuild", { text: "Building for win64" });
 				promises.push(
 					runShellCmd(
-						`cd ${env.wk} && GOOS=windows go build -o bin/ `,
+						`cd ${env.wk} && GOOS=windows go build -o ${config.outDir}/${config.name} ${env.entryPointPath}`,
 						"winbuild",
 						spinnies
 					)

@@ -35,13 +35,17 @@ const spinnies = new Spinnies({
 });
 
 const cleanUp = (config: BaseConfig) => {
-	if (config.cleanAfterBuild && fs.existsSync("tsc-build"))
+	if (config.ts.cleanAfterBuild && fs.existsSync("tsc-build"))
 		fs.rmSync("tsc-build", { recursive: true, force: true });
 
 	if (fs.existsSync("build"))
 		fs.rmSync("build", { recursive: true, force: true });
 
-	if (config.cleanAfterBuild && !config.skipPkg && fs.existsSync("dist"))
+	if (
+		config.ts.cleanAfterBuild &&
+		!config.ts.skipPkg &&
+		fs.existsSync("dist")
+	)
 		fs.rmSync("dist", { recursive: true, force: true });
 };
 import envWrapper from "lib/executionEnvironment";
@@ -50,24 +54,24 @@ export default function (): Promise<void> {
 	const env = envWrapper.getInstance();
 	const { config, log } = env;
 	return new Promise((resolve, reject) => {
-		const indexTsPath = env.resolveFromRoot("src/index.ts");
+		const indexTsPath = env.resolveFromRoot(env.entryPointPath);
 		if (fs.existsSync(indexTsPath)) {
 			try {
 				spinnies.add("esb", { text: "1. Bundling with ESBuild" });
 
-				if (config.produceTypes) {
+				if (config.ts.produceTypes) {
 					execSync(
-						`cd ${env.wk} && npx tsc --declaration true --outDir tsc-build`
+						`cd ${env.wk} && npx tsc ${env.entryPointPath} --declaration true --outDir ${config.ts.buildDir}`
 					);
 				} else {
 					execSync(
-						`cd ${env.wk} && npx tsc --declaration false --outDir tsc-build`
+						`cd ${env.wk} && npx tsc ${env.entryPointPath} --declaration false --outDir ${config.ts.buildDir}`
 					);
 				}
 				execSync(`cd ${env.wk} && npx tsc-alias -f -p tsconfig.json`);
 
-				if (config.test != "") {
-					const newCmd = `cd ${env.wk} && ${config.test}`;
+				if (config.ts.test != "") {
+					const newCmd = `cd ${env.wk} && ${config.ts.test}`;
 					const cmds = newCmd.split(" ");
 					const testRes = spawnSync(cmds[0], cmds.slice(1), {
 						stdio: "inherit",
@@ -85,7 +89,14 @@ export default function (): Promise<void> {
 				}
 
 				execSync(
-					`cd ${env.wk} && npx esbuild tsc-build/index.js --outfile="build/veraceTemp.cjs" --bundle --platform=node --target=node16`,
+					`cd ${env.wk} && npx esbuild ${
+						config.ts.buildDir
+					}/${env.entryPointName
+						.split(".")
+						.slice(0, -1)
+						.join(
+							"."
+						)}.js --outfile="build/veraceTemp.cjs" --bundle --platform=node --target=node16`,
 					{ stdio: "inherit" }
 				);
 
@@ -114,7 +125,7 @@ export default function (): Promise<void> {
 
 				spinnies.succeed("esb");
 
-				if (config.skipPkg) {
+				if (config.ts.skipPkg) {
 					resolve();
 					return;
 				}
@@ -146,7 +157,7 @@ export default function (): Promise<void> {
 
 				reject(e);
 			}
-		} else reject(`${indexTsPath} was not found`);
+		} else reject(`entrypoint ${indexTsPath} was not found`);
 		return;
 	});
 }
@@ -157,7 +168,7 @@ const buildLinux = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		spinnies.add("buildlinux", { text: "Building for linux64" });
 		runShellCmd(
-			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o bin/${config.name} -t node16-linux -C GZIP`,
+			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o ${config.outDir}/${config.name} -t node16-linux -C GZIP`,
 			"buildlinux",
 			spinnies
 		)
@@ -172,7 +183,7 @@ const buildWin = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		spinnies.add("buildwin", { text: "Building for win64" });
 		runShellCmd(
-			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o bin/${config.name} -t node16-win -C GZIP`,
+			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o ${config.outDir}/${config.name} -t node16-win -C GZIP`,
 			"buildwin",
 			spinnies
 		)

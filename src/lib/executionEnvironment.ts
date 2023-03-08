@@ -40,9 +40,6 @@ export default class GetExecutionEnv {
 	static getInstance(strict = false) {
 		if (!this.instance && !strict) {
 			this.instance = new InternalExecutionEnvironment();
-			console.log(
-				`Creating new execution instance. ID: ${this.instance.id}`
-			);
 		}
 		return this.instance;
 	}
@@ -69,6 +66,7 @@ class InternalExecutionEnvironment {
 
 	setupInstance(testMode: boolean, apiMode: boolean) {
 		if (!this._setupDone) {
+			console.log(`Setting up execution instance. ID: ${this._id}`);
 			const log = make_logger(testMode, apiMode);
 			this._log = log;
 			this._apiMode = apiMode;
@@ -165,5 +163,23 @@ class InternalExecutionEnvironment {
 			apiExecConfig: this.apiExecutionConfig,
 			configOverrides: this._configOverrides,
 		};
+	}
+
+	get entryPointPath() {
+		if (this._config.entrypoint != "") return this._config.entrypoint;
+		else {
+			switch (this._config.lang) {
+				case "go":
+					return "main.go";
+
+				case "ts":
+					return "src/index.ts";
+			}
+		}
+	}
+
+	get entryPointName() {
+		const paths = this.entryPointPath.split("/");
+		return paths[paths.length - 1];
 	}
 }

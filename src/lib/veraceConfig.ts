@@ -23,9 +23,33 @@ const hooks = z.object({
 	postBuild: z.string().default(""),
 });
 
+const typeScriptConfig = z.object({
+	buildDir: z.string().default("tsc-build"),
+	cleanAfterBuild: z.boolean().default(false),
+	produceTypes: z.boolean().default(false),
+	skipPkg: z.boolean().default(false),
+	test: z.string().default(""),
+});
+
+const goConfig = z.object({
+	gomod: z.string().default(""),
+});
+
 const defaultHook = {
 	preBuild: "",
 	postBuild: "",
+};
+
+const defaultTypescript = {
+	buildDir: "tsc-build",
+	cleanAfterBuild: false,
+	produceTypes: false,
+	skipPkg: false,
+	test: "",
+};
+
+const defaultGo = {
+	gomod: "",
 };
 
 const config = z
@@ -34,13 +58,12 @@ const config = z
 		name: z.string(),
 		version: z.string(),
 		targets: z.array(z.union([z.literal("win64"), z.literal("linux64")])),
-		gomod: z.string().default(""),
-		skipPkg: z.boolean().default(false),
 		hooks: hooks.default(defaultHook),
-		produceTypes: z.boolean().default(false),
 		data: z.unknown(),
-		test: z.string().default(""),
-		cleanAfterBuild: z.boolean().default(false),
+		outDir: z.string().default("bin"),
+		entrypoint: z.string().default(""),
+		ts: typeScriptConfig.default(defaultTypescript),
+		go: goConfig.default(defaultGo),
 	})
 	.strict();
 

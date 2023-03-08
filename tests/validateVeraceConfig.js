@@ -15,12 +15,21 @@ test("Check basic config generation", async (t) => {
 		name: "test",
 		version: "1.0.0",
 		targets: ["win64"],
-		gomod: "",
-		skipPkg: false,
 		hooks: { preBuild: "", postBuild: "" },
-		produceTypes: false,
-		test: "",
-		cleanAfterBuild: false,
+		entrypoint: "",
+		outDir: "bin",
+		ts: {
+			buildDir: "tsc-build",
+			skipPkg: false,
+			test: "",
+			produceTypes: false,
+			cleanAfterBuild: false,
+		},
+		version: "1.0.0",
+		go: {
+			gomod: "",
+
+		}
 	});
 });
 
@@ -73,17 +82,26 @@ test("Allow data values", async (t) => {
 		name: "test",
 		version: "1.0.0",
 		targets: ["win64"],
-		gomod: "",
-		skipPkg: false,
 		hooks: { preBuild: "", postBuild: "" },
-		produceTypes: false,
-		test: "",
-		cleanAfterBuild: false,
+		entrypoint: "",
+		outDir: "bin",
+		ts: {
+			buildDir: "tsc-build",
+			skipPkg: false,
+			test: "",
+			produceTypes: false,
+			cleanAfterBuild: false,
+		},
+		version: "1.0.0",
+		go: {
+			gomod: "",
+
+		},
 		data: {
 			cat: "dog",
 			foo: {
 				bar: "baz",
 			},
-		},
+		}
 	});
 });

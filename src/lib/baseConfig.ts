@@ -27,6 +27,8 @@ export const baseconfig: BaseConfig = {
 	data: {
 		foo: "bar",
 	},
+	ts: {},
+	go: {},
 };
 
 //Typescript basic starter
@@ -135,7 +137,7 @@ export const makePackageJson = (bc: BaseConfig) => {
 		private: true,
 	};
 
-	if (bc.produceTypes) {
+	if (bc.ts.produceTypes) {
 		baseConfig.typings = "typings/index.d.ts";
 	}
 

@@ -9,5 +9,8 @@
 	"data": {
 		"foo": "bar"
 	},
-	"gomod": "lspaccatrosi16/verace.js/examples/go-example"
+	"ts": {},
+	"go": {
+		"gomod": "lspaccatrosi16/verace.js/examples/go-example"
+	}
 }

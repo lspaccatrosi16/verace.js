@@ -1,61 +1,61 @@
 {
-	"name": "verace.js",
-	"version": "0.2.7",
-	"keywords": [
-		"cli",
-		"pkg",
-		"binary",
-		"go",
-		"golang",
-		"exe"
-	],
-	"repository": "github:lspaccatrosi16/verace.js",
-	"license": "AGPL-3.0-only",
-	"author": {
-		"name": "Luca Spaccatrosi",
-		"email": "luca@spaccatrosi.co.uk"
-	},
-	"type": "module",
-	"typings": "tsc-build/api.d.ts",
-	"bin": {
-		"verace": "./dist/verace.cjs"
-	},
-	"dependencies": {
-		"chalk": "^5.2.0",
-		"commander": "^10.0.0",
-		"figlet": "^1.5.2",
-		"fs-extra": "^11.1.0",
-		"inquirer": "^9.1.4",
-		"semver": "^7.3.8",
-		"spinnies": "^0.5.1",
-		"tsc-alias": "^1.8.2",
-		"zod": "^3.21.0"
-	},
-	"devDependencies": {
-		"@types/figlet": "^1.5.5",
-		"@types/fs-extra": "^9.0.13",
-		"@types/inquirer": "^9.0.3",
-		"@types/node": "^16.17.0",
-		"@types/semver": "^7.3.13",
-		"@types/spinnies": "^0.5.0",
-		"ava": "^5.2.0",
-		"c8": "^7.13.0",
-		"esbuild": "0.16.12",
-		"pkg": "^5.8.0",
-		"prettier": "^2.8.4",
-		"typescript": "^4.9.4",
-		"verace.js": "^0"
-	},
-	"scripts": {
-		"test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava",
-		"lint": "prettier --write src",
-		"build": "verace build-exe",
-		"build:ci": "./ci/verace build-exe --skipPkg --noHooks"
-	},
-	"exports": {
-		".": "./tsc-build/api.js"
-	},
-	"engines": {
-		"node": "16.x || 18.x"
-	}
+  "name": "verace.js",
+  "version": "0.2.7",
+  "keywords": [
+    "cli",
+    "pkg",
+    "binary",
+    "go",
+    "golang",
+    "exe"
+  ],
+  "repository": "github:lspaccatrosi16/verace.js",
+  "license": "AGPL-3.0-only",
+  "author": {
+    "name": "Luca Spaccatrosi",
+    "email": "luca@spaccatrosi.co.uk"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./tsc-build/api.js"
+  },
+  "typings": "tsc-build/api.d.ts",
+  "bin": {
+    "verace": "./dist/verace.cjs"
+  },
+  "scripts": {
+    "build": "verace build-exe",
+    "build:ci": "./ci/verace build-exe --skipPkg --noHooks",
+    "lint": "prettier --write src",
+    "test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava"
+  },
+  "dependencies": {
+    "chalk": "^5.2.0",
+    "commander": "^10.0.0",
+    "figlet": "^1.5.2",
+    "fs-extra": "^11.1.0",
+    "inquirer": "^9.1.4",
+    "semver": "^7.3.8",
+    "spinnies": "^0.5.1",
+    "tsc-alias": "^1.8.2",
+    "zod": "^3.21.0"
+  },
+  "devDependencies": {
+    "@types/figlet": "^1.5.5",
+    "@types/fs-extra": "^9.0.13",
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "^16.17.0",
+    "@types/semver": "^7.3.13",
+    "@types/spinnies": "^0.5.0",
+    "ava": "^5.2.0",
+    "c8": "^7.13.0",
+    "esbuild": "0.16.12",
+    "pkg": "^5.8.0",
+    "prettier": "^2.8.4",
+    "typescript": "^4.9.4",
+    "verace.js": "^0"
+  },
+  "engines": {
+    "node": "16.x || 18.x"
+  }
 }

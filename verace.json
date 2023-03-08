@@ -1,15 +1,25 @@
 {
 	"lang": "ts",
 	"name": "verace",
-	"version": "0.2.7",
-	"targets": ["win64", "linux64"],
-	"gomod": "",
-	"skipPkg": false,
+	"version": "0.2.8",
+	"targets": [
+		"win64",
+		"linux64"
+	],
 	"hooks": {
 		"preBuild": "",
 		"postBuild": "cp bin/verace ci/"
 	},
-	"produceTypes": true,
-	"test": "",
-	"cleanAfterBuild": false
+	"outDir": "bin",
+	"entrypoint": "src/index.ts",
+	"ts": {
+		"buildDir": "tsc-build",
+		"cleanAfterBuild": false,
+		"produceTypes": true,
+		"skipPkg": false,
+		"test": ""
+	},
+	"go": {
+		"gomod": ""
+	}
 }

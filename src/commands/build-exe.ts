@@ -67,17 +67,22 @@ const wrapBuild = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		const env = envWrapper.getInstance();
 
-		build().then((cfg: BaseConfig) => {
-			if (env.apiMode) {
-				env.setApiResult({
-					command: "build-exe",
-					success: true,
-					config: cfg,
-				});
+		build()
+			.then((cfg: BaseConfig) => {
+				if (env.apiMode) {
+					env.setApiResult({
+						command: "build-exe",
+						success: true,
+						config: cfg,
+					});
+					resolve();
+				}
 				resolve();
-			}
-			resolve();
-		});
+			})
+			.catch(e => {
+				// if(e) env.log().danger(e.toString())
+				reject(e);
+			});
 	});
 };
 
@@ -85,7 +90,7 @@ const build = (): Promise<BaseConfig> => {
 	const env = envWrapper.getInstance();
 
 	const { log } = env;
-	return new Promise(resolve => {
+	return new Promise((resolve, reject) => {
 		parseConfig("Build")
 			.then(() => {
 				const { config: cfg } = env;
@@ -93,20 +98,24 @@ const build = (): Promise<BaseConfig> => {
 					execHookCommand(cfg.hooks.preBuild);
 				switch (cfg.lang) {
 					case "ts": {
-						buildTs().then(() => {
-							if (cfg.hooks && cfg.hooks.postBuild != "")
-								execHookCommand(cfg.hooks.postBuild);
-							resolve(cfg);
-						});
+						buildTs()
+							.then(() => {
+								if (cfg.hooks && cfg.hooks.postBuild != "")
+									execHookCommand(cfg.hooks.postBuild);
+								resolve(cfg);
+							})
+							.catch(reject);
 						break;
 					}
 
 					case "go": {
-						buildGo().then(() => {
-							if (cfg.hooks && cfg.hooks.postBuild != "")
-								execHookCommand(cfg.hooks.postBuild);
-							resolve(cfg);
-						});
+						buildGo()
+							.then(() => {
+								if (cfg.hooks && cfg.hooks.postBuild != "")
+									execHookCommand(cfg.hooks.postBuild);
+								resolve(cfg);
+							})
+							.catch(reject);
 						break;
 					}
 				}

@@ -31,18 +31,6 @@ import type {
 	ExecutionEnvironment,
 } from "lib/executionEnvironment";
 import type { VeraceEnv } from "index";
-process.on("exit", code => {
-	console.log("\n");
-	if (code == 0) console.log("Verace.js CLI exited without errors.");
-	else {
-		const env = executionEnv.getInstance();
-		if (env) {
-			console.log("Environment Config: ");
-			console.log(env.ErrorExecContext);
-		}
-		console.log("Verace.js CLI exited with errors.");
-	}
-});
 
 const init = async (version: string, env: ExecutionEnvironment) => {
 	const { log } = env;
@@ -61,14 +49,40 @@ const init = async (version: string, env: ExecutionEnvironment) => {
 };
 
 export default function (env: VeraceEnv) {
+	if (process.argv[2] == "thisver") {
+		console.log(env.version);
+		process.exit(0);
+	}
+
+	process.on("exit", code => {
+		console.log("\n");
+		if (code == 0) console.log("Verace.js CLI exited without errors.");
+		else {
+			const env = executionEnv.getInstance();
+			if (env) {
+				console.log("Environment Config: ");
+				console.log(env.ErrorExecContext);
+			}
+			console.log("Verace.js CLI exited with errors.");
+		}
+	});
+
 	const executionEnvironment = executionEnv.getInstance();
 	executionEnvironment.setupInstance(false, false);
 
+	const { log } = executionEnvironment;
+
 	init(env.version, executionEnvironment).then(() => {
 		const program = createProgram(executionEnvironment, env);
-		program.parseAsync(process.argv).then(() => {
-			executionEnv.purge();
-		});
+		program
+			.parseAsync(process.argv)
+			.then(() => {
+				executionEnv.purge();
+			})
+			.catch(e => {
+				if (e) log().danger(e.toString());
+				process.exit(1);
+			});
 	});
 }
 
@@ -89,12 +103,15 @@ export function api(config: APICONFIG, testMode: boolean): Promise<APIResult> {
 			throw new Error("Only command build-exe is currently supported");
 		}
 
-		program.parseAsync(["", "", config.command]).then(() => {
-			const execData = { ...env.apiExecResult };
-			console.log(execData);
-			executionEnv.purge();
-			resolve(execData);
-		});
+		program
+			.parseAsync(["", "", config.command])
+			.then(() => {
+				const execData = { ...env.apiExecResult };
+				console.log(execData);
+				executionEnv.purge();
+				resolve(execData);
+			})
+			.catch(reject);
 	});
 }
 

@@ -59,7 +59,10 @@ const run = (args: string[]): Promise<void> => {
 						resolve();
 						break;
 					case "ts":
-						env.setConfig({ ...cfg, skipPkg: true });
+						env.setConfig({
+							...cfg,
+							ts: { ...cfg.ts, skipPkg: true },
+						});
 
 						buildTs();
 
