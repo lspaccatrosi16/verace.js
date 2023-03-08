@@ -33,10 +33,29 @@ export default function () {
 		"Builds the project according to the verace.json file"
 	);
 
+	be.option("--skipPkg", "Skips the packaging step (overrides verace.json)");
+	be.option(
+		"--noHooks",
+		"Disables the execution of hooks (overrides verace.json)"
+	);
+
 	be.action(() => {
 		const opts = be.optsWithGlobals();
 		if (opts.path && opts.path != "") {
 			env.setConfigPath(opts.path);
+		}
+
+		if (opts.skipPkg) {
+			env.setConfigOverrides({ skipPkg: opts.skipPkg });
+		}
+
+		if (opts.noHooks) {
+			env.setConfigOverrides({
+				hooks: {
+					preBuild: "",
+					postBuild: "",
+				},
+			});
 		}
 		return wrapBuild();
 	});
@@ -68,8 +87,8 @@ const build = (): Promise<BaseConfig> => {
 	const { log } = env;
 	return new Promise(resolve => {
 		parseConfig("Build")
-			.then(cfg => {
-				env.setConfig(cfg);
+			.then(() => {
+				const { config: cfg } = env;
 				if (cfg.hooks && cfg.hooks.preBuild != "")
 					execHookCommand(cfg.hooks.preBuild);
 				switch (cfg.lang) {

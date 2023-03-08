@@ -65,6 +65,7 @@ class InternalExecutionEnvironment {
 	private _setupDone = false;
 	private _apiResult: APIResult;
 	private _id = Math.floor(Math.random() * 1e10).toString(36);
+	private _configOverrides = {};
 
 	setupInstance(testMode: boolean, apiMode: boolean) {
 		if (!this._setupDone) {
@@ -82,6 +83,10 @@ class InternalExecutionEnvironment {
 
 	setConfig(cfg: BaseConfig) {
 		this._config = cfg;
+	}
+
+	setConfigOverrides(ovr: Record<string, unknown>) {
+		this._configOverrides = { ...this._configOverrides, ...ovr };
 	}
 
 	setApiExecutionConfig(cfg: APICONFIG) {
@@ -127,7 +132,7 @@ class InternalExecutionEnvironment {
 	}
 
 	get config() {
-		return this._config;
+		return { ...this._config, ...this._configOverrides };
 	}
 
 	get apiExecutionConfig() {
@@ -158,6 +163,7 @@ class InternalExecutionEnvironment {
 			parsedConfig: this._config,
 			configLocation: this._veraceConfigPath,
 			apiExecConfig: this.apiExecutionConfig,
+			configOverrides: this._configOverrides,
 		};
 	}
 }

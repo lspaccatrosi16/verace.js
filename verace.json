@@ -2,15 +2,12 @@
 	"lang": "ts",
 	"name": "verace",
 	"version": "0.2.7",
-	"targets": [
-		"win64",
-		"linux64"
-	],
+	"targets": ["win64", "linux64"],
 	"gomod": "",
 	"skipPkg": false,
 	"hooks": {
 		"preBuild": "",
-		"postBuild": ""
+		"postBuild": "cp bin/verace ci/"
 	},
 	"produceTypes": true,
 	"test": "",

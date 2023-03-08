@@ -21,7 +21,7 @@ import path from "path";
 import { BaseConfig, validate } from "./veraceConfig";
 import envWrapper from "lib/executionEnvironment";
 
-export function parseConfig(command: string): Promise<BaseConfig> {
+export function parseConfig(command: string): Promise<void> {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	return new Promise((resolve, reject) => {
@@ -49,7 +49,9 @@ export function parseConfig(command: string): Promise<BaseConfig> {
 						[log().context, `${config.name}@${config.version}`],
 					]);
 
-					resolve(config);
+					env.setConfig(config);
+
+					resolve();
 					return;
 				})
 				.catch(e => {

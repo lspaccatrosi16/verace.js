@@ -43,8 +43,8 @@ export default function () {
 const version = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		const env = envWrapper.getInstance();
-		parseConfig("Version").then(cfg => {
-			env.setConfig(cfg);
+		parseConfig("Version").then(() => {
+			const { config: cfg } = env;
 			const { version } = cfg;
 			inquirer
 				.prompt({

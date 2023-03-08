@@ -7,3 +7,5 @@ node_modules/
 coverage
 build.sh
 tsc-build
+
+.vscode

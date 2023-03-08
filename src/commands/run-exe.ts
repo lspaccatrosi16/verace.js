@@ -43,8 +43,8 @@ const run = (args: string[]): Promise<void> => {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	return new Promise((resolve, reject) => {
-		parseConfig("Run").then(cfg => {
-			env.setConfig(cfg);
+		parseConfig("Run").then(() => {
+			const { config: cfg } = env;
 			try {
 				switch (cfg.lang) {
 					case "go":
