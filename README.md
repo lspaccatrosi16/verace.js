@@ -1,11 +1,11 @@
 # Verace.js
 
-[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-
 > The multi-platform multi-language build tool.
 
 > **Warning**<br />
 > This project is very immature. Breaking changes are inevitable.
+
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 * Out of the box support for typescript and go
 * Easy extensibility
