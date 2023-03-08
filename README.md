@@ -6,7 +6,7 @@
 > This project is very immature. Breaking changes are inevitable.
 
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
-
+[![CI](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml/badge.svg)](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml)
 * Out of the box support for typescript and go
 * Easy extensibility
 * Modular build process with json configuration
