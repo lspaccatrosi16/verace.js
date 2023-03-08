@@ -61,11 +61,11 @@ export default function (): Promise<void> {
 
 				if (config.ts.produceTypes) {
 					execSync(
-						`cd ${env.wk} && npx tsc ${env.entryPointPath} --declaration true --outDir ${config.ts.buildDir}`
+						`cd ${env.wk} && npx tsc --declaration true --outDir ${config.ts.buildDir}`
 					);
 				} else {
 					execSync(
-						`cd ${env.wk} && npx tsc ${env.entryPointPath} --declaration false --outDir ${config.ts.buildDir}`
+						`cd ${env.wk} && npx tsc --declaration false --outDir ${config.ts.buildDir}`
 					);
 				}
 				execSync(`cd ${env.wk} && npx tsc-alias -f -p tsconfig.json`);

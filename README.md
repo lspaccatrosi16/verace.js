@@ -8,9 +8,10 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 [![CI](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml/badge.svg)](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml)
 [![npm version](https://badge.fury.io/js/verace.js.svg)](https://badge.fury.io/js/verace.js)
-* Out of the box support for typescript and go
-* Easy extensibility
-* Modular build process with json configuration
+
+-   Out of the box support for typescript and go
+-   Easy extensibility
+-   Modular build process with json configuration
 
 ## TL; DR
 
@@ -47,27 +48,27 @@ $ npx verace.js build-exe
 
 ## Contents
 
-* [Install](#install)
-  + [Standalone installation](#standalone-installation)
-  + [Installing using npm](#installing-using-npm)
-  + [Running using `npx`](#running-using-npx)
-* [Global Options](#global-options)
-* [Why](#why)
-* [Examples](#examples)
-* [Versioning](#versioning)
-* [Configuring](#configuring)
-  + [Universal Options](#universal-options)
-  + [Typescript specific options](#typescript-specific-options)
-  + [Go specific options](#go-specific-options)
-* [Implementation Details](#implementation-details)
-  + [Data embedding in Typescipt](#data-embedding-in-typescipt)
-  + [Data embedding in Go](#data-embedding-in-go)
-* [Build Pipelines](#build-pipelines)
-  + [The Typescript Build Pipeline](#the-typescript-build-pipeline)
-  + [The Go Build Pipeline](#the-go-build-pipeline)
-* [Javascript API](#javascript-api)
-* [Planned features](#planned-features)
-* [Licence](#licence)
+-   [Install](#install)
+    -   [Standalone installation](#standalone-installation)
+    -   [Installing using npm](#installing-using-npm)
+    -   [Running using `npx`](#running-using-npx)
+-   [Global Options](#global-options)
+-   [Why](#why)
+-   [Examples](#examples)
+-   [Versioning](#versioning)
+-   [Configuring](#configuring)
+    -   [Universal Options](#universal-options)
+    -   [Typescript specific options](#typescript-specific-options)
+    -   [Go specific options](#go-specific-options)
+-   [Implementation Details](#implementation-details)
+    -   [Data embedding in Typescipt](#data-embedding-in-typescipt)
+    -   [Data embedding in Go](#data-embedding-in-go)
+-   [Build Pipelines](#build-pipelines)
+    -   [The Typescript Build Pipeline](#the-typescript-build-pipeline)
+    -   [The Go Build Pipeline](#the-go-build-pipeline)
+-   [Javascript API](#javascript-api)
+-   [Planned features](#planned-features)
+-   [Licence](#licence)
 
 ## Install
 
@@ -115,8 +116,8 @@ When working on different projects, differences in build procedure can sometimes
 
 Two examples corresponding to the output of running `$ verace create-exe` :
 
-* [Go](/examples/go-example/)
-* [Typescript](/examples/ts-example/)
+-   [Go](/examples/go-example/)
+-   [Typescript](/examples/ts-example/)
 
 ## Versioning
 
@@ -133,34 +134,33 @@ All configuration for **Verace.js** lives in the `verace.json` file created in e
 ```jsonc
 //verace.json
 {
-    "lang": "ts",
-    "name": "verace",
-    "version": "0.0.2",
-    "targets": ["win64", "linux64"],
-    "data": { 
-        "foo": "bar"
-    }, 
-    "hooks": {
-        "preBuild": "echo hello there",
-        "postBuild": "echo general kenobi"
-    },
-    "entrypoint": "src/index.ts",
-    "outDir": "bin",
-    "ts": {
-      "skipPkg": true,
-      "cleanAfterBuild": true,
-      "produceTypes": true,
-      "buildDir": "tsc-build",
-      "test": "npx c8 ava",
-    },
-    "go": {
-      "gomod": "lspaccatrosi16/verace.js",
-    }
+	"lang": "ts",
+	"name": "verace",
+	"version": "0.0.2",
+	"targets": ["win64", "linux64"],
+	"data": {
+		"foo": "bar"
+	},
+	"hooks": {
+		"preBuild": "echo hello there",
+		"postBuild": "echo general kenobi"
+	},
+	"entrypoint": "src/index.ts",
+	"outDir": "bin",
+	"ts": {
+		"skipPkg": true,
+		"cleanAfterBuild": true,
+		"produceTypes": true,
+		"buildDir": "tsc-build",
+		"test": "npx c8 ava"
+	},
+	"go": {
+		"gomod": "lspaccatrosi16/verace.js"
+	}
 }
 ```
 
-> **Note** <br />
-> **Verace.js** will not allow building or running if there are errors in `verace.json` . You should make sure that any custom keys lie in the [ `data` ](#implementation-details) attribute (see below).
+> **Note** <br /> > **Verace.js** will not allow building or running if there are errors in `verace.json` . You should make sure that any custom keys lie in the [ `data` ](#implementation-details) attribute (see below).
 
 ---
 
@@ -243,7 +243,7 @@ Data passed in any format. See [environment data](#implementation-details) for m
 <td>
 
 ```json
-{ 
+{
   "prebuild": ""
   , "postbuild: ""
 }
@@ -257,7 +257,11 @@ Data passed in any format. See [environment data](#implementation-details) for m
 `entrypoint`
 
 </td>
-<td>The path to the entrypoint of the program.</td>
+<td>
+
+The path to the entrypoint of the program. Note for `ts`, the `tsconfig.json` needs to be updated too if it is changed.
+
+</td>
 <td>
 
 `src/index.ts` / `main.go`
@@ -291,7 +295,6 @@ Data passed in any format. See [environment data](#implementation-details) for m
 <td>
 
 `skipPkg`
-
 
 </td>
 <td>
@@ -371,8 +374,6 @@ Similar to build hooks in purpose. Instead of being run before/after the build p
 </tr>
 </table>
 
-
-
 ---
 
 ### Go specific options
@@ -394,15 +395,13 @@ Similar to build hooks in purpose. Instead of being run before/after the build p
 </tr>
 </table>
 
-
-
 ## Implementation Details
 
-**Verace.js** is designed in a way that lets custom data be embedded at compile-time. The most obvious example of this is the [ `version` ](#version), and [ `name` ](#name) fields which are present in every program. 
+**Verace.js** is designed in a way that lets custom data be embedded at compile-time. The most obvious example of this is the [ `version` ](#version), and [ `name` ](#name) fields which are present in every program.
 
 ### Data embedding in Typescipt
 
-The `index.ts` file (the entrypoint) of any program should always default export a function. **Verace.js** will then pass environment data to the program as its only argument in object format: 
+The `index.ts` file (the entrypoint) of any program should always default export a function. **Verace.js** will then pass environment data to the program as its only argument in object format:
 
 ```ts
 //index.ts
@@ -410,13 +409,12 @@ The `index.ts` file (the entrypoint) of any program should always default export
 //The does not need to be exported, and can be moved to another place, its sole purpose is to provide
 //typing for the env parameter
 export interface VeraceEnv {
-    name: string;
-    version: string;
+	name: string;
+	version: string;
 }
 
-export default function(env: VeraceEnv) {
-  console.log(`Hello world from ${env.name} v${env.version}`);
-
+export default function (env: VeraceEnv) {
+	console.log(`Hello world from ${env.name} v${env.version}`);
 }
 ```
 
@@ -426,13 +424,13 @@ Custom data will be parsed in the [ `data` ](#data) field:
 //index.ts
 
 export interface VeraceEnv {
-    name: string;
-    version: string;
-    data: MyData;
+	name: string;
+	version: string;
+	data: MyData;
 }
 
 interface MyData {
-    foo: string;
+	foo: string;
 }
 ```
 
@@ -499,7 +497,7 @@ $ npx tsc
 $ npx esbuild ${buildDir}/index.js --outfile="build/veraceTemp.cjs" --bundle --platform=node --target=node16
 ```
 
-3. A new file,  `index.cjs` is created in `build`, which injects the [environment config](#data-embedding-in-typescipt) into the program.
+3. A new file, `index.cjs` is created in `build`, which injects the [environment config](#data-embedding-in-typescipt) into the program.
 
 ```js
 //build/index.cjs
@@ -543,13 +541,13 @@ $ GOOS=windows go build -o ${outDir}/{config.name} ${env.entrypoint}
 A basic API is additionally exposed when imported.
 
 ```ts
-import api from "verace.js"
+import api from "verace.js";
 
 await api({
-  path: "./examples/go-example/verace.json",
-  command: "build-exe",
-}).then((res) => {
-  console.log(res);
+	path: "./examples/go-example/verace.json",
+	command: "build-exe",
+}).then(res => {
+	console.log(res);
 });
 ```
 
@@ -563,12 +561,12 @@ The (relative) path to the [ `verace.json` ](#configuring) file of the project.
 
 ## Planned features
 
-* [x] Add more build configuration (entry points etc)
-* [ ] Add support for directly executing javascript build hooks
-* [ ] Add further build targets
-* [ ] Add plain javascript support
-* [ ] Dramatically increase testing coverage
-* [ ] Allow target node version to be configured
+-   [x] Add more build configuration (entry points etc)
+-   [ ] Add support for directly executing javascript build hooks
+-   [ ] Add further build targets
+-   [ ] Add plain javascript support
+-   [ ] Dramatically increase testing coverage
+-   [ ] Allow target node version to be configured
 
 ## Licence
 
