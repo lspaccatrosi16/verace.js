@@ -1,6 +1,22 @@
-import chalk from "chalk";
+/*
+Copyright (C) 2023  Luca Spaccatrosi
 
-import type { BaseConfig } from "./veraceConfig";
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+*/
+
+import chalk from "chalk";
 
 interface Opts {
 	color: string;
@@ -47,7 +63,7 @@ class Logger {
 		return this._self()._log(str);
 	}
 
-	private _self(opts = {}, print = false) {
+	private _self(opts = {}) {
 		const newOpts: Opts = {
 			...{
 				color: this._color,
@@ -145,7 +161,7 @@ class Logger {
 
 		this.StdoutWrite(logOutput);
 
-		return this._self({}, true);
+		return this._self({});
 	}
 
 	private sanitiseString(str: string): string {
