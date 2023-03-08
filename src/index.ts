@@ -1,10 +1,10 @@
-import verace from "verace"
+import verace from "verace";
 
 export interface VeraceEnv {
-	name: string
-	version: string
+	name: string;
+	version: string;
 }
 
 export default function (env: VeraceEnv) {
-	verace(env)
+	verace(env);
 }

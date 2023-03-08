@@ -1,7 +1,7 @@
-import child_process from "child_process"
-import { Command } from "commander"
-import fs from "fs-extra"
-import inquirer from "inquirer"
+import child_process from "child_process";
+import { Command } from "commander";
+import fs from "fs-extra";
+import inquirer from "inquirer";
 import {
 	baseconfig,
 	goFile,
@@ -10,31 +10,62 @@ import {
 	tsConfig,
 	tsFile,
 	tsGI,
-} from "lib/baseConfig"
-import envWrapper from "lib/executionEnvironment"
+} from "lib/baseConfig";
+import envWrapper from "lib/executionEnvironment";
 
-import type { BaseConfig } from "lib/veraceConfig"
+import path from "path";
+
+import type { BaseConfig } from "lib/veraceConfig";
 
 export default function () {
-	const ce = new Command("create-exe").description("Creates an executable.")
-	ce.action(() => collectInfo())
-	return ce
+	const env = envWrapper.getInstance();
+	const ce = new Command("create-exe").description("Creates an executable.");
+	ce.action(() => {
+		const opts = ce.optsWithGlobals();
+
+		let dirPath = "";
+
+		if (opts.path && opts.path != "") {
+			const input = opts.path as string;
+			if (fs.existsSync(input)) {
+				if (fs.lstatSync(input).isFile()) {
+					dirPath = path.dirname(input);
+				} else {
+					dirPath = input;
+				}
+			} else {
+				if (input.endsWith(".json")) {
+					dirPath = path.dirname(input);
+					fs.mkdirSync(dirPath, { recursive: true });
+				} else {
+					fs.mkdirSync(input, { recursive: true });
+					dirPath = input;
+				}
+			}
+
+			const newPath = path.join(dirPath, "verace.json");
+
+			env.setConfigPath(newPath);
+		}
+		return collectInfo();
+	});
+	return ce;
 }
 
 const errorDeleteFile = (files: string[]): Promise<void> => {
 	return new Promise(resolve => {
 		files.forEach(file => {
 			if (fs.existsSync(file))
-				fs.rmSync(file, { force: true, recursive: true })
-		})
+				fs.rmSync(file, { force: true, recursive: true });
+		});
 
-		resolve()
-	})
-}
+		resolve();
+	});
+};
 
 const collectInfo = async () => {
-	const env = envWrapper.getInstance()
-	const { log } = env
+	const env = envWrapper.getInstance();
+	const { log } = env;
 	const answers = await inquirer.prompt([
 		{
 			name: "lang",
@@ -55,56 +86,77 @@ const collectInfo = async () => {
 			message: "Enter go module path",
 			name: "gomod",
 			when: answers => {
-				return answers.lang && answers.lang == "go"
+				return answers.lang && answers.lang == "go";
 			},
 		},
-	])
+	]);
 
-	const userSelection: BaseConfig = { ...baseconfig, ...answers }
+	const userSelection: BaseConfig = { ...baseconfig, ...answers };
+
+	console.log(
+		`Will create a project in ${path.dirname(
+			env.resolveFromRoot("verace.json")
+		)} with config:\n\n`
+	);
+	console.log(userSelection, "\n\n");
+
+	const { confirm } = await inquirer.prompt({
+		type: "list",
+		choices: ["yes", "no"],
+		name: "confirm",
+		message: "Confirm creation?",
+	});
+
+	if (confirm != "yes") {
+		log().danger("Creation cancelled");
+		return;
+	}
 
 	switch (userSelection.lang) {
 		case "go": {
 			try {
-				child_process.execSync("go version")
-				child_process.execSync(`go mod init ${userSelection.gomod}`)
+				child_process.execSync("go version");
+				child_process.execSync(
+					`cd ${env.wk} && go mod init ${userSelection.gomod}`
+				);
 
-				await fs.writeFile("main.go", goFile)
-				await fs.writeFile(".gitignore", goGI)
-				log().success("Successfully initialised the Go project")
+				await fs.writeFile(env.resolveFromRoot("main.go"), goFile);
+				await fs.writeFile(env.resolveFromRoot(".gitignore"), goGI);
+				log().success("Successfully initialised the Go project");
 			} catch {
 				log().danger(
 					"Go binary could not be found on the current system."
-				)
+				);
 
-				await errorDeleteFile(["go.mod", "main.go", ".gitignore"])
+				await errorDeleteFile(["go.mod", "main.go", ".gitignore"]);
 
-				return
+				return;
 			}
-			break
+			break;
 		}
 
 		case "ts": {
 			try {
-				const pkg = makePackageJson(userSelection)
+				const pkg = makePackageJson(userSelection);
 				await fs.writeFile(
-					"package.json",
+					env.resolveFromRoot("package.json"),
 					JSON.stringify(pkg, null, "\t")
-				)
+				);
 				await fs.writeFile(
-					"tsconfig.json",
+					env.resolveFromRoot("tsconfig.json"),
 					JSON.stringify(tsConfig, null, "\t")
-				)
+				);
 
-				await child_process.execSync("npm i")
-				await fs.mkdir("src")
-				await fs.writeFile("src/index.ts", tsFile)
-				await fs.writeFile(".gitignore", tsGI)
+				await child_process.execSync("npm i");
+				await fs.mkdir(env.resolveFromRoot("src"), { recursive: true });
+				await fs.writeFile(env.resolveFromRoot("src/index.ts"), tsFile);
+				await fs.writeFile(env.resolveFromRoot(".gitignore"), tsGI);
 
 				await log().success(
 					"Successfully initialised the Typescript project"
-				)
+				);
 			} catch (e) {
-				if (e) log().danger(e.toString())
+				if (e) log().danger(e.toString());
 
 				await errorDeleteFile([
 					"tsconfig.json",
@@ -113,15 +165,18 @@ const collectInfo = async () => {
 					".gitignore",
 					"node_modules",
 					"package-lock.json",
-				])
+				]);
 
-				return
+				return;
 			}
-			break
+			break;
 		}
 	}
 
-	await fs.writeFile("verace.json", JSON.stringify(userSelection, null, "\t"))
+	await fs.writeFile(
+		env.resolveFromRoot("verace.json"),
+		JSON.stringify(userSelection, null, "\t")
+	);
 
-	return
-}
+	return;
+};

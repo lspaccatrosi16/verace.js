@@ -1,132 +1,136 @@
-import type { APICONFIG } from "src/verace"
-import { LoggerType, make_logger } from "./log"
-import type { BaseConfig } from "./veraceConfig"
+import type { APICONFIG } from "src/verace";
+import { LoggerType, make_logger } from "./log";
+import type { BaseConfig } from "./veraceConfig";
 
-import path from "path"
+import path from "path";
 
-export type Commands = "build-exe" | "run-exe" | "create-exe" | "version"
+export type Commands = "build-exe" | "run-exe" | "create-exe" | "version";
 
 export interface APIResult {
-	command: Commands
-	success: boolean
-	config: BaseConfig
+	command: Commands;
+	success: boolean;
+	config: BaseConfig;
 }
 
 export default class GetExecutionEnv {
-	static instance: InternalExecutionEnvironment = null
+	static instance: InternalExecutionEnvironment = null;
 
 	constructor() {
-		throw new Error("Use the getInstance method")
+		throw new Error("Use the getInstance method");
 	}
 
 	static getInstance(strict = false) {
 		if (!this.instance && !strict) {
-			this.instance = new InternalExecutionEnvironment()
+			this.instance = new InternalExecutionEnvironment();
 			console.log(
 				`Creating new execution instance. ID: ${this.instance.id}`
-			)
+			);
 		}
-		return this.instance
+		return this.instance;
 	}
 
 	static purge() {
-		console.log(`Purging execution instance. ID: ${this.instance.id}`)
-		this.instance = null
+		console.log(`Purging execution instance. ID: ${this.instance.id}`);
+		this.instance = null;
 	}
 }
 
-export type ExecutionEnvironment = InternalExecutionEnvironment
+export type ExecutionEnvironment = InternalExecutionEnvironment;
 
 class InternalExecutionEnvironment {
-	private _log: LoggerType
-	private _apiMode: boolean
-	private _config: BaseConfig
-	private _apiExecutionConfig: APICONFIG
-	private _veraceConfigPath: string = "./verace.json"
-	private _skipTest = false
-	private _setupDone = false
-	private _apiResult: APIResult
-	private _id = Math.floor(Math.random() * 1e10).toString(36)
+	private _log: LoggerType;
+	private _apiMode: boolean;
+	private _config: BaseConfig;
+	private _apiExecutionConfig: APICONFIG;
+	private _veraceConfigPath: string = "./verace.json";
+	private _skipTest = false;
+	private _setupDone = false;
+	private _apiResult: APIResult;
+	private _id = Math.floor(Math.random() * 1e10).toString(36);
 
 	setupInstance(testMode: boolean, apiMode: boolean) {
 		if (!this._setupDone) {
-			const log = make_logger(testMode, apiMode)
-			this._log = log
-			this._apiMode = apiMode
-			this._setupDone = true
+			const log = make_logger(testMode, apiMode);
+			this._log = log;
+			this._apiMode = apiMode;
+			this._setupDone = true;
 		} else {
 			throw new Error(
 				"Can't create more than one instance at a time. Ensure that the promise to the previous api action is resolved before trying again ID: " +
 					this._id
-			)
+			);
 		}
 	}
 
 	setConfig(cfg: BaseConfig) {
-		this._config = cfg
+		this._config = cfg;
 	}
 
 	setApiExecutionConfig(cfg: APICONFIG) {
 		if (this._apiMode) {
-			this._apiExecutionConfig = cfg
-			this.setConfigPath(cfg.path)
+			this._apiExecutionConfig = cfg;
+			this.setConfigPath(cfg.path);
 		}
 	}
 
 	setConfigPath(cpath: string) {
-		this._veraceConfigPath = cpath
+		this._veraceConfigPath = cpath;
 
 		this._log(
 			`Config path: ${path.join(process.cwd(), cpath)}. ID: ${this._id}`
-		)
+		);
 	}
 
 	setSkipTest(skip: boolean) {
-		this._skipTest = skip
+		this._skipTest = skip;
 	}
 
 	setApiResult(data: APIResult) {
 		if (this.apiMode) {
-			this._apiResult = data
+			this._apiResult = data;
 		}
 	}
 
+	resolveFromRoot(fp: string) {
+		return path.join(this.wk, fp);
+	}
+
 	get apiExecResult() {
-		if (this.apiMode) return this._apiResult
-		return null
+		if (this.apiMode) return this._apiResult;
+		return null;
 	}
 
 	get log() {
-		return this._log
+		return this._log;
 	}
 
 	get apiMode() {
-		return this._apiMode
+		return this._apiMode;
 	}
 
 	get config() {
-		return this._config
+		return this._config;
 	}
 
 	get apiExecutionConfig() {
-		return this._apiExecutionConfig
+		return this._apiExecutionConfig;
 	}
 
 	get wk() {
-		const dn = path.dirname(this._veraceConfigPath)
-		return dn
+		const dn = path.dirname(this._veraceConfigPath);
+		return dn;
 	}
 
 	get confPath() {
-		return this._veraceConfigPath
+		return this._veraceConfigPath;
 	}
 
 	get skipTest() {
-		return this._skipTest
+		return this._skipTest;
 	}
 
 	get id() {
-		return this._id
+		return this._id;
 	}
 
 	get ErrorExecContext() {
@@ -136,6 +140,6 @@ class InternalExecutionEnvironment {
 			parsedConfig: this._config,
 			configLocation: this._veraceConfigPath,
 			apiExecConfig: this.apiExecutionConfig,
-		}
+		};
 	}
 }

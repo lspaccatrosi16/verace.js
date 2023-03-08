@@ -1,14 +1,18 @@
 {
-  "lang": "ts",
-  "name": "verace",
-  "version": "0.2.6",
-  "targets": ["win64", "linux64"],
-  "gomod": "",
-  "skipPkg": false,
-  "hooks": {
-    "preBuild": "",
-    "postBuild": ""
-  },
-  "produceTypes": true,
-  "cleanAfterBuild": false
+	"lang": "ts",
+	"name": "verace",
+	"version": "0.2.7",
+	"targets": [
+		"win64",
+		"linux64"
+	],
+	"gomod": "",
+	"skipPkg": false,
+	"hooks": {
+		"preBuild": "",
+		"postBuild": ""
+	},
+	"produceTypes": true,
+	"test": "",
+	"cleanAfterBuild": false
 }

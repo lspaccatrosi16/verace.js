@@ -45,6 +45,7 @@ $ npx verace.js build-exe
   * [Standalone installation](#standalone-installation)
   * [Installing using npm](#installing-using-npm)
   * [Running using `npx`](#running-using-npx)
+- [Global Options](#global-options)
 - [Why](#why)
 - [Examples](#examples)
 - [Versioning](#versioning)
@@ -58,6 +59,7 @@ $ npx verace.js build-exe
 - [Build Pipelines](#build-pipelines)
   * [The Typescript Build Pipeline](#the-typescript-build-pipeline)
   * [The Go Build Pipeline](#the-go-build-pipeline)
+- [Javascript API](#javascript-api)
 - [Planned features](#planned-features)
 - [Licence](#licence)
 
@@ -95,6 +97,12 @@ $ npx verace.js
 
 > **Note** <br />
 > All commands assume a permanent system binary is installed. If `npx` is used instead. Replace all mentions of `verace` with `npx verace.js`
+
+## Global Options
+
+#### `-p, --path <path>`
+
+Set this to the path to theverace.json file for operations on projects that are not in the current directory. If unset, the current directory will be used instead. When running `create-exe`, `path` can either be set to a folder, or a verace.json file. If the folder does not exist, it will be automatically created.
 
 ## Why
 
@@ -334,6 +342,28 @@ $ npx pkg "dist/${config.name}.cjs" -o bin/${config.name} -t node16-linux -C GZI
 ```bash
 $ GOOS=windows go build -o bin/
 ```
+
+## Javascript API
+
+A basic API is additionally exposed when imported.
+
+```ts
+import api from "verace.js"
+
+await api({
+  path: "./examples/go-example/verace.json",
+  command: "build-exe",
+}).then((res) => {
+  console.log(res);
+});
+```
+
+#### `command`
+The action to run. Can be any command runable from the normal CLI.
+
+#### `path`
+The (relative) path to the [`verace.json`](#configuring) file of the project.
+
 
 ## Planned features
 
