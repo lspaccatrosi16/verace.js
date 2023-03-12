@@ -33,37 +33,31 @@ import envWrapper from "lib/executionEnvironment";
 export default function (): Promise<void> {
 	const env = envWrapper.getInstance();
 	return new Promise((resolve, reject) => {
+		const { config, log } = env;
 		const mainGoPath = env.resolveFromRoot(env.entryPointPath);
+		log().verbose(`Entrypoint path: ${mainGoPath}`);
 		if (!fs.existsSync(mainGoPath)) {
 			reject(`entrypoint ${mainGoPath} was not found`);
 			return;
 		}
 
-		const { config, log } = env;
-
 		try {
 			const promises = [];
 
 			if (config.targets.includes("linux64")) {
+				log().verbose("Add linux build");
+				const buildCmd = `GOOS=linux cd ${env.wk} && go build -o ${config.outDir}/${config.name} ${env.entryPointPath}`;
+				log().verbose(`Command: ${buildCmd}`);
 				spinnies.add("linbuild", { text: "Building for linux64" });
-				promises.push(
-					runShellCmd(
-						`cd ${env.wk} && GOOS=linux go build -o ${config.outDir}/${config.name} ${env.entryPointPath}`,
-						"linbuild",
-						spinnies
-					)
-				);
+				promises.push(runShellCmd(buildCmd, "linbuild", spinnies));
 			}
 
 			if (config.targets.includes("win64")) {
+				log().verbose("Add windows build");
+				const buildCmd = `GOOS=windows cd ${env.wk} && go build -o ${config.outDir}/${config.name}.exe ${env.entryPointPath}`;
+				log().verbose(`Command: ${buildCmd}`);
 				spinnies.add("winbuild", { text: "Building for win64" });
-				promises.push(
-					runShellCmd(
-						`cd ${env.wk} && GOOS=windows go build -o ${config.outDir}/${config.name} ${env.entryPointPath}`,
-						"winbuild",
-						spinnies
-					)
-				);
+				promises.push(runShellCmd(buildCmd, "winbuild", spinnies));
 			}
 
 			Promise.all(promises)

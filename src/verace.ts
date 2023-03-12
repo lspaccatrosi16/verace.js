@@ -24,6 +24,7 @@ import version from "commands/version";
 import figlet from "figlet";
 import Standard from "font/Standard";
 import executionEnv from "lib/executionEnvironment";
+import util from "util";
 
 import type {
 	APIResult,
@@ -46,6 +47,8 @@ const init = async (version: string, env: ExecutionEnvironment) => {
 	log().bold().citrus("The multi-platform, multi-language build tool");
 
 	log(`v${version}`);
+
+	log().verbose().grey("Verbose mode enabled");
 };
 
 export default function (env: VeraceEnv) {
@@ -60,68 +63,113 @@ export default function (env: VeraceEnv) {
 		else {
 			const env = executionEnv.getInstance();
 			if (env) {
-				console.log("Environment Config: ");
-				console.log(env.ErrorExecContext);
+				const { log } = env;
+				log("Environment Config: ");
+				log(env.ErrorExecContext);
 			}
 			console.log("Verace.js CLI exited with errors.");
 		}
 	});
 
-	const executionEnvironment = executionEnv.getInstance();
-	executionEnvironment.setupInstance(false, false);
-
-	const { log } = executionEnvironment;
-
-	init(env.version, executionEnvironment).then(() => {
-		const program = createProgram(executionEnvironment, env);
-		program
-			.parseAsync(process.argv)
-			.then(() => {
-				executionEnv.purge();
-			})
-			.catch(e => {
-				if (e) log().danger(e.toString());
-				process.exit(1);
-			});
+	const topProgram = createPrimaryProgram(false, false, env);
+	topProgram.parseAsync(process.argv).then(() => {
+		const executionEnvironment = executionEnv.getInstance();
+		const { log } = executionEnvironment;
+		init(env.version, executionEnvironment).then(() => {
+			const program = createMainProgram(env);
+			program
+				.parseAsync(process.argv)
+				.then(() => {
+					executionEnv.purge();
+				})
+				.catch(e => {
+					if (e) log().danger(e.toString());
+					process.exit(1);
+				});
+		});
 	});
 }
 
 export interface APICONFIG {
 	command: Commands;
 	path: string;
+	verbose: boolean;
 }
 
 export function api(config: APICONFIG, testMode: boolean): Promise<APIResult> {
 	return new Promise((resolve, reject) => {
-		const env = executionEnv.getInstance();
-		env.setupInstance(testMode, true);
-		env.setApiExecutionConfig(config);
-
-		const program = createProgram(env);
-
-		if (config.command != "build-exe") {
-			throw new Error("Only command build-exe is currently supported");
+		let primDummyArgv = ["", "", "--path", config.path];
+		if (config.verbose) {
+			primDummyArgv.push("--verbose");
 		}
+		const topProg = createPrimaryProgram(testMode, true);
+		topProg.parseAsync(primDummyArgv).then(() => {
+			const env = executionEnv.getInstance();
+			const program = createMainProgram();
+			if (config.command != "build-exe") {
+				throw new Error(
+					"Only command build-exe is currently supported"
+				);
+			}
 
-		program
-			.parseAsync(["", "", config.command])
-			.then(() => {
-				const execData = { ...env.apiExecResult };
-				console.log(execData);
-				executionEnv.purge();
-				resolve(execData);
-			})
-			.catch(reject);
+			program
+				.parseAsync(["", "", config.command])
+				.then(() => {
+					const execData = { ...env.apiExecResult };
+					console.log(execData);
+					executionEnv.purge();
+					resolve(execData);
+				})
+				.catch(() => {
+					const { log } = env;
+					log("Env config:");
+					log(env.ErrorExecContext);
+
+					reject();
+				});
+		});
 	});
 }
 
-function createProgram(
-	execEnv: ExecutionEnvironment,
+function createPrimaryProgram(
+	testMode: boolean,
+	apiMode: boolean,
 	env?: VeraceEnv
 ): Command {
-	const program = new Command();
+	const topProgram = new Command();
+	if (env) {
+		topProgram
+			.name(env.name)
+			.description("The Verace.js CLI Toolchain")
+			.version(env.version);
+	}
 
-	const { log } = execEnv;
+	topProgram.option("-p --path <path>", "Path to verace.json file.");
+	topProgram.option("-v --verbose", "Provides verbose logs");
+	topProgram.allowUnknownOption();
+
+	topProgram.action(async () => {
+		const opts = topProgram.optsWithGlobals();
+		let verbose = false;
+
+		if (opts.verbose) {
+			verbose = true;
+		}
+		const env = executionEnv.getInstance();
+		env.setupInstance(testMode, apiMode, verbose);
+
+		if (opts.path && opts.path != "") {
+			env.setConfigPath(opts.path);
+		}
+
+		return;
+	});
+
+	return topProgram;
+}
+
+function createMainProgram(env?: VeraceEnv): Command {
+	const program = new Command();
 
 	if (env) {
 		program
@@ -129,17 +177,18 @@ function createProgram(
 			.description("The Verace.js CLI Toolchain")
 			.version(env.version);
 		program.action(async () => {
-			log(program.helpInformation());
+			console.log(program.helpInformation());
 		});
 		program
 			.command("help")
 			.description("Shows this message")
 			.action(async () => {
-				log(program.helpInformation());
+				console.log(program.helpInformation());
 			});
 	}
 
 	program.option("-p --path <path>", "Path to verace.json file.");
+	program.option("-v --verbose", "Provides verbose logs");
 
 	program.addCommand(createExe());
 	program.addCommand(buildExe());

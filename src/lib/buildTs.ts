@@ -17,10 +17,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { execSync, spawnSync } from "child_process";
+import { rmSync } from "fs";
 import fs from "fs-extra";
 import { handleExecError, runShellCmd } from "lib/common";
+import envWrapper from "lib/executionEnvironment";
+import path from "path";
 import Spinnies from "spinnies";
 
+import crawlFiles from "./fileCrawl";
+import { parseHook } from "./hooks";
 import veraceTempJS from "./veraceTempJS";
 
 import type { BaseConfig } from "./veraceConfig";
@@ -47,9 +52,13 @@ const cleanUp = (config: BaseConfig) => {
 		fs.existsSync("dist")
 	)
 		fs.rmSync("dist", { recursive: true, force: true });
-};
-import envWrapper from "lib/executionEnvironment";
 
+	if (fs.existsSync("dist/pkg.config.json")) {
+		fs.rmSync("dist/pkg.config.json", { force: true });
+	}
+};
+import type { baseconfig } from "./baseConfig";
+import cjsTranslate from "./cjs-translate";
 export default function (): Promise<void> {
 	const env = envWrapper.getInstance();
 	const { config, log } = env;
@@ -68,9 +77,15 @@ export default function (): Promise<void> {
 						`cd ${env.wk} && npx tsc --declaration false --outDir ${config.ts.buildDir}`
 					);
 				}
+
+				log().verbose("tsc run");
+
 				execSync(`cd ${env.wk} && npx tsc-alias -f -p tsconfig.json`);
 
+				log().verbose("tsc-alias run");
+
 				if (config.ts.test != "") {
+					log().verbose("Running tests");
 					const newCmd = `cd ${env.wk} && ${config.ts.test}`;
 					const cmds = newCmd.split(" ");
 					const testRes = spawnSync(cmds[0], cmds.slice(1), {
@@ -88,16 +103,25 @@ export default function (): Promise<void> {
 					}
 				}
 
-				execSync(
-					`cd ${env.wk} && npx esbuild ${
-						config.ts.buildDir
-					}/${env.entryPointName
-						.split(".")
-						.slice(0, -1)
-						.join(
-							"."
-						)}.js --outfile="build/veraceTemp.cjs" --bundle --platform=node --target=node16`,
-					{ stdio: "inherit" }
+				if (fs.existsSync(env.resolveFromRoot(config.ts.assets)))
+					fs.copySync(
+						path.join(env.resolveFromRoot(config.ts.assets)),
+						path.join(
+							env.resolveFromRoot(config.ts.buildDir),
+							config.ts.assets
+						)
+					);
+
+				cjsTranslate(
+					path.join(
+						env.wk,
+						config.ts.buildDir,
+						`${env.entryPointName
+							.split(".")
+							.slice(0, -1)
+							.join(".")}.js`
+					),
+					env.resolveFromRoot("build/veraceTemp.cjs")
 				);
 
 				fs.writeFileSync(
@@ -105,9 +129,9 @@ export default function (): Promise<void> {
 					veraceTempJS
 				);
 
-				execSync(
-					`cd ${env.wk} && npx esbuild build/index.cjs --outfile="dist/${config.name}.cjs" --bundle --platform=node --target=node16`,
-					{ stdio: "inherit" }
+				cjsTranslate(
+					env.resolveFromRoot("build/index.cjs"),
+					env.resolveFromRoot(`dist/${config.name}.cjs`)
 				);
 
 				const oFile = fs
@@ -129,23 +153,28 @@ export default function (): Promise<void> {
 					resolve();
 					return;
 				}
+
 				try {
 					const promises = [];
+
 					if (config.targets.includes("linux64")) {
-						promises.push(buildLinux());
+						promises.push(buildUniv("linux64"));
 					}
-					if (config.targets.includes("win64")) {
-						promises.push(buildWin());
-					}
-
-					Promise.all(promises).then(() => {
-						log().success("All targets built for successfully.");
-
-						cleanUp(config);
-
-						resolve();
-						return;
-					});
+					Promise.all(promises)
+						.then(() => {
+							if (config.targets.includes("win64")) {
+								return buildUniv("win64");
+							}
+							return;
+						})
+						.then(() => {
+							log().success(
+								"All targets built for successfully."
+							);
+							cleanUp(config);
+							resolve();
+							return;
+						});
 				} catch (e) {
 					throw e;
 				}
@@ -162,32 +191,92 @@ export default function (): Promise<void> {
 	});
 }
 
-const buildLinux = (): Promise<void> => {
-	const env = envWrapper.getInstance();
-	const { config } = env;
+const buildUniv = (target: (typeof baseconfig.targets)[0]): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		spinnies.add("buildlinux", { text: "Building for linux64" });
-		runShellCmd(
-			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o ${config.outDir}/${config.name} -t node16-linux -C GZIP`,
-			"buildlinux",
-			spinnies
-		)
-			.then(resolve)
+		let pkgTarget = "";
+		if (target == "linux64") pkgTarget = "node16-linux";
+		else pkgTarget = "node16-win";
+		const env = envWrapper.getInstance();
+		const { config, log } = env;
+
+		evalPrePkgHool([target])
+			.then(() => {
+				log().verbose("hook resolved");
+				const assets = crawlFiles(config.ts.assets);
+				log().verbose(`Assets: ${assets.length}`);
+
+				assets.forEach(a => {
+					log().verbose(a);
+				});
+
+				const del = createConfig(config, assets);
+
+				spinnies.add("builduniv", { text: `Building for ${target}` });
+
+				runShellCmd(
+					`cd ${env.wk} && npx pkg dist/"${config.name}.cjs" -o ${config.outDir}/${config.name} -C Gzip -t ${pkgTarget} -c dist/pkg.config.json`,
+					"builduniv",
+					spinnies
+				)
+					.then(() => {
+						del.forEach(file => {
+							rmSync(file, { force: true, recursive: true });
+							log().verbose(`Deleted ${file}`);
+						});
+						resolve();
+					})
+					.catch(reject);
+			})
 			.catch(reject);
 	});
 };
 
-const buildWin = (): Promise<void> => {
-	const env = envWrapper.getInstance();
-	const { config } = env;
+const evalPrePkgHool = (target: typeof baseconfig.targets): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		spinnies.add("buildwin", { text: "Building for win64" });
-		runShellCmd(
-			`cd ${env.wk} && npx pkg "dist/${config.name}.cjs" -o ${config.outDir}/${config.name} -t node16-win -C GZIP`,
-			"buildwin",
-			spinnies
-		)
-			.then(resolve)
-			.catch(reject);
+		const tgt = target[0];
+		const env = envWrapper.getInstance();
+		const { config, log } = env;
+
+		if (config.hooks && config.hooks.prePkg) {
+			parseHook(config.hooks.prePkg, tgt)
+				.then(status => {
+					if (!status) {
+						reject();
+						return;
+					}
+					log().verbose("Hook done");
+
+					resolve();
+				})
+				.catch(reject);
+		} else {
+			log().verbose("No hooks to apply");
+			resolve();
+		}
 	});
+};
+
+const createConfig = (config: BaseConfig, assets: string[]) => {
+	const env = envWrapper.getInstance();
+	assets.forEach(file => {
+		const dir = path.join("dist", path.dirname(file));
+
+		fs.mkdirSync(dir, { recursive: true });
+		fs.copySync(file, path.join("dist", file));
+	});
+
+	const cfg = {
+		name: config.name,
+		version: config.version,
+		pkg: {
+			assets: assets.map(file => path.join(file)),
+		},
+	};
+
+	fs.writeFileSync(
+		env.resolveFromRoot("dist/pkg.config.json"),
+		JSON.stringify(cfg, null, "\t")
+	);
+
+	return [env.resolveFromRoot("dist/pkg.config.json")];
 };

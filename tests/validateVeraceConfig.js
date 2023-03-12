@@ -15,7 +15,7 @@ test("Check basic config generation", async (t) => {
 		name: "test",
 		version: "1.0.0",
 		targets: ["win64"],
-		hooks: { preBuild: "", postBuild: "" },
+		hooks: { preBuild: "", postBuild: "", prePkg: "" },
 		entrypoint: "",
 		outDir: "bin",
 		ts: {
@@ -24,6 +24,7 @@ test("Check basic config generation", async (t) => {
 			test: "",
 			produceTypes: false,
 			cleanAfterBuild: false,
+			assets: "assets"
 		},
 		version: "1.0.0",
 		go: {
@@ -82,7 +83,7 @@ test("Allow data values", async (t) => {
 		name: "test",
 		version: "1.0.0",
 		targets: ["win64"],
-		hooks: { preBuild: "", postBuild: "" },
+		hooks: { preBuild: "", postBuild: "", prePkg: "" },
 		entrypoint: "",
 		outDir: "bin",
 		ts: {
@@ -91,6 +92,7 @@ test("Allow data values", async (t) => {
 			test: "",
 			produceTypes: false,
 			cleanAfterBuild: false,
+			assets: "assets"
 		},
 		version: "1.0.0",
 		go: {

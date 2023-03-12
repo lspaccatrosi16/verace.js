@@ -18,27 +18,47 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { z, ZodError } from "zod";
 
-const hooks = z.object({
-	preBuild: z.string().default(""),
-	postBuild: z.string().default(""),
-});
+const hookDetails = z
+	.object({
+		file: z.string().default(""),
+		command: z.string().default(""),
+	})
+	.strict();
 
-const typeScriptConfig = z.object({
-	buildDir: z.string().default("tsc-build"),
-	cleanAfterBuild: z.boolean().default(false),
-	produceTypes: z.boolean().default(false),
-	skipPkg: z.boolean().default(false),
-	test: z.string().default(""),
-});
+const defaultHookDetails = {
+	command: "",
+	file: "",
+};
 
-const goConfig = z.object({
-	gomod: z.string().default(""),
-});
+const hookField = z.union([
+	z.string().default(""),
+	hookDetails.default(defaultHookDetails),
+]);
+
+const hooks = z
+	.object({
+		preBuild: hookField.default(""),
+		postBuild: hookField.default(""),
+		prePkg: hookField.default(""),
+	})
+	.strict();
 
 const defaultHook = {
 	preBuild: "",
 	postBuild: "",
+	prePkg: "",
 };
+
+const typeScriptConfig = z
+	.object({
+		buildDir: z.string().default("tsc-build"),
+		cleanAfterBuild: z.boolean().default(false),
+		produceTypes: z.boolean().default(false),
+		skipPkg: z.boolean().default(false),
+		test: z.string().default(""),
+		assets: z.string().default("assets"),
+	})
+	.strict();
 
 const defaultTypescript = {
 	buildDir: "tsc-build",
@@ -47,6 +67,12 @@ const defaultTypescript = {
 	skipPkg: false,
 	test: "",
 };
+
+const goConfig = z
+	.object({
+		gomod: z.string().default(""),
+	})
+	.strict();
 
 const defaultGo = {
 	gomod: "",
@@ -68,6 +94,8 @@ const config = z
 	.strict();
 
 export type BaseConfig = z.infer<typeof config>;
+
+export type HookField = z.infer<typeof hookField>;
 
 export const validate = (data: unknown): Promise<BaseConfig> => {
 	return new Promise((resolve, reject) => {

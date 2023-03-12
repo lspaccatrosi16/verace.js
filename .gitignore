@@ -5,8 +5,7 @@ bin
 dist
 node_modules/
 coverage
-build.sh
-release.sh
+*.sh
 tsc-build
 
 .vscode

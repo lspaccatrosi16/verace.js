@@ -4,9 +4,9 @@ var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
 
-// build/veraceTemp.cjs
+// examples/ts-example/build/veraceTemp.cjs
 var require_veraceTemp = __commonJS({
-  "build/veraceTemp.cjs"(exports2, module2) {
+  "examples/ts-example/build/veraceTemp.cjs"(exports2, module2) {
     var __defProp = Object.defineProperty;
     var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
     var __getOwnPropNames2 = Object.getOwnPropertyNames;
@@ -36,9 +36,9 @@ var require_veraceTemp = __commonJS({
   }
 });
 
-// verace.json
+// examples/ts-example/verace.json
 var require_verace = __commonJS({
-  "verace.json"(exports2, module2) {
+  "examples/ts-example/verace.json"(exports2, module2) {
     module2.exports = {
       lang: "ts",
       name: "ts-example",
@@ -51,12 +51,17 @@ var require_verace = __commonJS({
         foo: "bar"
       },
       ts: {},
-      go: {}
+      go: {},
+      hooks: {
+        prePkg: {
+          file: "./myhook.js"
+        }
+      }
     };
   }
 });
 
-// build/index.cjs
+// examples/ts-example/build/index.cjs
 var exec = require_veraceTemp();
 var config = require_verace();
 exec.default(config);

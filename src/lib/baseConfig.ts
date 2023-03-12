@@ -86,7 +86,8 @@ func main() {
     fmt.Println(verace.Data.Foo)
 }`;
 
-export const goGI = "dist";
+export const goGI = `dist
+bin`;
 
 export const tsConfig = {
 	compilerOptions: {
@@ -130,7 +131,6 @@ export const makePackageJson = (bc: BaseConfig) => {
 			"@types/node": "^16.17",
 			"typescript": "^4.9",
 			"pkg": "^5.8",
-			"esbuild": "^0.16",
 		},
 		author: "",
 		licence: "UNLICENCED",

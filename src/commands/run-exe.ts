@@ -27,13 +27,8 @@ import envWrapper from "lib/executionEnvironment";
 export default function () {
 	const re = new Command("run-exe").description("Runs the current project");
 	re.argument("[arguments...]");
-	const env = envWrapper.getInstance();
 
 	re.action((args: string[]) => {
-		const opts = re.optsWithGlobals();
-		if (opts.path && opts.path != "") {
-			env.setConfigPath(opts.path);
-		}
 		return run(args);
 	});
 	return re;
@@ -81,7 +76,7 @@ const run = (args: string[]): Promise<void> => {
 				}
 			} catch (e) {
 				handleExecError(e, env);
-				reject(e);
+				reject();
 				return;
 			}
 		});

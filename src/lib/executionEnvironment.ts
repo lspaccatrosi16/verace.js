@@ -63,14 +63,18 @@ class InternalExecutionEnvironment {
 	private _apiResult: APIResult;
 	private _id = Math.floor(Math.random() * 1e10).toString(36);
 	private _configOverrides = {};
+	private _tsOverrides = {};
+	private _goOverrides = {};
+	private _verboseMode: boolean;
 
-	setupInstance(testMode: boolean, apiMode: boolean) {
+	setupInstance(testMode: boolean, apiMode: boolean, verboseMode: boolean) {
 		if (!this._setupDone) {
 			console.log(`Setting up execution instance. ID: ${this._id}`);
-			const log = make_logger(testMode, apiMode);
+			const log = make_logger(testMode, apiMode, verboseMode);
 			this._log = log;
 			this._apiMode = apiMode;
 			this._setupDone = true;
+			this._verboseMode = true;
 		} else {
 			throw new Error(
 				"Can't create more than one instance at a time. Ensure that the promise to the previous api action is resolved before trying again ID: " +
@@ -86,6 +90,12 @@ class InternalExecutionEnvironment {
 	setConfigOverrides(ovr: Record<string, unknown>) {
 		this._configOverrides = { ...this._configOverrides, ...ovr };
 	}
+	setTsOverrides(ovr: Record<string, unknown>) {
+		this._tsOverrides = { ...this._tsOverrides, ...ovr };
+	}
+	setGoOverrides(ovr: Record<string, unknown>) {
+		this._goOverrides = { ...this._goOverrides, ...ovr };
+	}
 
 	setApiExecutionConfig(cfg: APICONFIG) {
 		if (this._apiMode) {
@@ -97,9 +107,7 @@ class InternalExecutionEnvironment {
 	setConfigPath(cpath: string) {
 		this._veraceConfigPath = cpath;
 
-		this._log(
-			`Config path: ${path.join(process.cwd(), cpath)}. ID: ${this._id}`
-		);
+		this._log(`Config path: ${this.absolutePath(cpath)}. ID: ${this._id}`);
 	}
 
 	setSkipTest(skip: boolean) {
@@ -116,6 +124,10 @@ class InternalExecutionEnvironment {
 		return path.join(this.wk, fp);
 	}
 
+	absolutePath(fp: string) {
+		return path.join(process.cwd(), fp);
+	}
+
 	get apiExecResult() {
 		if (this.apiMode) return this._apiResult;
 		return null;
@@ -130,7 +142,18 @@ class InternalExecutionEnvironment {
 	}
 
 	get config() {
-		return { ...this._config, ...this._configOverrides };
+		return {
+			...this._config,
+			...this._configOverrides,
+			ts: {
+				...this._config.ts,
+				...this._tsOverrides,
+			},
+			go: {
+				...this._config.go,
+				...this._goOverrides,
+			},
+		};
 	}
 
 	get apiExecutionConfig() {
@@ -162,6 +185,7 @@ class InternalExecutionEnvironment {
 			configLocation: this._veraceConfigPath,
 			apiExecConfig: this.apiExecutionConfig,
 			configOverrides: this._configOverrides,
+			verbose: this._verboseMode,
 		};
 	}
 

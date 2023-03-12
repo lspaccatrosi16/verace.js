@@ -10,5 +10,10 @@
 		"foo": "bar"
 	},
 	"ts": {},
-	"go": {}
+	"go": {},
+	"hooks": {
+		"prePkg": {
+			"file": "./myhook.js"
+		}
+	}
 }

@@ -18,22 +18,28 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import chalk from "chalk";
 
+import util from "util";
+
 interface Opts {
 	color: string;
 	bold: boolean;
 	underline: boolean;
+	verbose: boolean;
 }
 
 export type uncalledFn = [Logger, string];
 
-export type LoggerType = (str?: string) => Logger;
+export type LoggerType = (input?: string | object) => Logger;
 
-export function make_logger(testMode = false, apiMode = false) {
-	const log = new Logger(testMode, apiMode);
-
-	return (str?: string) => {
-		if (str) {
-			return log.apply(str);
+export function make_logger(
+	testMode = false,
+	apiMode = false,
+	verboseMode = false
+) {
+	const log = new Logger(testMode, apiMode, verboseMode);
+	return (input?: string | object) => {
+		if (input) {
+			return log.apply(input);
 		} else return log;
 	};
 }
@@ -44,23 +50,32 @@ class Logger {
 	private _color: string = "#FFFFFF";
 	private _bold: boolean = false;
 	private _underline: boolean = false;
+	private _verbose: boolean = false;
 	maxWidth: 75;
 	private testMode: boolean;
 	private apiMode: boolean;
+	private verboseMode: boolean;
 
-	constructor(testMode: boolean, apiMode: boolean, opts?: Opts) {
+	constructor(
+		testMode: boolean,
+		apiMode: boolean,
+		verboseMode: boolean,
+		opts?: Opts
+	) {
 		this.testMode = testMode;
 		this.apiMode = apiMode;
+		this.verboseMode = verboseMode;
 
 		if (opts) {
 			this._color = opts.color;
 			this._bold = opts.bold;
 			this._underline = opts.underline;
+			this._verbose = opts.verbose;
 		}
 	}
 
-	apply(str: string) {
-		return this._self()._log(str);
+	apply(input: string | object) {
+		return this._self()._log(input);
 	}
 
 	private _self(opts = {}) {
@@ -69,76 +84,88 @@ class Logger {
 				color: this._color,
 				bold: this._bold,
 				underline: this._underline,
+				verbose: this._verbose,
 			},
 			...opts,
 		};
 
-		// if (!print) console.log("self", this, opts, newOpts);
-
-		return new Logger(this.testMode, this.apiMode, newOpts);
+		return new Logger(
+			this.testMode,
+			this.apiMode,
+			this.verboseMode,
+			newOpts
+		);
 	}
 
-	citrus(str?: string) {
+	citrus(input?: string | object) {
 		const newAttr = { color: "F7FF00" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	grey(str?: string) {
+	grey(input?: string | object) {
 		const newAttr = { color: "aaaaaa" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	bold(str?: string) {
+	bold(input?: string | object) {
 		const newAttr = { bold: true };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	underline(str?: string) {
+	underline(input?: string | object) {
 		const newAttr = { underline: true };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	danger(str?: string) {
+	danger(input?: string | object) {
 		const newAttr = { bold: true, color: "#eb445a" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	warn(str?: string) {
+	warn(input?: string | object) {
 		const newAttr = { color: "#ff8709" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	info(str?: string) {
+	info(input?: string | object) {
 		const newAttr = { color: "#23a8f2" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
 		}
 	}
 
-	success(str?: string) {
+	success(input?: string | object) {
 		const newAttr = { color: "#2dd36f" };
-		if (!str) return this._self(newAttr);
+		if (!input) return this._self(newAttr);
 		else {
-			this._self(newAttr)._log(str);
+			this._self(newAttr)._log(input);
+		}
+	}
+
+	verbose(input?: string | object) {
+		const newAttr = { verbose: true };
+		if (!input) return this._self(newAttr);
+		else {
+			this._self(newAttr)._log(input);
 		}
 	}
 
@@ -147,19 +174,22 @@ class Logger {
 	}
 
 	private _logTree(str: string): string {
-		if (this._bold) {
-			if (this._underline)
-				return chalk.bold.underline.hex(this._color)(str);
-			else return chalk.bold.hex(this._color)(str);
-		} else if (this._underline)
-			return chalk.underline.hex(this._color)(str);
-		else return chalk.hex(this._color)(str);
+		let chalkObj = chalk.hex(this._color);
+
+		if (this._bold) chalkObj = chalkObj.bold;
+		if (this._underline) chalkObj = chalkObj.underline;
+
+		return chalkObj(str);
 	}
 
-	private _log(str: string) {
-		const logOutput = this._logTree(this.sanitiseString(str) + "\n");
-
-		this.StdoutWrite(logOutput);
+	private _log(input: string | object) {
+		if (typeof input == "string") {
+			const logOutput = this._logTree(this.sanitiseString(input) + "\n");
+			this.StdoutWrite(logOutput);
+		} else if (typeof input == "object") {
+			const logOutput = util.inspect(input, false, null, true);
+			this.StdoutWrite(logOutput);
+		}
 
 		return this._self({});
 	}
@@ -190,7 +220,6 @@ class Logger {
 		});
 
 		let outstr = newString.join("\n");
-		// if (newString.length != 1 && !multi) outstr = outstr.trimEnd();
 
 		return outstr;
 	}
@@ -200,8 +229,6 @@ class Logger {
 		parts.forEach(el => {
 			const fn = el[0];
 			const str = el[1];
-
-			// console.log("fnres:", fn);
 			outstr += fn._logTree(this.sanitiseString(str));
 		});
 
@@ -216,8 +243,10 @@ class Logger {
 	}
 
 	private StdoutWrite(data: string) {
-		if (!this.testMode && !this.apiMode) {
-			process.stdout.write(data);
+		if ((!this.testMode && !this.apiMode) || this.verboseMode) {
+			if (!this._verbose || this.verboseMode) {
+				process.stdout.write(data);
+			}
 		} else {
 			devBuffer += data;
 			return data;

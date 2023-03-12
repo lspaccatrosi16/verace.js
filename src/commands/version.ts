@@ -28,13 +28,7 @@ import semver from "semver";
 
 export default function () {
 	const v = new Command("version").description("Manage package versions");
-
-	const env = envWrapper.getInstance();
 	v.action(() => {
-		const opts = v.optsWithGlobals();
-		if (opts.path && opts.path != "") {
-			env.setConfigPath(opts.path);
-		}
 		return version();
 	});
 	return v;

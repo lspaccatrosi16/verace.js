@@ -73,9 +73,11 @@ export function runShellCmd(
 export const handleExecError = (e: any, env: ExecutionEnvironment) => {
 	process.stdout.write(e.toString() + "\n");
 	if (e.stdout) {
-		process.stdout.write((e.stdout as Buffer).toString() + "\n");
+		process.stdout.write((e.stdout as Buffer).toString());
+		process.stdout.write("\n");
 	}
 	if (e.stderr) {
-		process.stdout.write((e.stderr as Buffer).toString() + "\n");
+		process.stdout.write((e.stderr as Buffer).toString());
+		process.stdout.write("\n");
 	}
 };

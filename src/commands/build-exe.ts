@@ -16,16 +16,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
 
-import { execSync } from "child_process";
 import { Command } from "commander";
 import buildGo from "lib/buildGo";
 import buildTs from "lib/buildTs";
-import { parseConfig } from "lib/parseConfig";
-import { handleExecError } from "lib/common";
-import type { BaseConfig } from "lib/veraceConfig";
-
 import envWrapper from "lib/executionEnvironment";
+import { parseConfig } from "lib/parseConfig";
 
+import { parseHook } from "lib/hooks";
+
+import type { BaseConfig } from "lib/veraceConfig";
 export default function () {
 	const env = envWrapper.getInstance();
 
@@ -41,12 +40,9 @@ export default function () {
 
 	be.action(() => {
 		const opts = be.optsWithGlobals();
-		if (opts.path && opts.path != "") {
-			env.setConfigPath(opts.path);
-		}
 
 		if (opts.skipPkg) {
-			env.setConfigOverrides({ skipPkg: opts.skipPkg });
+			env.setTsOverrides({ skipPkg: opts.skipPkg });
 		}
 
 		if (opts.noHooks) {
@@ -54,6 +50,7 @@ export default function () {
 				hooks: {
 					preBuild: "",
 					postBuild: "",
+					prePkg: "",
 				},
 			});
 		}
@@ -88,32 +85,49 @@ const wrapBuild = (): Promise<void> => {
 
 const build = (): Promise<BaseConfig> => {
 	const env = envWrapper.getInstance();
-
 	const { log } = env;
+	log().verbose("Build starting");
 	return new Promise((resolve, reject) => {
 		parseConfig("Build")
 			.then(() => {
+				log().verbose("Parsed Config");
 				const { config: cfg } = env;
 				if (cfg.hooks && cfg.hooks.preBuild != "")
-					execHookCommand(cfg.hooks.preBuild);
+					return parseHook(cfg.hooks.preBuild);
+				else return true;
+			})
+			.then((status: boolean) => {
+				log().verbose("Prebuild hook dealt with");
+
+				if (!status) return;
+				const { config: cfg } = env;
 				switch (cfg.lang) {
 					case "ts": {
+						log().verbose("TS lang");
+
 						buildTs()
 							.then(() => {
+								log().verbose("TS build done");
 								if (cfg.hooks && cfg.hooks.postBuild != "")
-									execHookCommand(cfg.hooks.postBuild);
-								resolve(cfg);
+									parseHook(cfg.hooks.postBuild).then(() =>
+										resolve(cfg)
+									);
+								else resolve(cfg);
 							})
 							.catch(reject);
 						break;
 					}
-
 					case "go": {
+						log().verbose("Go lang");
+
 						buildGo()
 							.then(() => {
+								log().verbose("Go build done");
 								if (cfg.hooks && cfg.hooks.postBuild != "")
-									execHookCommand(cfg.hooks.postBuild);
-								resolve(cfg);
+									parseHook(cfg.hooks.postBuild).then(() =>
+										resolve(cfg)
+									);
+								else resolve(cfg);
 							})
 							.catch(reject);
 						break;
@@ -125,18 +139,4 @@ const build = (): Promise<BaseConfig> => {
 				throw new Error();
 			});
 	});
-};
-
-const execHookCommand = (cmd: string) => {
-	const env = envWrapper.getInstance();
-
-	const { log } = env;
-	log().info(`Executing hook: ` + cmd);
-	try {
-		execSync(cmd, { stdio: "inherit" });
-	} catch (e) {
-		log().danger("Error executing hook command: ");
-
-		handleExecError(e, env);
-	}
 };

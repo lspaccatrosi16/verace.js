@@ -25,7 +25,7 @@ export function parseConfig(command: string): Promise<void> {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	return new Promise((resolve, reject) => {
-		const expectedPath = path.join(process.cwd(), env.confPath);
+		const expectedPath = env.absolutePath(env.confPath);
 
 		if (!fs.existsSync(expectedPath)) {
 			reject("not found: " + expectedPath);
