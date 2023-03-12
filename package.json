@@ -25,7 +25,7 @@
   },
   "scripts": {
     "build": "verace build-exe",
-    "build:ci": "./ci/verace build-exe --skipPkg --noHooks",
+    "build:ci": "./ci/verace build-exe --skipPkg",
     "lint": "prettier --write src",
     "test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava"
   },
