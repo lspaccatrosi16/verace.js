@@ -11,7 +11,7 @@
 			"file": "hooks/preBuild.js",
 			"command": ""
 		},
-		"postBuild": "cp bin/verace ci/ && rm assets -rf ",
+		"postBuild": "cp bin/verace ci/ || true && rm assets -rf ",
 		"prePkg": "go run hooks/prePkg/main.go"
 	},
 	"outDir": "bin",
