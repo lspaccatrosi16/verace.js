@@ -7,7 +7,7 @@ coverage
 dist
 hooks
 node_modules
-src
+./src
 tests
 tools
 
