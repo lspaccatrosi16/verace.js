@@ -7,7 +7,11 @@
     "binary",
     "go",
     "golang",
-    "exe"
+    "exe",
+    "thread",
+    "multithread",
+    "worker",
+    "pool"
   ],
   "repository": "github:lspaccatrosi16/verace.js",
   "license": "AGPL-3.0-only",
@@ -17,15 +21,25 @@
   },
   "type": "module",
   "exports": {
-    ".": "./tsc-build/api.js"
+    "./bt": "./bt/tsc-build/api.js",
+    "./tp": "./tp/tsc-build/api.js"
   },
-  "typings": "tsc-build/api.d.ts",
+  "typesVersions": {
+    "*": {
+      "bt": [
+        "./bt/tsc-build/api.d.ts"
+      ],
+      "tp": [
+        "./tp/tsc-build/api.d.ts"
+      ]
+    }
+  },
   "bin": {
-    "verace": "./dist/verace.cjs"
+    "tp": "./tp/dist/thingpool.cjs",
+    "verace": "./bt/dist/verace.cjs"
   },
   "scripts": {
-    "build": "verace build-exe",
-    "build:ci": "./ci/verace build-exe --skipPkg",
+    "build:ci": "cd bt && ../ci/verace build-exe --skipPkg",
     "lint": "prettier --write src",
     "test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava"
   },

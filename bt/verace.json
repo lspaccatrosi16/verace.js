@@ -1,0 +1,30 @@
+{
+	"lang": "ts",
+	"name": "verace",
+	"version": "1.0.0",
+	"targets": [
+		"win64",
+		"linux64"
+	],
+	"hooks": {
+		"preBuild": {
+			"file": "hooks/preBuild.js",
+			"command": ""
+		},
+		"prePkg": "go run hooks/prePkg/main.go",
+		"postBuild": "cp bin/verace ../ci/ || true && rm assets -rf "
+	},
+	"outDir": "bin",
+	"entrypoint": "src/index.ts",
+	"ts": {
+		"buildDir": "tsc-build",
+		"cleanAfterBuild": false,
+		"produceTypes": true,
+		"skipPkg": false,
+		"test": "",
+		"assets": "assets"
+	},
+	"go": {
+		"gomod": ""
+	}
+}

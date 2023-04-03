@@ -1,0 +1,27 @@
+{
+	"lang": "ts",
+	"name": "thingpool",
+	"version": "1.0.0",
+	"targets": [
+		"win64",
+		"linux64"
+	],
+	"hooks": {
+		"preBuild": "",
+		"postBuild": "",
+		"prePkg": ""
+	},
+	"outDir": "bin",
+	"entrypoint": "",
+	"ts": {
+		"buildDir": "tsc-build",
+		"cleanAfterBuild": false,
+		"produceTypes": true,
+		"skipPkg": false,
+		"test": "",
+		"assets": "assets"
+	},
+	"go": {
+		"gomod": ""
+	}
+}

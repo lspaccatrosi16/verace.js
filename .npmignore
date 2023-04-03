@@ -6,8 +6,10 @@ ci
 coverage
 dist
 hooks
+docs
 node_modules
-./src
+examples
+src
 tests
 tools
 
@@ -19,3 +21,5 @@ tools
 toAdd.txt
 tsconfig.json
 verace.json
+
+*.tgz
