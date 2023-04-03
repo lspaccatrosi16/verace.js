@@ -1,7 +1,7 @@
 {
 	"lang": "ts",
 	"name": "thingpool",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"targets": [
 		"win64",
 		"linux64"
