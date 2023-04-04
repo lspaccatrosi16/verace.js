@@ -36,6 +36,12 @@ export interface OptionalConfig {
 	debug: boolean;
 }
 
+interface InteralConfig {
+	threads: number;
+	workers: Worker[];
+	toRun: Fork[];
+}
+
 export default class ThreadPool<T> {
 	private workers: Worker[];
 	private toRun: Fork[];
@@ -71,6 +77,17 @@ export default class ThreadPool<T> {
 		this.log(`Thread pool initialised with ${workers.length} threads`);
 	}
 
+	get _internalConfig() {
+		if (this.debug) {
+			return {
+				threads: this.workers.length,
+				workers: this.workers,
+				toRun: this.toRun,
+			} as InteralConfig;
+		}
+		return null;
+	}
+
 	start(): Promise<T[]> {
 		return new Promise((resolve, reject) => {
 			this.results = [];
@@ -80,9 +97,13 @@ export default class ThreadPool<T> {
 		});
 	}
 
+	private get debug() {
+		if (this.optionalConfig && this.optionalConfig.debug) return true;
+		return false;
+	}
+
 	private log(...args: unknown[]) {
-		if (this.optionalConfig && this.optionalConfig.debug)
-			console.log(...args);
+		if (this.debug) console.log(...args);
 	}
 
 	private alloc() {

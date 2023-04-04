@@ -40,8 +40,12 @@
   },
   "scripts": {
     "build:ci": "cd bt && ../ci/verace build-exe --skipPkg",
-    "lint": "prettier --write src",
-    "test": "cd examples/ts-example && npm ci && cd ../.. && c8 ava"
+    "lint": "prettier --write tp/src bt/src",
+    "test": "npm run test:bt && npm run test:tp",
+    "test:bt": "cd examples/ts-example && npm ci && cd ../.. && c8 ava bt/tests",
+    "test:tp": "cd tp && c8 ava tests",
+    "dep": "cd bt && npm i && cd ../tp && npm i",
+    "vhs": "vhs vhs/create-exe.tape"
   },
   "dependencies": {
     "chalk": "^5.2.0",

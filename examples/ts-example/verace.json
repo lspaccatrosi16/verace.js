@@ -1,6 +1,6 @@
 {
 	"lang": "ts",
-	"name": "ts-example",
+	"name": "my-awesome-package",
 	"version": "0.0.1",
 	"targets": [
 		"win64",
@@ -10,10 +10,5 @@
 		"foo": "bar"
 	},
 	"ts": {},
-	"go": {},
-	"hooks": {
-		"prePkg": {
-			"file": "./myhook.js"
-		}
-	}
+	"go": {}
 }
