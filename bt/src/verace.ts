@@ -24,7 +24,6 @@ import version from "commands/version";
 import figlet from "figlet";
 import Standard from "font/Standard";
 import executionEnv from "lib/executionEnvironment";
-import util from "util";
 
 import type {
 	APIResult,

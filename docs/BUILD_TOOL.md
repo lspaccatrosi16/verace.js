@@ -1,5 +1,7 @@
 # The Build Tool
 
+<img src="./images/create-exe.gif" />
+
 > The multi-platform multi-language build tool.
 
 -   Out of the box support for typescript and go
