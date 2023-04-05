@@ -22,7 +22,8 @@
   "type": "module",
   "exports": {
     "./bt": "./bt/tsc-build/api.js",
-    "./tp": "./tp/tsc-build/api.js"
+    "./tp": "./tp/tsc-build/api.js",
+    "./bb": "./bb/tsc-build/api.js"
   },
   "typesVersions": {
     "*": {
@@ -31,6 +32,9 @@
       ],
       "tp": [
         "./tp/tsc-build/api.d.ts"
+      ],
+      "bb": [
+        "./bb/tsc-build/api.d.ts"
       ]
     }
   },
@@ -48,8 +52,10 @@
     "vhs": "vhs vhs/create-exe.tape"
   },
   "dependencies": {
+    "arcsecond": "^5.0.0",
     "chalk": "^5.2.0",
     "commander": "^10.0.0",
+    "dayjs": "^1.11.7",
     "figlet": "^1.5.2",
     "fs-extra": "^11.1.0",
     "inquirer": "^9.1.4",

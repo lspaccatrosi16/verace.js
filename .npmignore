@@ -13,6 +13,8 @@ src
 tests
 tools
 
+vhs
+
 .gitingore
 .npmignore
 .prettierignore
@@ -23,3 +25,6 @@ tsconfig.json
 verace.json
 
 *.tgz
+
+bb/worker
+bb/runner/assets/
