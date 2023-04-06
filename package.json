@@ -55,7 +55,7 @@
 		"test:helpers": "cd helpers && c8 ava tests",
 		"dep": "cd bt && npm i && cd ../tp && npm i",
 		"vhs": "vhs vhs/create-exe.tape",
-		"api": "run-s api:** && api-documenter yaml -i api-report -o yml",
+		"api": "run-s api:** && api-documenter markdown -i api-report -o docs/pages",
 		"api:bt": "cd bt && api-extractor run --local -c api-extractor.json",
 		"api:helpers": "cd helpers && api-extractor run --local -c api-extractor.json",
 		"api:tp": "cd tp && api-extractor run --local -c api-extractor.json",
