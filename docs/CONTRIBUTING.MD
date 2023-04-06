@@ -49,3 +49,17 @@ $ npm run test
 ```bash
 $ npm run vhs
 ```
+
+4. API Reference
+
+```bash
+$ npm run api
+```
+
+Or run
+
+```bash
+$ npm run predep
+```
+
+for all of them at once.

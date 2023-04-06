@@ -1,0 +1,308 @@
+### YamlMime:TSType
+name: VeraceApi
+uid: 'bt!VeraceApi:class'
+package: bt!
+fullName: VeraceApi
+summary: ''
+remarks: ''
+example: []
+isPreview: false
+isDeprecated: false
+type: class
+constructors:
+  - name: (constructor)(config)
+    uid: 'bt!VeraceApi:constructor(1)'
+    package: bt!
+    fullName: (constructor)(config)
+    summary: Constructs a new instance of the `VeraceApi` class
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'constructor(config: unknown);'
+      parameters:
+        - id: config
+          description: ''
+          type: unknown
+properties:
+  - name: _envConfig
+    uid: 'bt!VeraceApi#_envConfig:member'
+    package: bt!
+    fullName: _envConfig
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: |-
+        get _envConfig(): {
+                id: string;
+                api: boolean;
+                parsedConfig: {
+                    lang?: "ts" | "go";
+                    name?: string;
+                    version?: string;
+                    targets?: ("win64" | "linux64")[];
+                    hooks?: {
+                        preBuild?: string | {
+                            file?: string;
+                            command?: string;
+                        };
+                        postBuild?: string | {
+                            file?: string;
+                            command?: string;
+                        };
+                        prePkg?: string | {
+                            file?: string;
+                            command?: string;
+                        };
+                    };
+                    data?: unknown;
+                    outDir?: string;
+                    entrypoint?: string;
+                    ts?: {
+                        buildDir?: string;
+                        cleanAfterBuild?: boolean;
+                        produceTypes?: boolean;
+                        skipPkg?: boolean;
+                        test?: string;
+                        assets?: string;
+                        noBytecode?: boolean;
+                    };
+                    go?: {
+                        gomod?: string;
+                    };
+                };
+                configLocation: string;
+                apiExecConfig: {
+                    path?: string;
+                    verbose?: boolean;
+                };
+                configOverrides: {
+                    ts: {};
+                    go: {};
+                };
+                verbose: boolean;
+            };
+      return:
+        type: |-
+          {
+                  id: string;
+                  api: boolean;
+                  parsedConfig: {
+                      lang?: "ts" | "go";
+                      name?: string;
+                      version?: string;
+                      targets?: ("win64" | "linux64")[];
+                      hooks?: {
+                          preBuild?: string | {
+                              file?: string;
+                              command?: string;
+                          };
+                          postBuild?: string | {
+                              file?: string;
+                              command?: string;
+                          };
+                          prePkg?: string | {
+                              file?: string;
+                              command?: string;
+                          };
+                      };
+                      data?: unknown;
+                      outDir?: string;
+                      entrypoint?: string;
+                      ts?: {
+                          buildDir?: string;
+                          cleanAfterBuild?: boolean;
+                          produceTypes?: boolean;
+                          skipPkg?: boolean;
+                          test?: string;
+                          assets?: string;
+                          noBytecode?: boolean;
+                      };
+                      go?: {
+                          gomod?: string;
+                      };
+                  };
+                  configLocation: string;
+                  apiExecConfig: {
+                      path?: string;
+                      verbose?: boolean;
+                  };
+                  configOverrides: {
+                      ts: {};
+                      go: {};
+                  };
+                  verbose: boolean;
+              }
+methods:
+  - name: buildExe()
+    uid: 'bt!VeraceApi#buildExe:member(1)'
+    package: bt!
+    fullName: buildExe()
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'buildExe(): Promise<rustic.ResultEquipped<null, string>>;'
+      return:
+        type: 'Promise&lt;<xref uid="rustic!ResultEquipped:class" />&lt;null, string&gt;&gt;'
+        description: ''
+  - name: createExe(config)
+    uid: 'bt!VeraceApi#createExe:member(1)'
+    package: bt!
+    fullName: createExe(config)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'createExe(config: CreateApi): Promise<rustic.ResultEquipped<null, string>>;'
+      parameters:
+        - id: config
+          description: ''
+          type: '<xref uid="bt!~CreateApi:type" />'
+      return:
+        type: 'Promise&lt;<xref uid="rustic!ResultEquipped:class" />&lt;null, string&gt;&gt;'
+        description: ''
+  - name: purgeEnvironment()
+    uid: 'bt!VeraceApi#purgeEnvironment:member(1)'
+    package: bt!
+    fullName: purgeEnvironment()
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'purgeEnvironment(): void;'
+      return:
+        type: void
+        description: ''
+  - name: runExe(args)
+    uid: 'bt!VeraceApi#runExe:member(1)'
+    package: bt!
+    fullName: runExe(args)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'runExe(args: RunApi): Promise<rustic.ResultEquipped<null, string>>;'
+      parameters:
+        - id: args
+          description: ''
+          type: '<xref uid="bt!~RunApi:type" />'
+      return:
+        type: 'Promise&lt;<xref uid="rustic!ResultEquipped:class" />&lt;null, string&gt;&gt;'
+        description: ''
+  - name: setConfigOverrides(config)
+    uid: 'bt!VeraceApi#setConfigOverrides:member(1)'
+    package: bt!
+    fullName: setConfigOverrides(config)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'setConfigOverrides(config: Record<keyof BaseConfig, unknown>): this;'
+      parameters:
+        - id: config
+          description: ''
+          type: 'Record&lt;keyof <xref uid="bt!BaseConfig:type" />, unknown&gt;'
+      return:
+        type: this
+        description: ''
+  - name: setGoConfigOverride(config)
+    uid: 'bt!VeraceApi#setGoConfigOverride:member(1)'
+    package: bt!
+    fullName: setGoConfigOverride(config)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'setGoConfigOverride(config: Record<keyof GoConfig, unknown>): this;'
+      parameters:
+        - id: config
+          description: ''
+          type: 'Record&lt;keyof <xref uid="bt!~GoConfig:type" />, unknown&gt;'
+      return:
+        type: this
+        description: ''
+  - name: setTestMode(test)
+    uid: 'bt!VeraceApi#setTestMode:member(1)'
+    package: bt!
+    fullName: setTestMode(test)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'setTestMode(test: boolean): void;'
+      parameters:
+        - id: test
+          description: ''
+          type: boolean
+      return:
+        type: void
+        description: ''
+  - name: setTsConfigOverride(config)
+    uid: 'bt!VeraceApi#setTsConfigOverride:member(1)'
+    package: bt!
+    fullName: setTsConfigOverride(config)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'setTsConfigOverride(config: Record<keyof TSConfig, unknown>): this;'
+      parameters:
+        - id: config
+          description: ''
+          type: 'Record&lt;keyof <xref uid="bt!~TSConfig:type" />, unknown&gt;'
+      return:
+        type: this
+        description: ''
+  - name: setupEnvironment()
+    uid: 'bt!VeraceApi#setupEnvironment:member(1)'
+    package: bt!
+    fullName: setupEnvironment()
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'setupEnvironment(): rustic.ResultEquipped<VeraceApi, string>;'
+      return:
+        type: '<xref uid="rustic!ResultEquipped:class" />&lt;<xref uid="bt!VeraceApi:class" />, string&gt;'
+        description: ''
+  - name: version(increment)
+    uid: 'bt!VeraceApi#version:member(1)'
+    package: bt!
+    fullName: version(increment)
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: 'version(increment: VeraceApi): Promise<rustic.ResultEquipped<null, string>>;'
+      parameters:
+        - id: increment
+          description: ''
+          type: '<xref uid="bt!VeraceApi:class" />'
+      return:
+        type: 'Promise&lt;<xref uid="rustic!ResultEquipped:class" />&lt;null, string&gt;&gt;'
+        description: ''

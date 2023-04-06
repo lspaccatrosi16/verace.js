@@ -6,7 +6,7 @@
 -   [x] Add support for directly executing javascript build hooks [2.](#2)
 -   [ ] Add further build targets [3.](#3)
 -   [ ] ~~Add plain javascript support [4.}(#4)~~
--   [ ] Dramatically increase testing coverage [5.](#5)
+-   [x] Dramatically increase testing coverage [5.](#5)
 -   [ ] Allow target node version to be configured [6.](#6)
 
 ## 1.

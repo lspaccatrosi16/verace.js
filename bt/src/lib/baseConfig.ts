@@ -131,15 +131,12 @@ export const makePackageJson = (bc: BaseConfig) => {
 			"@types/node": "^16.17",
 			"typescript": "^4.9",
 			"pkg": "^5.8",
+			"verace.js": "^1.0",
 		},
 		author: "",
 		licence: "UNLICENCED",
 		private: true,
 	};
-
-	if (bc.ts.produceTypes) {
-		baseConfig.typings = "typings/index.d.ts";
-	}
 
 	return baseConfig;
 };

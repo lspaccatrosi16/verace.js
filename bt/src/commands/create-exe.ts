@@ -86,11 +86,15 @@ function pathWalk(input: string) {
 }
 
 const errorDeleteFile = (files: string[]): Promise<void> => {
+	const env = envWrapper.getInstance();
+
 	return new Promise(resolve => {
-		files.forEach(file => {
-			if (fs.existsSync(file))
-				fs.rmSync(file, { force: true, recursive: true });
-		});
+		files
+			.map(f => env.resolveFromRoot(f))
+			.forEach(file => {
+				if (fs.existsSync(file))
+					fs.rmSync(file, { force: true, recursive: true });
+			});
 
 		resolve();
 	});
@@ -152,7 +156,7 @@ const collectInfo = async () => {
 		return;
 	}
 
-	doCreation(userSelection);
+	await doCreation(userSelection);
 	return;
 };
 
@@ -178,9 +182,11 @@ export async function createApi(
 		return Err(parsedConfig.unwrapErr());
 	}
 
+	const cfg = parsedConfig.unwrap();
+
 	const userSelection: BaseConfig = {
 		...baseconfig,
-		...parsedConfig.unwrap(),
+		...cfg,
 	};
 
 	const newPath = pathWalk(apiConfig.path);
@@ -190,6 +196,11 @@ export async function createApi(
 		delete userSelection.go;
 	} else if (userSelection.lang == "go") {
 		delete userSelection.ts;
+		userSelection.go.gomod = cfg.gomod;
+	}
+
+	if ("gomod" in userSelection) {
+		delete userSelection["gomod" as keyof BaseConfig];
 	}
 
 	try {
@@ -200,8 +211,7 @@ export async function createApi(
 		);
 
 		log(userSelection);
-
-		// await doCreation(config);
+		await doCreation(userSelection);
 		return Ok(null);
 	} catch (e) {
 		return Err(e);
@@ -214,8 +224,8 @@ async function doCreation(userSelection: BaseConfig) {
 	switch (userSelection.lang) {
 		case "go": {
 			try {
-				child_process.execSync("go version");
-				child_process.execSync(
+				await child_process.execSync("go version");
+				await child_process.execSync(
 					`cd ${env.wk} && go mod init ${userSelection.go.gomod}`
 				);
 
@@ -242,7 +252,7 @@ async function doCreation(userSelection: BaseConfig) {
 
 		case "ts": {
 			try {
-				const pkg = makePackageJson(userSelection);
+				const pkg = await makePackageJson(userSelection);
 				await fs.writeFile(
 					env.resolveFromRoot("package.json"),
 					JSON.stringify(pkg, null, "\t")
@@ -252,22 +262,22 @@ async function doCreation(userSelection: BaseConfig) {
 					JSON.stringify(tsConfig, null, "\t")
 				);
 
-				await child_process.execSync("npm i");
+				await child_process.execSync(`cd ${env.wk} && npm i`);
 				await fs.mkdir(env.resolveFromRoot("src"), { recursive: true });
 				await fs.writeFile(env.resolveFromRoot("src/index.ts"), tsFile);
 				await fs.writeFile(env.resolveFromRoot(".gitignore"), tsGI);
 
 				await fs.writeFile(
-					env.resolveFromRoot("verace.config.js"),
+					env.resolveFromRoot("verace.config.mjs"),
 					makeVeraceConfig(userSelection)
 				);
 
-				await log().success(
+				log().success(
 					"Successfully initialised the Typescript project"
 				);
 			} catch (e) {
+				log().danger("Error occurred");
 				if (e) log().danger(e.toString());
-
 				await errorDeleteFile([
 					"tsconfig.json",
 					"package.json",
@@ -280,6 +290,9 @@ async function doCreation(userSelection: BaseConfig) {
 				throw e;
 			}
 			break;
+		}
+		default: {
+			throw `Unrecognized language ${userSelection.lang}`;
 		}
 	}
 }

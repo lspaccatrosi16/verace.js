@@ -1,89 +1,97 @@
 {
-  "name": "verace.js",
-  "version": "1.0.1",
-  "keywords": [
-    "cli",
-    "pkg",
-    "binary",
-    "go",
-    "golang",
-    "exe",
-    "thread",
-    "multithread",
-    "worker",
-    "pool"
-  ],
-  "repository": "github:lspaccatrosi16/verace.js",
-  "license": "AGPL-3.0-only",
-  "author": {
-    "name": "Luca Spaccatrosi",
-    "email": "luca@spaccatrosi.co.uk"
-  },
-  "type": "module",
-  "exports": {
-    "./bt": "./bt/tsc-build/api.js",
-    "./helpers": "./helpers/tsc-build/api.js",
-    "./tp": "./tp/tsc-build/api.js",
-    "./bb": "./bb/runner/tsc-build/api.js"
-  },
-  "typesVersions": {
-    "*": {
-      "bt": [
-        "./bt/tsc-build/api.d.ts"
-      ],
-      "tp": [
-        "./tp/tsc-build/api.d.ts"
-      ],
-      "bb": [
-        "./bb/runner/tsc-build/api.d.ts"
-      ],
-      "helpers": [
-        "./helpers/tsc-build/api.d.ts"
-      ]
-    }
-  },
-  "bin": {
-    "tp": "./tp/dist/thingpool.cjs",
-    "verace": "./bt/dist/verace.cjs"
-  },
-  "scripts": {
-    "build:ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
-    "lint": "prettier --write tp/src bt/src",
-    "test": "npm run test:bt && npm run test:tp && npm run test:helpers",
-    "test:bt": "cd examples/ts-example && npm ci && cd ../.. && c8 ava bt/tests",
-    "test:tp": "cd tp && c8 ava tests",
-    "test:helpers": "cd helpers && c8 ava tests",
-    "dep": "cd bt && npm i && cd ../tp && npm i",
-    "vhs": "vhs vhs/create-exe.tape"
-  },
-  "dependencies": {
-    "arcsecond": "^5.0.0",
-    "chalk": "^5.2.0",
-    "commander": "^10.0.0",
-    "dayjs": "^1.11.7",
-    "figlet": "^1.5.2",
-    "fs-extra": "^11.1.0",
-    "inquirer": "^9.1.4",
-    "rustic": "^1.2.2",
-    "semver": "^7.3.8",
-    "spinnies": "^0.5.1",
-    "tsc-alias": "^1.8.2",
-    "zod": "^3.21.0"
-  },
-  "devDependencies": {
-    "@types/figlet": "^1.5.5",
-    "@types/fs-extra": "^9.0.13",
-    "@types/inquirer": "^9.0.3",
-    "@types/node": "^16.17.0",
-    "@types/semver": "^7.3.13",
-    "@types/spinnies": "^0.5.0",
-    "ava": "^5.2.0",
-    "c8": "^7.13.0",
-    "pkg": "^5.8.0",
-    "prettier": "^2.8.4",
-    "typescript": "^4.9.4"
-  },
-  "engines": {
-    "node": "16.x || 18.x"
-  }
+	"name": "verace.js",
+	"version": "1.0.1",
+	"keywords": [
+		"cli",
+		"pkg",
+		"binary",
+		"go",
+		"golang",
+		"exe",
+		"thread",
+		"multithread",
+		"worker",
+		"pool"
+	],
+	"repository": "github:lspaccatrosi16/verace.js",
+	"license": "AGPL-3.0-only",
+	"author": {
+		"name": "Luca Spaccatrosi",
+		"email": "luca@spaccatrosi.co.uk"
+	},
+	"type": "module",
+	"exports": {
+		"./bt": "./bt/tsc-build/api.js",
+		"./helpers": "./helpers/tsc-build/api.js",
+		"./tp": "./tp/tsc-build/api.js",
+		"./bb": "./bb/runner/tsc-build/api.js"
+	},
+	"typesVersions": {
+		"*": {
+			"bt": [
+				"./bt/tsc-build/api.d.ts"
+			],
+			"tp": [
+				"./tp/tsc-build/api.d.ts"
+			],
+			"bb": [
+				"./bb/runner/tsc-build/api.d.ts"
+			],
+			"helpers": [
+				"./helpers/tsc-build/api.d.ts"
+			]
+		}
+	},
+	"bin": {
+		"tp": "./tp/dist/thingpool.cjs",
+		"verace": "./bt/dist/verace.cjs"
+	},
+	"scripts": {
+		"build:ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
+		"lint": "prettier --write tp/src bt/src helpers/src",
+		"test": "run-s test:**",
+		"test:bt": "cd examples/ts-example && npm ci && cd ../.. && cd bt && c8 ava tests",
+		"test:tp": "cd tp && c8 ava tests",
+		"test:helpers": "cd helpers && c8 ava tests",
+		"dep": "cd bt && npm i && cd ../tp && npm i",
+		"vhs": "vhs vhs/create-exe.tape",
+		"api": "run-s api:** && api-documenter yaml -i api-report -o yml",
+		"api:bt": "cd bt && api-extractor run --local -c api-extractor.json",
+		"api:helpers": "cd helpers && api-extractor run --local -c api-extractor.json",
+		"api:tp": "cd tp && api-extractor run --local -c api-extractor.json",
+		"predep": "npm run lint && npm run test && npm run vhs && npm run api"
+	},
+	"dependencies": {
+		"arcsecond": "^5.0.0",
+		"chalk": "^5.2.0",
+		"commander": "^10.0.0",
+		"dayjs": "^1.11.7",
+		"figlet": "^1.5.2",
+		"fs-extra": "^11.1.0",
+		"inquirer": "^9.1.4",
+		"rustic": "^1.2.2",
+		"semver": "^7.3.8",
+		"spinnies": "^0.5.1",
+		"tsc-alias": "^1.8.2",
+		"zod": "^3.21.0"
+	},
+	"devDependencies": {
+		"@microsoft/api-documenter": "^7.21.7",
+		"@microsoft/api-extractor": "^7.34.4",
+		"@types/figlet": "^1.5.5",
+		"@types/fs-extra": "^9.0.13",
+		"@types/inquirer": "^9.0.3",
+		"@types/node": "^16.17.0",
+		"@types/semver": "^7.3.13",
+		"@types/spinnies": "^0.5.0",
+		"ava": "^5.2.0",
+		"c8": "^7.13.0",
+		"npm-run-all": "^4.1.5",
+		"pkg": "^5.8.0",
+		"prettier": "^2.8.4",
+		"typescript": "^4.9.4"
+	},
+	"engines": {
+		"node": "16.x || 18.x"
+	}
 }

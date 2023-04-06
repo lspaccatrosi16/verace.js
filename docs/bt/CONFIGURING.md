@@ -181,8 +181,6 @@ The path to the entrypoint of the program. Note for `ts`, the `tsconfig.json` ne
 </tr>
 </table>
 
-> Hook extensibilty with javascript/typescript is planned for the future. Currently, to implement something like that, create the javascript file and then set one of the hooks to include `node myJsScript.js`
-
 ---
 
 ### Typescript specific options

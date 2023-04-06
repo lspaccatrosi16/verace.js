@@ -11,3 +11,7 @@ tsc-build
 .vscode
 
 *.tgz
+
+temp
+
+api-report

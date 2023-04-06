@@ -67,6 +67,15 @@ export default function () {
 	return be;
 }
 
+export async function buildApi(): Promise<rustic.Result<null, string>> {
+	try {
+		await wrapBuild();
+		return rustic.Ok(null);
+	} catch (e) {
+		return rustic.Err(e);
+	}
+}
+
 const wrapBuild = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		const env = envWrapper.getInstance();

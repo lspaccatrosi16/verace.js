@@ -50,7 +50,9 @@ export default class GetExecutionEnv {
 	}
 
 	static purge() {
-		console.log(`Purging execution instance. ID: ${this.instance.id}`);
+		this.instance.log(
+			`Purging execution instance. ID: ${this.instance.id}`
+		);
 		this.instance = null;
 	}
 }
@@ -78,9 +80,9 @@ class InternalExecutionEnvironment {
 		verboseMode: boolean
 	): Result<void, string> {
 		if (!this._setupDone) {
-			console.log(`Setting up execution instance. ID: ${this._id}`);
 			const log = make_logger(testMode, apiMode, verboseMode);
 			this._log = log;
+			this._log(`Setting up execution instance. ID: ${this._id}`);
 			this._apiMode = apiMode;
 			this._setupDone = true;
 			this._verboseMode = true;

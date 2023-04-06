@@ -1,0 +1,93 @@
+### YamlMime:TSPackage
+uid: helpers!
+name: helpers
+type: package
+summary: ''
+functions:
+  - name: defineConfig(config)
+    uid: 'helpers!defineConfig:function(1)'
+    package: helpers!
+    summary: ''
+    remarks: ''
+    example: []
+    isPreview: false
+    isDeprecated: false
+    syntax:
+      content: |-
+        export declare function defineConfig(config: typeof Config): {
+            lang?: "ts" | "go";
+            name?: string;
+            version?: string;
+            targets?: ("win64" | "linux64")[];
+            hooks?: {
+                preBuild?: string | {
+                    file?: string;
+                    command?: string;
+                };
+                postBuild?: string | {
+                    file?: string;
+                    command?: string;
+                };
+                prePkg?: string | {
+                    file?: string;
+                    command?: string;
+                };
+            };
+            data?: unknown;
+            outDir?: string;
+            entrypoint?: string;
+            ts?: {
+                buildDir?: string;
+                cleanAfterBuild?: boolean;
+                produceTypes?: boolean;
+                skipPkg?: boolean;
+                test?: string;
+                assets?: string;
+                noBytecode?: boolean;
+            };
+            go?: {
+                gomod?: string;
+            };
+        };
+      parameters:
+        - id: config
+          description: ''
+          type: 'typeof <xref uid="helpers!~Config:var" />'
+      return:
+        type: |-
+          {
+              lang?: "ts" | "go";
+              name?: string;
+              version?: string;
+              targets?: ("win64" | "linux64")[];
+              hooks?: {
+                  preBuild?: string | {
+                      file?: string;
+                      command?: string;
+                  };
+                  postBuild?: string | {
+                      file?: string;
+                      command?: string;
+                  };
+                  prePkg?: string | {
+                      file?: string;
+                      command?: string;
+                  };
+              };
+              data?: unknown;
+              outDir?: string;
+              entrypoint?: string;
+              ts?: {
+                  buildDir?: string;
+                  cleanAfterBuild?: boolean;
+                  produceTypes?: boolean;
+                  skipPkg?: boolean;
+                  test?: string;
+                  assets?: string;
+                  noBytecode?: boolean;
+              };
+              go?: {
+                  gomod?: string;
+              };
+          }
+        description: ''

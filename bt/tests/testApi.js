@@ -1,6 +1,6 @@
 import test from "ava";
 import { tmpdir } from "os";
-import { join } from "path";
+import { dirname, join } from "path";
 
 import fs from "fs";
 
@@ -111,7 +111,50 @@ test.serial("Should only allow one execution at a time", t => {
 	tool.purgeEnvironment();
 });
 
-test.serial("Should create a verace typescript project successfuly", t => {
+test.serial(
+	"Should create a verace typescript project successfuly",
+	async t => {
+		t.timeout(20 * 1e3);
+		const createPath = join(tmpdir(), `verace-create`);
+
+		if (fs.existsSync(createPath)) {
+			fs.rmSync(createPath, { recursive: true, force: true });
+		}
+
+		fs.mkdirSync(createPath);
+
+		const tool = new api({
+			path: createPath,
+			verbose: false,
+		});
+
+		const cfgResult = tool.setupEnvironment();
+
+		if (cfgResult.isErr()) {
+			throw cfgResult.unwrapErr();
+		}
+
+		const res = await cfgResult.unwrap().createExe({
+			lang: "ts",
+			name: "my-project",
+		});
+		if (res.isErr()) {
+			console.log(res.unwrapErr());
+			t.fail();
+		}
+
+		if (fs.existsSync(join(createPath, "verace.config.mjs"))) {
+			t.pass();
+		} else {
+			t.fail();
+		}
+
+		tool.purgeEnvironment();
+	}
+);
+
+test.serial("Should create a verace go project successfuly", async t => {
+	t.timeout(20 * 1e3);
 	const createPath = join(tmpdir(), `verace-create`);
 
 	if (fs.existsSync(createPath)) {
@@ -122,7 +165,7 @@ test.serial("Should create a verace typescript project successfuly", t => {
 
 	const tool = new api({
 		path: createPath,
-		verbose: true,
+		verbose: false,
 	});
 
 	const cfgResult = tool.setupEnvironment();
@@ -131,20 +174,230 @@ test.serial("Should create a verace typescript project successfuly", t => {
 		throw cfgResult.unwrapErr();
 	}
 
-	cfgResult
-		.unwrap()
-		.createExe({
-			lang: "ts",
-			name: "my-project",
-		})
-		.then(res => {
-			if (res.isErr()) {
-				console.log(res.unwrapErr());
-				t.fail();
-			}
+	const res = await cfgResult.unwrap().createExe({
+		lang: "go",
+		name: "my-project",
+		gomod: "github.com/lspaccatrosi16/verace.js",
+	});
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
 
-			if (fs.existsSync(join(createPath, "verace.config.mjs"))) {
-				t.pass();
-			}
+	if (fs.existsSync(join(createPath, "verace.json"))) {
+		t.pass();
+	} else {
+		t.fail();
+	}
+
+	tool.purgeEnvironment();
+});
+
+test.serial("Should build a verace typescript project successfuly", async t => {
+	t.timeout(20 * 1e3);
+
+	const configPath = "../examples/ts-example/verace.json";
+
+	const tool = new api({
+		path: configPath,
+		verbose: false,
+	});
+
+	const cfgResult = tool.setupEnvironment();
+
+	if (cfgResult.isErr()) {
+		throw cfgResult.unwrapErr();
+	}
+
+	const res = await cfgResult.unwrap().buildExe();
+
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
+
+	if (fs.existsSync(join(dirname(configPath), "bin/my-awesome-package"))) {
+		t.pass();
+	} else {
+		t.fail();
+	}
+
+	tool.purgeEnvironment();
+});
+
+test.serial("Should build a verace go project successfuly", async t => {
+	t.timeout(20 * 1e3);
+
+	const configPath = "../examples/go-example/verace.json";
+
+	const tool = new api({
+		path: configPath,
+		verbose: false,
+	});
+
+	const cfgResult = tool.setupEnvironment();
+
+	if (cfgResult.isErr()) {
+		throw cfgResult.unwrapErr();
+	}
+
+	const res = await cfgResult.unwrap().buildExe();
+
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
+
+	if (fs.existsSync(join(dirname(configPath), "bin/go-example"))) {
+		t.pass();
+	} else {
+		t.fail();
+	}
+
+	tool.purgeEnvironment();
+});
+
+test.serial("Should run a verace typescript project successfuly", async t => {
+	t.timeout(20 * 1e3);
+
+	const configPath = "../examples/ts-example/verace.json";
+
+	const tool = new api({
+		path: configPath,
+		verbose: false,
+	});
+
+	const cfgResult = tool.setupEnvironment();
+
+	if (cfgResult.isErr()) {
+		throw cfgResult.unwrapErr();
+	}
+
+	const res = await cfgResult.unwrap().runExe([]);
+
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
+
+	if (fs.existsSync(join(dirname(configPath), "bin/my-awesome-package"))) {
+		t.pass();
+	} else {
+		t.fail();
+	}
+
+	tool.purgeEnvironment();
+});
+
+test.serial("Should run a verace go project successfuly", async t => {
+	t.timeout(20 * 1e3);
+
+	const configPath = "../examples/go-example/verace.json";
+
+	const tool = new api({
+		path: configPath,
+		verbose: false,
+	});
+
+	const cfgResult = tool.setupEnvironment();
+
+	if (cfgResult.isErr()) {
+		throw cfgResult.unwrapErr();
+	}
+
+	const res = await cfgResult.unwrap().runExe([]);
+
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
+
+	if (fs.existsSync(join(dirname(configPath), "bin/go-example"))) {
+		t.pass();
+	} else {
+		t.fail();
+	}
+
+	tool.purgeEnvironment();
+});
+
+test.serial(
+	"Should version a verace typescript project successfuly",
+	async t => {
+		t.timeout(20 * 1e3);
+
+		const configPath = "../examples/ts-example/verace.json";
+
+		const existingConfig = JSON.parse(fs.readFileSync(configPath));
+
+		if (!("version" in existingConfig)) {
+			t.fail("Existing file does not have a version");
+		}
+
+		const tool = new api({
+			path: configPath,
+			verbose: true,
 		});
+
+		const cfgResult = tool.setupEnvironment();
+
+		if (cfgResult.isErr()) {
+			throw cfgResult.unwrapErr();
+		}
+
+		const res = await cfgResult.unwrap().version("patch");
+
+		if (res.isErr()) {
+			console.log(res.unwrapErr());
+			t.fail();
+		}
+
+		const newConfig = JSON.parse(fs.readFileSync(configPath));
+
+		if (!("version" in newConfig)) {
+			t.fail("New file does not have a version");
+		}
+
+		t.notDeepEqual(newConfig.version, existingConfig.version);
+		tool.purgeEnvironment();
+	}
+);
+
+test.serial("Should version a verace go project successfuly", async t => {
+	t.timeout(20 * 1e3);
+
+	const configPath = "../examples/go-example/verace.json";
+
+	const existingConfig = JSON.parse(fs.readFileSync(configPath));
+
+	if (!("version" in existingConfig)) {
+		t.fail("Existing file does not have a version");
+	}
+
+	const tool = new api({
+		path: configPath,
+		verbose: false,
+	});
+
+	const cfgResult = tool.setupEnvironment();
+
+	if (cfgResult.isErr()) {
+		throw cfgResult.unwrapErr();
+	}
+
+	const res = await cfgResult.unwrap().version("patch");
+
+	if (res.isErr()) {
+		console.log(res.unwrapErr());
+		t.fail();
+	}
+
+	const newConfig = JSON.parse(fs.readFileSync(configPath));
+
+	if (!("version" in newConfig)) {
+		t.fail("New file does not have a version");
+	}
+
+	t.notDeepEqual(newConfig.version, existingConfig.version);
+	tool.purgeEnvironment();
 });

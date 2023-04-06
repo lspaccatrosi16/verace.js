@@ -81,30 +81,58 @@ func main() {
 
 Combining this with [build hooks](/docs/bt/CONFIGURING.md) allows powerful metadata about builds (e.g build time, build environment config) to be created, and used.
 
-## Javascript API
+## Javascript/Typescript API
 
-A basic API is additionally exposed when imported.
+A complete API is exposed complete with full typings. It uses rust-style error handling provided by [rustic](https://github.com/franeklubi/rustic)
+
+### A Basic example
 
 ```ts
 import api from "verace.js/bt";
 
-await api({
-	path: "./examples/go-example/verace config",
-	command: "build-exe",
-	verbose: false,
-}).then(res => {
-	console.log(res);
+const verace = new api({
+	path: "path/to/verace/config",
 });
+
+const envResult = verace.setupEnvironment();
+if (envResult.isErr()) {
+	throw envResult.unwrapErr();
+}
+
+const res = await cfgResult.unwrap().buildExe();
+
+if (res.isErr()) {
+	throw res.unwrapErr();
+}
 ```
 
-##### `command`
+### Advanced Usage
 
-The action to run. Can be any command runable from the normal CLI.
+It is possible to override config for every run:
 
-##### `path`
+```ts
+import api from "verace.js/bt";
 
-The (relative) path to the [ `verace config` ](/docs/bt/CONFIGURING.md) file of the project.
+const verace = new api({
+	path: "path/to/verace/config",
+});
 
-##### `verbose`
+const envResult = verace.setupEnvironment();
+if (envResult.isErr()) {
+	throw envResult.unwrapErr();
+}
+verace
+	.setConfigOverrides({ entrypoint: "foo" })
+	.setTsConfigOverride({
+		test: "bar",
+	})
+	.setGoConfigOverride({ gomod: "baz" });
 
-Set verbose logging.
+const res = await verace.buildExe();
+
+if (res.isErr()) {
+	throw res.unwrapErr();
+}
+```
+
+The config will still be checked so if incorrect values are passed (which your intellisense should object to) it will return an error.

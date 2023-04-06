@@ -26,6 +26,9 @@ import rustic from "rustic";
 import type { Result } from "rustic";
 import { createApi, CreateApi } from "./commands/create-exe";
 import zodWrapper from "./lib/zodParserWithResult";
+import { buildApi } from "./commands/build-exe";
+import { RunApi, runApi } from "./commands/run-exe";
+import { versionApi } from "./commands/version";
 const { isOk, Ok, Err } = rustic;
 
 const configParser = z
@@ -102,11 +105,20 @@ export default class VeraceApi {
 		return rustic.equip(result);
 	}
 
-	buildExe() {}
+	async buildExe() {
+		const result = await buildApi();
+		return rustic.equip(result);
+	}
 
-	runExe() {}
+	async runExe(args: RunApi) {
+		const result = await runApi(args);
+		return rustic.equip(result);
+	}
 
-	version() {}
+	async version(increment: VeraceApi) {
+		const result = await versionApi(increment);
+		return rustic.equip(result);
+	}
 }
 
 export { BaseConfig };

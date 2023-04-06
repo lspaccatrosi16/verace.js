@@ -1,0 +1,10 @@
+### YamlMime:TSPackage
+uid: bt!
+name: bt
+type: package
+summary: ''
+typeAliases:
+  - 'bt!APICONFIG:type'
+  - 'bt!BaseConfig:type'
+classes:
+  - 'bt!VeraceApi:class'
