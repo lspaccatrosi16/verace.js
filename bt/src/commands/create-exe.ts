@@ -41,6 +41,7 @@ const { Ok, Err } = rustic;
 import type { BaseConfig } from "lib/veraceConfig";
 import { z } from "zod";
 import zodWrapper from "src/lib/zodParserWithResult";
+import type { APICONFIG } from "src/api";
 
 export default function () {
 	const env = envWrapper.getInstance();
@@ -53,29 +54,35 @@ export default function () {
 
 		if (opts.path && opts.path != "") {
 			const input = opts.path as string;
-			if (fs.existsSync(input)) {
-				if (fs.lstatSync(input).isFile()) {
-					dirPath = path.dirname(input);
-				} else {
-					dirPath = input;
-				}
-			} else {
-				if (input.endsWith(".json") || input.endsWith(".mjs")) {
-					dirPath = path.dirname(input);
-					fs.mkdirSync(dirPath, { recursive: true });
-				} else {
-					fs.mkdirSync(input, { recursive: true });
-					dirPath = input;
-				}
-			}
 
-			const newPath = path.join(dirPath, "verace.config.js");
+			const newPath = pathWalk(input);
 
 			env.setConfigPath(newPath);
 		}
 		return collectInfo();
 	});
 	return ce;
+}
+
+function pathWalk(input: string) {
+	let dirPath;
+	if (fs.existsSync(input)) {
+		if (fs.lstatSync(input).isFile()) {
+			dirPath = path.dirname(input);
+		} else {
+			dirPath = input;
+		}
+	} else {
+		if (input.endsWith(".json") || input.endsWith(".mjs")) {
+			dirPath = path.dirname(input);
+			fs.mkdirSync(dirPath, { recursive: true });
+		} else {
+			fs.mkdirSync(input, { recursive: true });
+			dirPath = input;
+		}
+	}
+
+	return path.join(dirPath, "verace.config.js");
 }
 
 const errorDeleteFile = (files: string[]): Promise<void> => {
@@ -125,12 +132,13 @@ const collectInfo = async () => {
 		delete userSelection.ts;
 	}
 
-	console.log(
+	log(
 		`Will create a project in ${path.dirname(
 			env.resolveFromRoot("verace.config.js")
 		)} with config:\n\n`
 	);
-	console.log(userSelection, "\n\n");
+	log(userSelection);
+	log("\n");
 
 	const { confirm } = await inquirer.prompt({
 		type: "list",
@@ -159,17 +167,24 @@ const createApiParser = z
 export type CreateApi = z.infer<typeof createApiParser>;
 
 export async function createApi(
-	config: unknown
+	config: unknown,
+	apiConfig: APICONFIG
 ): Promise<Result<null, string>> {
+	const env = envWrapper.getInstance();
+	const { log } = env;
 	const parsedConfig = zodWrapper(createApiParser, config);
 
 	if (parsedConfig.isErr()) {
 		return Err(parsedConfig.unwrapErr());
 	}
+
 	const userSelection: BaseConfig = {
 		...baseconfig,
 		...parsedConfig.unwrap(),
 	};
+
+	const newPath = pathWalk(apiConfig.path);
+	env.setConfigPath(newPath);
 
 	if (userSelection.lang == "ts") {
 		delete userSelection.go;
@@ -178,7 +193,15 @@ export async function createApi(
 	}
 
 	try {
-		await doCreation(config);
+		log(
+			`Will create a project in ${path.dirname(
+				env.resolveFromRoot("verace.config.js")
+			)} with config:\n\n`
+		);
+
+		log(userSelection);
+
+		// await doCreation(config);
 		return Ok(null);
 	} catch (e) {
 		return Err(e);

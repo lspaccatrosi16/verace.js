@@ -98,7 +98,7 @@ export default class VeraceApi {
 	async createExe(
 		config: CreateApi
 	): Promise<rustic.ResultEquipped<null, string>> {
-		const result = await createApi(config);
+		const result = await createApi(config, this.config);
 		return rustic.equip(result);
 	}
 

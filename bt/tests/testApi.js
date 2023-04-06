@@ -114,16 +114,15 @@ test.serial("Should only allow one execution at a time", t => {
 test.serial("Should create a verace typescript project successfuly", t => {
 	const createPath = join(tmpdir(), `verace-create`);
 
-	fs.rmSync(createPath, {
-		force: true,
-		recursive: true,
-	});
+	if (fs.existsSync(createPath)) {
+		fs.rmSync(createPath, { recursive: true, force: true });
+	}
 
 	fs.mkdirSync(createPath);
 
 	const tool = new api({
 		path: createPath,
-		verbose: false,
+		verbose: true,
 	});
 
 	const cfgResult = tool.setupEnvironment();
