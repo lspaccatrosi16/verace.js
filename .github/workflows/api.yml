@@ -1,5 +1,11 @@
 # Your GitHub workflow file under .github/workflows/
 
+on:
+    pull_request:
+        branches: ["master"]
+    commit:
+        branches: ["master", "newfeatures"]
+
 jobs:
     publish-docs:
         runs-on: ubuntu-latest
