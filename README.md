@@ -36,3 +36,7 @@ $ npx tp -p verace.js
 ```
 
 See the [specific docs](/docs/THREADING_POOLS.md) for more.
+
+## API Reference
+
+See the [full api reference](/docs/pages/index.md) for detailed information
