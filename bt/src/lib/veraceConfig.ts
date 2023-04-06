@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { z, ZodError } from "zod";
+import zodWrapper from "./zodParserWithResult";
 
 const hookDetails = z
 	.object({
@@ -98,16 +99,19 @@ export type BaseConfig = z.infer<typeof config>;
 
 export type HookField = z.infer<typeof hookField>;
 
+export type TSConfig = z.infer<typeof typeScriptConfig>;
+
+export type GoConfig = z.infer<typeof goConfig>;
+
 export const validate = (data: unknown): Promise<BaseConfig> => {
 	return new Promise((resolve, reject) => {
 		try {
-			const parsed = config.parse(data);
-			resolve(parsed);
+			const parseResult = zodWrapper(config, data);
+			resolve(parseResult.unwrap());
 			return;
 		} catch (e: any) {
 			const err = e as ZodError;
 			const error = `Error found whilst parsing verace.json :\n${err.toString()}`;
-
 			reject(error);
 			return;
 		}

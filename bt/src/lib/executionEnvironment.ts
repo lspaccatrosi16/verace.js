@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import rustic from "rustic";
 import type { Result } from "rustic";
 const { Err, Ok } = rustic;
-import type { APICONFIG } from "src/verace";
+import type { APICONFIG } from "src/api";
 import { LoggerType, make_logger } from "./log";
 import type { BaseConfig } from "./veraceConfig";
 
@@ -211,7 +211,11 @@ class InternalExecutionEnvironment {
 			parsedConfig: this._config,
 			configLocation: this._veraceConfigPath,
 			apiExecConfig: this.apiExecutionConfig,
-			configOverrides: this._configOverrides,
+			configOverrides: {
+				...this._configOverrides,
+				ts: { ...this._tsOverrides },
+				go: { ...this._goOverrides },
+			},
 			verbose: this._verboseMode,
 		};
 	}

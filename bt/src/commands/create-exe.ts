@@ -34,7 +34,13 @@ import envWrapper from "lib/executionEnvironment";
 
 import path from "path";
 
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Ok, Err } = rustic;
+
 import type { BaseConfig } from "lib/veraceConfig";
+import { z } from "zod";
+import zodWrapper from "src/lib/zodParserWithResult";
 
 export default function () {
 	const env = envWrapper.getInstance();
@@ -54,7 +60,7 @@ export default function () {
 					dirPath = input;
 				}
 			} else {
-				if (input.endsWith(".json")) {
+				if (input.endsWith(".json") || input.endsWith(".mjs")) {
 					dirPath = path.dirname(input);
 					fs.mkdirSync(dirPath, { recursive: true });
 				} else {
@@ -138,6 +144,50 @@ const collectInfo = async () => {
 		return;
 	}
 
+	doCreation(userSelection);
+	return;
+};
+
+const createApiParser = z
+	.object({
+		lang: z.union([z.literal("ts"), z.literal("go")]),
+		name: z.string(),
+		gomod: z.optional(z.string()),
+	})
+	.strict();
+
+export type CreateApi = z.infer<typeof createApiParser>;
+
+export async function createApi(
+	config: unknown
+): Promise<Result<null, string>> {
+	const parsedConfig = zodWrapper(createApiParser, config);
+
+	if (parsedConfig.isErr()) {
+		return Err(parsedConfig.unwrapErr());
+	}
+	const userSelection: BaseConfig = {
+		...baseconfig,
+		...parsedConfig.unwrap(),
+	};
+
+	if (userSelection.lang == "ts") {
+		delete userSelection.go;
+	} else if (userSelection.lang == "go") {
+		delete userSelection.ts;
+	}
+
+	try {
+		await doCreation(config);
+		return Ok(null);
+	} catch (e) {
+		return Err(e);
+	}
+}
+
+async function doCreation(userSelection: BaseConfig) {
+	const env = envWrapper.getInstance();
+	const { log } = env;
 	switch (userSelection.lang) {
 		case "go": {
 			try {
@@ -148,15 +198,21 @@ const collectInfo = async () => {
 
 				await fs.writeFile(env.resolveFromRoot("main.go"), goFile);
 				await fs.writeFile(env.resolveFromRoot(".gitignore"), goGI);
+
+				await fs.writeFile(
+					env.resolveFromRoot("verace.json"),
+					JSON.stringify(userSelection, null, "\t")
+				);
+
 				log().success("Successfully initialised the Go project");
-			} catch {
+			} catch (e) {
 				log().danger(
 					"Go binary could not be found on the current system."
 				);
 
 				await errorDeleteFile(["go.mod", "main.go", ".gitignore"]);
 
-				return;
+				throw e;
 			}
 			break;
 		}
@@ -178,6 +234,11 @@ const collectInfo = async () => {
 				await fs.writeFile(env.resolveFromRoot("src/index.ts"), tsFile);
 				await fs.writeFile(env.resolveFromRoot(".gitignore"), tsGI);
 
+				await fs.writeFile(
+					env.resolveFromRoot("verace.config.js"),
+					makeVeraceConfig(userSelection)
+				);
+
 				await log().success(
 					"Successfully initialised the Typescript project"
 				);
@@ -193,17 +254,9 @@ const collectInfo = async () => {
 					"package-lock.json",
 				]);
 
-				return;
+				throw e;
 			}
 			break;
 		}
 	}
-
-	await fs.writeFile(
-		env.resolveFromRoot("verace.config.js"),
-		makeVeraceConfig(userSelection)
-		// JSON.stringify(userSelection, null, "\t")
-	);
-
-	return;
-};
+}

@@ -1,43 +1,58 @@
 # Configuring
 
-All configuration for **Verace.js** lives in the `verace.json` file created in each project. Properties prepended with an asterisk are required.
+All configuration for **Verace.js** lives in the `verace config` file created in each project. Properties prepended with an asterisk are required. The config file can be in two forms: as a `.json` file, or in a `.mjs` file. The default option is the `.mjs` solution as it provides robust typing. The `.json` may be useful in situations in which dynamic config generation is needed.
+
+### `verace.config.mjs`
+
+```js
+import { defineConfig } from "verace.js/helpers";
+
+export default defineConfig({
+	lang: "ts",
+	name: "verace",
+	version: "0.0.2",
+	targets: ["win64", "linux64"],
+	data: {
+		foo: "bar",
+	},
+	hooks: {
+		preBuild: "echo hello there",
+		postBuild: {
+			command: "echo general kenobi",
+		},
+		prePkg: {
+			file: "myhook.js",
+		},
+	},
+	entrypoint: "src/index.ts",
+	outDir: "bin",
+	ts: {
+		skipPkg: true,
+		cleanAfterBuild: true,
+		produceTypes: true,
+		buildDir: "tsc-build",
+		test: "npx c8 ava",
+		assets: "assets",
+		noBytecode: false,
+	},
+	go: {
+		gomod: "lspaccatrosi16/verace.js",
+	},
+});
+```
+
+### `verace.json`
 
 ```jsonc
-//verace.json
+//verace config
 {
 	"lang": "ts",
-	"name": "verace",
-	"version": "0.0.2",
-	"targets": ["win64", "linux64"],
-	"data": {
-		"foo": "bar"
-	},
-	"hooks": {
-		"preBuild": "echo hello there",
-		"postBuild": {
-			"command": "echo general kenobi"
-		},
-		"prePkg": {
-			"file": "myhook.js"
-		}
-	},
-	"entrypoint": "src/index.ts",
-	"outDir": "bin",
-	"ts": {
-		"skipPkg": true,
-		"cleanAfterBuild": true,
-		"produceTypes": true,
-		"buildDir": "tsc-build",
-		"test": "npx c8 ava",
-		"assets": "assets"
-	},
-	"go": {
-		"gomod": "lspaccatrosi16/verace.js"
-	}
+	"name": "verace"
+	//Rest of the configuration etc.
 }
 ```
 
-> **Note** <br /> > **Verace.js** will not allow building or running if there are errors in `verace.json` . You should make sure that any custom keys lie in the [ `data` ](#implementation-details) attribute (see below).
+> **Note** <br /> > **Verace.js** will not allow building or running if there are errors in your verace config . You should make sure that any custom keys lie in the `data` attribute (see below).
 
 ---
 
@@ -275,6 +290,28 @@ Static assets can be embedded into the binary for one-file packaging. They shoul
 <td>
 
 `assets`
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+`noBytecode`
+
+</td>
+
+<td>
+
+This corresponds to the `pkg` options of `--public --no-bytecode`. It should be set if dynamic `import()` statements are used in the code [due to a bug in v8 itself](https://github.com/vercel/pkg/issues/1603#issuecomment-1229274700)
+
+</td>
+
+<td>
+
+`false`
 
 </td>
 

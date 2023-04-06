@@ -25,7 +25,7 @@ $ npx esbuild ${buildDir}/index.js --outfile="build/veraceTemp.cjs" --bundle --p
 //build/index.cjs
 
 const exec = require("./veraceTemp.cjs");
-const config = require("../verace.json");
+const config = require("../verace config");
 
 exec.default(config);
 ```

@@ -2,7 +2,7 @@
 
 ## Data Embedding
 
-**Verace.js** is designed in a way that lets custom data be embedded at compile-time. The most obvious example of this is the `version`, and `name`fields which are present in every program in the [`verace.json`](/docs/bt/CONFIGURING.md).
+**Verace.js** is designed in a way that lets custom data be embedded at compile-time. The most obvious example of this is the `version`, and `name`fields which are present in every program in the [`verace config`](/docs/bt/CONFIGURING.md).
 
 ### Data embedding in Typescipt
 
@@ -43,7 +43,7 @@ Data will always be given in JS Object format
 
 ### Data embedding in Go
 
-Data embedding in Go is more conventional: the core `embed` library is used which provided `//go:embed` directives. This gives the additonal flexibility which allows the data embedding to be in a separate file, as all it requires is the `//go:embed` directive to point to [ `verace.json` ](/docs/bt/CONFIGURING.md). The data then needs to be unmarshaled:
+Data embedding in Go is more conventional: the core `embed` library is used which provided `//go:embed` directives. This gives the additonal flexibility which allows the data embedding to be in a separate file, as all it requires is the `//go:embed` directive to point to [ `verace config` ](/docs/bt/CONFIGURING.md). The data then needs to be unmarshaled:
 
 ```go
 //main.go
@@ -55,7 +55,7 @@ import (
     "fmt"
 )
 
-//go:embed verace.json
+//go:embed verace config
 var veraceJSON []byte
 //The data is embedded as a byte array
 
@@ -89,7 +89,7 @@ A basic API is additionally exposed when imported.
 import api from "verace.js/bt";
 
 await api({
-	path: "./examples/go-example/verace.json",
+	path: "./examples/go-example/verace config",
 	command: "build-exe",
 	verbose: false,
 }).then(res => {
@@ -103,7 +103,7 @@ The action to run. Can be any command runable from the normal CLI.
 
 ##### `path`
 
-The (relative) path to the [ `verace.json` ](/docs/bt/CONFIGURING.md) file of the project.
+The (relative) path to the [ `verace config` ](/docs/bt/CONFIGURING.md) file of the project.
 
 ##### `verbose`
 

@@ -104,14 +104,14 @@ The Verace.js CLI Toolchain
 
 Options:
   -V, --version           output the version number
-  -p --path <path>        Path to verace.json file.
+  -p --path <path>        Path to verace config file.
   -v --verbose            Provides verbose logs
   -h, --help              display help for command
 
 Commands:
   help                    Shows this message
   create-exe              Creates an executable.
-  build-exe [options]     Builds the project according to the verace.json file
+  build-exe [options]     Builds the project according to the verace config file
   run-exe [arguments...]  Runs the current project
   version                 Manage package versions
 
@@ -125,7 +125,7 @@ Verace.js CLI exited without errors.
 
 ##### `-p, --path <path>`
 
-Set this to the path to the `verace.json` file for operations on projects that are not in the current directory. If unset, `./verace.json` will be used instead.
+Set this to the path to the [verace config](/docs/bt/CONFIGURING.md) file for operations on projects that are not in the current directory.
 
 ##### `-v --verbose`
 
@@ -141,7 +141,7 @@ Creates a new project with a dialog.
 
 ##### `-p --path <path>`
 
-Can either be set to a folder, or a verace.json file. If the folder does not exist, it will be automatically created.
+Can either be set to a folder, or a verace config file. If the folder does not exist, it will be automatically created.
 
 ### `build-exe`
 
@@ -161,7 +161,7 @@ Runs the current project without creating a permanent build.
 
 ### `version`
 
-**Verace.js** uses [ `semver` ](https://github.com/npm/node-semver) versioning to manage individual project versions. The version is stored in the `version` field of [ `verace.json` ](/docs/bt/CONFIGURING.md), and passed to each program in its [environment data](/docs/bt/ADVANCED_USAGE.md#data-embedding). It can be managed with:
+**Verace.js** uses [ `semver` ](https://github.com/npm/node-semver) versioning to manage individual project versions. The version is stored in the `version` field of [ `verace config` ](/docs/bt/CONFIGURING.md), and passed to each program in its [environment data](/docs/bt/ADVANCED_USAGE.md#data-embedding). It can be managed with:
 
 ## See More
 
