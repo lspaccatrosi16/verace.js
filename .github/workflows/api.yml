@@ -3,7 +3,7 @@
 on:
     pull_request:
         branches: ["master"]
-    commit:
+    push:
         branches: ["master", "newfeatures"]
 
 jobs:
