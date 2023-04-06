@@ -57,6 +57,7 @@ const typeScriptConfig = z
 		skipPkg: z.boolean().default(false),
 		test: z.string().default(""),
 		assets: z.string().default("assets"),
+		noBytecode: z.boolean().default(false),
 	})
 	.strict();
 

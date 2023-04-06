@@ -16,7 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
 
-import { execSync, spawnSync } from "child_process";
+import { execSync } from "child_process";
 import fs from "fs-extra";
 import { handleExecError } from "lib/common";
 import envWrapper from "lib/executionEnvironment";
@@ -25,8 +25,13 @@ import path from "path";
 
 import type { HookField } from "lib/veraceConfig";
 import cjsTranslate from "./cjs-translate";
-
-export const parseHook = async (hook: HookField, args = "") => {
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, Ok } = rustic;
+export const parseHook = async (
+	hook: HookField,
+	args = ""
+): Promise<Result<boolean, string>> => {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	log().verbose("Parsing hook");
@@ -43,13 +48,13 @@ export const parseHook = async (hook: HookField, args = "") => {
 				const fp = env.resolveFromRoot(hook.file);
 
 				if (!fp.endsWith("js")) {
-					throw new Error(
+					return Err(
 						`Hook file must be plain js: ${env.absolutePath(fp)}`
 					);
 				}
 
 				if (!fs.existsSync(fp)) {
-					throw new Error(
+					return Err(
 						`Path not found for hook running ${env.absolutePath(
 							fp
 						)}`
@@ -60,8 +65,8 @@ export const parseHook = async (hook: HookField, args = "") => {
 
 					if (hook.file.endsWith("js"))
 						await execJsHookFork(hook.file, args);
-				} catch {
-					return false;
+				} catch (e) {
+					return Err(e);
 				}
 			} else if (hook.command && hook.command != "") {
 				log().verbose("Command field given");
@@ -70,11 +75,10 @@ export const parseHook = async (hook: HookField, args = "") => {
 			}
 		}
 
-		return true;
+		return Ok(true);
 	} catch (e) {
 		log().danger("Error executing hook.");
-		if (e) console.log(e);
-		return false;
+		return Err(e);
 	}
 };
 

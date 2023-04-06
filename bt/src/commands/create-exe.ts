@@ -25,6 +25,7 @@ import {
 	goFile,
 	goGI,
 	makePackageJson,
+	makeVeraceConfig,
 	tsConfig,
 	tsFile,
 	tsGI,
@@ -62,7 +63,7 @@ export default function () {
 				}
 			}
 
-			const newPath = path.join(dirPath, "verace.json");
+			const newPath = path.join(dirPath, "verace.config.js");
 
 			env.setConfigPath(newPath);
 		}
@@ -112,9 +113,15 @@ const collectInfo = async () => {
 
 	const userSelection: BaseConfig = { ...baseconfig, ...answers };
 
+	if (userSelection.lang == "ts") {
+		delete userSelection.go;
+	} else if (userSelection.lang == "go") {
+		delete userSelection.ts;
+	}
+
 	console.log(
 		`Will create a project in ${path.dirname(
-			env.resolveFromRoot("verace.json")
+			env.resolveFromRoot("verace.config.js")
 		)} with config:\n\n`
 	);
 	console.log(userSelection, "\n\n");
@@ -193,8 +200,9 @@ const collectInfo = async () => {
 	}
 
 	await fs.writeFile(
-		env.resolveFromRoot("verace.json"),
-		JSON.stringify(userSelection, null, "\t")
+		env.resolveFromRoot("verace.config.js"),
+		makeVeraceConfig(userSelection)
+		// JSON.stringify(userSelection, null, "\t")
 	);
 
 	return;

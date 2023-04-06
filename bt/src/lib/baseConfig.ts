@@ -16,11 +16,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
 
+import { inspect } from "util";
 import type { BaseConfig } from "./veraceConfig";
 
 //CORE
 export const baseconfig: BaseConfig = {
-	lang: "ts",
 	name: "my-project",
 	version: "0.0.1",
 	targets: ["win64", "linux64"],
@@ -143,3 +143,12 @@ export const makePackageJson = (bc: BaseConfig) => {
 
 	return baseConfig;
 };
+
+export function makeVeraceConfig(userChoice: BaseConfig) {
+	return `
+import { defineConfig } from "verace.js/helpers";
+
+export default defineConfig(
+  ${inspect(userChoice, false, null, false)}
+);`;
+}

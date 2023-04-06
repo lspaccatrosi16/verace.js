@@ -2,16 +2,11 @@
 	"compilerOptions": {
 		"outDir": "tsc-build",
 		"baseUrl": "./src",
-		"typeRoots": [
-			"src/types",
-			"node_modules/@types"
-		],
+		"typeRoots": ["src/types", "node_modules/@types"],
 		"sourceMap": false,
 		"declaration": true,
 		"allowSyntheticDefaultImports": true,
-		"lib": [
-			"ES2021"
-		],
+		"lib": ["ES2021"],
 		"module": "ES2022",
 		"moduleResolution": "node",
 		"target": "ES2021",
@@ -23,12 +18,8 @@
 		"allowJs": true,
 		"checkJs": true,
 		"paths": {
-			"src/*": [
-				"*"
-			]
+			"src/*": ["*"]
 		}
 	},
-	"include": [
-		"src"
-	]
+	"include": ["src"]
 }

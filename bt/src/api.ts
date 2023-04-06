@@ -19,9 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { api } from "verace";
 import type { APICONFIG } from "verace";
 import type { APIResult } from "lib/executionEnvironment";
+import type { BaseConfig } from "./lib/veraceConfig";
 
 export default function (config: APICONFIG, test: boolean): Promise<APIResult> {
 	return new Promise((resolve, reject) => {
 		api(config, test).then(resolve).catch(reject);
 	});
 }
+
+export { BaseConfig };

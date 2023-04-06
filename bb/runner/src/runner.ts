@@ -1,10 +1,11 @@
-import { input, output, rmD } from "./io";
+import { output, rmD } from "./io";
 
 import directory from "./directory";
 
+import worker from "worker";
+
 import ThreadPool, { Fork } from "../../../tp/tsc-build/api";
 
-import path from "path";
 import type { OutputBackend, WorkerReturn } from "./types";
 
 export default async function (backend: OutputBackend, fileName?: string) {
@@ -21,13 +22,7 @@ export default async function (backend: OutputBackend, fileName?: string) {
 		console.log("No filepath provided. Running in directory compile mode.");
 		//Directory compile mode:
 
-		const workerFilePath = path.join(
-			__dirname,
-			"assets/blog-build-worker.cjs"
-		);
-		// const worker = fs.readFileSync(workerFilePath);
-		const worker = input(workerFilePath);
-		output("worker.cjs", worker);
+		output("worker.cjs", Buffer.from(worker, "base64").toString("ascii"));
 
 		rmD("pages/blog");
 

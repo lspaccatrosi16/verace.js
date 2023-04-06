@@ -25,6 +25,11 @@ import { parseConfig } from "lib/parseConfig";
 import { parseHook } from "lib/hooks";
 
 import type { BaseConfig } from "lib/veraceConfig";
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, isOk, Ok } = rustic;
+
+import { infallablePromise } from "src/lib/infallable";
 export default function () {
 	const env = envWrapper.getInstance();
 
@@ -67,12 +72,16 @@ const wrapBuild = (): Promise<void> => {
 		const env = envWrapper.getInstance();
 
 		build()
-			.then((cfg: BaseConfig) => {
+			.then(cfg => {
+				if (!isOk(cfg)) {
+					reject(cfg.data);
+					return;
+				}
 				if (env.apiMode) {
 					env.setApiResult({
 						command: "build-exe",
 						success: true,
-						config: cfg,
+						config: cfg.data,
 					});
 					resolve();
 				}
@@ -85,22 +94,28 @@ const wrapBuild = (): Promise<void> => {
 	});
 };
 
-const build = (): Promise<BaseConfig> => {
+const build = (): Promise<Result<BaseConfig, string>> => {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	log().verbose("Build starting");
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
 		parseConfig("Build")
-			.then(() => {
+			.then((result): Promise<Result<boolean, string>> => {
+				if (!isOk(result)) {
+					resolve(Err(result.data));
+					return;
+				}
 				log().verbose("Parsed Config");
 				const { config: cfg } = env;
 				if (cfg.hooks && cfg.hooks.preBuild != "")
 					return parseHook(cfg.hooks.preBuild);
-				else return true;
+				else return infallablePromise<boolean>(true);
 			})
-			.then((status: boolean) => {
+			.then((status: Result<boolean, string>) => {
+				if (!isOk(status)) {
+					resolve(Err("Prebuild hook not completed successfully"));
+				}
 				log().verbose("Prebuild hook dealt with");
-
 				if (!status) return;
 				const { config: cfg } = env;
 				switch (cfg.lang) {
@@ -112,11 +127,11 @@ const build = (): Promise<BaseConfig> => {
 								log().verbose("TS build done");
 								if (cfg.hooks && cfg.hooks.postBuild != "")
 									parseHook(cfg.hooks.postBuild).then(() =>
-										resolve(cfg)
+										resolve(Ok(cfg))
 									);
-								else resolve(cfg);
+								else resolve(Ok(cfg));
 							})
-							.catch(reject);
+							.catch(e => resolve(Err(e)));
 						break;
 					}
 					case "go": {
@@ -127,18 +142,17 @@ const build = (): Promise<BaseConfig> => {
 								log().verbose("Go build done");
 								if (cfg.hooks && cfg.hooks.postBuild != "")
 									parseHook(cfg.hooks.postBuild).then(() =>
-										resolve(cfg)
+										resolve(Ok(cfg))
 									);
-								else resolve(cfg);
+								else resolve(Ok(cfg));
 							})
-							.catch(reject);
+							.catch(e => resolve(Err(e)));
 						break;
 					}
 				}
 			})
 			.catch(e => {
-				log().danger(e);
-				throw new Error();
+				resolve(Err(e));
 			});
 	});
 };

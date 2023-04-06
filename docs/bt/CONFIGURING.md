@@ -79,7 +79,7 @@ All configuration for **Verace.js** lives in the `verace.json` file created in e
 </td>
 <td>
 
-The semver package version. See [versioning](/README.md#version) for more details.
+The semver package version. See [version](/docs/BUILD_TOOL.md#version) for more details.
 
 </td>
 <td>x</td>
@@ -105,7 +105,7 @@ The semver package version. See [versioning](/README.md#version) for more detail
 </td>
 <td>
 
-Data passed in any format. See [environment data](/docs/ADVANCED_USAGE.md#data-embedding) for more details.
+Data passed in any format. See [environment data](/docs/bt/ADVANCED_USAGE.md#data-embedding) for more details.
 
 </td>
 <td>x</td>
@@ -118,7 +118,7 @@ Data passed in any format. See [environment data](/docs/ADVANCED_USAGE.md#data-e
 </td>
 <td>
 
-Sometimes, it is convenient to have code automatically run directly before, or directly after the build process. This can be achieved with using build hooks: Like `npm` scripts, build hooks can be any command, or set of commands. Either a plain string, or an object can be passed to each hook. The object can take either a path to a javascript file (`file`) or a plain command (`command`). The `prePkg` script only applies when building typescript projects, and is applied before the `pkg` step. [See more](/docs/BUILD_PIPELINES.md#build-pipelines)
+Sometimes, it is convenient to have code automatically run directly before, or directly after the build process. This can be achieved with using build hooks: Like `npm` scripts, build hooks can be any command, or set of commands. Either a plain string, or an object can be passed to each hook. The object can take either a path to a javascript file (`file`) or a plain command (`command`). The `prePkg` script only applies when building typescript projects, and is applied before the `pkg` step. [See more](/docs/bt/BUILD_PIPELINES.md#build-pipelines)
 
 </td>
 <td>
@@ -250,7 +250,7 @@ Allows `d.ts` files to be produced. `cleanAfterBuild` must be disabled to make a
 </td>
 <td>
 
-Similar to build hooks in purpose. Instead of being run before/after the build process, the command is run after the initial `tsc` stage before the files are bundled (see the [Typescript build pipeline](/docs/BUILD_PIPELINES.md#the-typescript-build-pipeline) for more details)
+Similar to build hooks in purpose. Instead of being run before/after the build process, the command is run after the initial `tsc` stage before the files are bundled (see the [Typescript build pipeline](/docs/bt/BUILD_PIPELINES.md#the-typescript-build-pipeline) for more details)
 
 </td>
 <td>

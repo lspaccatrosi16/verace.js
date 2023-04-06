@@ -7,8 +7,8 @@ import type {
 } from "./types";
 
 export default class {
-	filename?: string;
-	backend?: OutputBackend;
+	private filename?: string;
+	private backend?: OutputBackend;
 	constructor(filename?: string) {
 		this.filename = filename;
 	}

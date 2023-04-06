@@ -22,8 +22,9 @@
   "type": "module",
   "exports": {
     "./bt": "./bt/tsc-build/api.js",
+    "./helpers": "./helpers/tsc-build/api.js",
     "./tp": "./tp/tsc-build/api.js",
-    "./bb": "./bb/tsc-build/api.js"
+    "./bb": "./bb/runner/tsc-build/api.js"
   },
   "typesVersions": {
     "*": {
@@ -34,7 +35,10 @@
         "./tp/tsc-build/api.d.ts"
       ],
       "bb": [
-        "./bb/tsc-build/api.d.ts"
+        "./bb/runner/tsc-build/api.d.ts"
+      ],
+      "helpers": [
+        "./helpers/tsc-build/api.d.ts"
       ]
     }
   },
@@ -45,9 +49,10 @@
   "scripts": {
     "build:ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
     "lint": "prettier --write tp/src bt/src",
-    "test": "npm run test:bt && npm run test:tp",
+    "test": "npm run test:bt && npm run test:tp && npm run test:helpers",
     "test:bt": "cd examples/ts-example && npm ci && cd ../.. && c8 ava bt/tests",
     "test:tp": "cd tp && c8 ava tests",
+    "test:helpers": "cd helpers && c8 ava tests",
     "dep": "cd bt && npm i && cd ../tp && npm i",
     "vhs": "vhs vhs/create-exe.tape"
   },
@@ -59,6 +64,7 @@
     "figlet": "^1.5.2",
     "fs-extra": "^11.1.0",
     "inquirer": "^9.1.4",
+    "rustic": "^1.2.2",
     "semver": "^7.3.8",
     "spinnies": "^0.5.1",
     "tsc-alias": "^1.8.2",

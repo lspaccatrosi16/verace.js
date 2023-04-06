@@ -22,7 +22,9 @@ import GetExecutionEnv from "./executionEnvironment";
 import os from "os";
 import child_process from "child_process";
 import * as url from "url";
-
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, Ok } = rustic;
 export default function (infile: string, outfile: string) {
 	switch (process.platform) {
 		case "win32":
@@ -35,7 +37,11 @@ export default function (infile: string, outfile: string) {
 	}
 }
 
-const runTranslate = (fn: string, infile: string, outfile: string) => {
+const runTranslate = (
+	fn: string,
+	infile: string,
+	outfile: string
+): Result<null, string> => {
 	const env = GetExecutionEnv.getInstance();
 	const { log } = env;
 	let dn = "";
@@ -71,7 +77,8 @@ const runTranslate = (fn: string, infile: string, outfile: string) => {
 			{ stdio: "inherit" }
 		);
 		fs.rmSync(tempPath, { force: true });
+		return Ok(null);
 	} else {
-		throw new Error("Could not resolve go helper bin");
+		return Err("Could not resolve go helper bin");
 	}
 };

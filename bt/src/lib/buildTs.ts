@@ -39,6 +39,10 @@ const spinnies = new Spinnies({
 	succeedColor: "white",
 });
 
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, Ok } = rustic;
+
 const cleanUp = (config: BaseConfig) => {
 	if (config.ts.cleanAfterBuild && fs.existsSync("tsc-build"))
 		fs.rmSync("tsc-build", { recursive: true, force: true });
@@ -59,7 +63,7 @@ const cleanUp = (config: BaseConfig) => {
 };
 import type { baseconfig } from "./baseConfig";
 import cjsTranslate from "./cjs-translate";
-export default function (): Promise<void> {
+export default function (): Promise<Result<void, string>> {
 	const env = envWrapper.getInstance();
 	const { config, log } = env;
 	return new Promise((resolve, reject) => {
@@ -95,11 +99,19 @@ export default function (): Promise<void> {
 
 					if (testRes.error) {
 						console.log(testRes.error);
-						throw new Error("Test failure");
+						resolve(Err("Test failure"));
+						return;
 					} else {
 						console.log(testRes.output.toString().trim());
 
-						if (testRes.status != 0) throw testRes.status;
+						if (testRes.status != 0) {
+							resolve(
+								Err(
+									`Test finished with status code ${testRes.status}`
+								)
+							);
+							return;
+						}
 					}
 				}
 
@@ -150,7 +162,7 @@ export default function (): Promise<void> {
 				spinnies.succeed("esb");
 
 				if (config.ts.skipPkg) {
-					resolve();
+					resolve(Ok(null));
 					return;
 				}
 
@@ -172,21 +184,19 @@ export default function (): Promise<void> {
 								"All targets built for successfully."
 							);
 							cleanUp(config);
-							resolve();
+							resolve(Ok(null));
 							return;
 						});
 				} catch (e) {
-					throw e;
+					resolve(Err(e));
+					return;
 				}
 			} catch (e) {
 				handleExecError(e, env);
-				reject(e);
-
 				cleanUp(config);
-
-				reject(e);
+				resolve(Err(e));
 			}
-		} else reject(`entrypoint ${indexTsPath} was not found`);
+		} else resolve(Err(`entrypoint ${indexTsPath} was not found`));
 		return;
 	});
 }
@@ -214,7 +224,13 @@ const buildUniv = (target: (typeof baseconfig.targets)[0]): Promise<void> => {
 				spinnies.add("builduniv", { text: `Building for ${target}` });
 
 				runShellCmd(
-					`cd ${env.wk} && npx pkg dist/"${config.name}.cjs" -o ${config.outDir}/${config.name} -C Gzip -t ${pkgTarget} -c dist/pkg.config.json`,
+					`cd ${env.wk} && npx pkg dist/"${config.name}.cjs" -o ${
+						config.outDir
+					}/${
+						config.name
+					} -C Gzip -t ${pkgTarget} -c dist/pkg.config.json${
+						config.ts.noBytecode ? " --public --no-bytecode" : ""
+					}`,
 					"builduniv",
 					spinnies
 				)

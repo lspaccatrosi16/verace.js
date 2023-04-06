@@ -15,7 +15,9 @@
 	},
 	"go": {},
 	"hooks": {
-		"preBuild": "cp ../worker/dist/blog-build-worker.cjs assets",
+		"preBuild": {
+			"file": "hooks/prebuild.js"
+		},
 		"postBuild": "",
 		"prePkg": ""
 	}

@@ -1,7 +1,5 @@
 //See https://github.com/lspaccatrosi16/verace.js/#readme for detailed documentation
 
-import "api";
-
 export interface VeraceEnv {
 	name: string;
 	version: string;
