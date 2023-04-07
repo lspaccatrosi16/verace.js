@@ -47,19 +47,20 @@
 		"verace": "./bt/dist/verace.cjs"
 	},
 	"scripts": {
-		"build:ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
+		"build:bt": "cd bt && verace build",
+		"build:helpers": "cd helpers && verace build",
+		"build:tp": "cd tp && verace build",
+		"build": "run-s build:**",
+		"ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
+		"dep": "npm i",
+		"doc": "typedoc",
 		"lint": "prettier --write tp/src bt/src helpers/src",
-		"test": "run-s test:**",
+		"predep": "npm run lint && npm run build && npm run test && npm run vhs && npm run doc",
 		"test:bt": "cd examples/ts-example && npm ci && cd ../.. && cd bt && c8 ava tests",
-		"test:tp": "cd tp && c8 ava tests",
 		"test:helpers": "cd helpers && c8 ava tests",
-		"dep": "cd bt && npm i && cd ../tp && npm i",
-		"vhs": "vhs vhs/create-exe.tape",
-		"api": "run-s api:** && api-documenter markdown -i api-report -o markdown",
-		"api:bt": "cd bt && api-extractor run --local -c api-extractor.json",
-		"api:helpers": "cd helpers && api-extractor run --local -c api-extractor.json",
-		"api:tp": "cd tp && api-extractor run --local -c api-extractor.json",
-		"predep": "npm run lint && npm run test && npm run vhs && npm run api"
+		"test:tp": "cd tp && c8 ava tests",
+		"test": "run-s test:**",
+		"vhs": "vhs vhs/create-exe.tape"
 	},
 	"dependencies": {
 		"arcsecond": "^5.0.0",
@@ -73,14 +74,10 @@
 		"semver": "^7.3.8",
 		"spinnies": "^0.5.1",
 		"tsc-alias": "^1.8.2",
-		"typedoc-plugin-missing-exports": "^1.0.0",
-		"typedoc-plugin-zod": "^1.0.1",
 		"zod": "^3.21.0"
 	},
 	"devDependencies": {
-		"@convex-dev/typedoc-plugin-markdown": "^3.14.0",
-		"@microsoft/api-documenter": "^7.21.7",
-		"@microsoft/api-extractor": "^7.34.4",
+		"@knodes/typedoc-plugin-pages": "^0.23.2",
 		"@mxssfd/typedoc-theme": "^1.0.6",
 		"@types/figlet": "^1.5.5",
 		"@types/fs-extra": "^9.0.13",
@@ -94,6 +91,8 @@
 		"pkg": "^5.8.0",
 		"prettier": "^2.8.4",
 		"typedoc": "^0.23.28",
+		"typedoc-plugin-missing-exports": "^1.0.0",
+		"typedoc-plugin-zod": "^1.0.1",
 		"typescript": "^4.9.4"
 	},
 	"engines": {

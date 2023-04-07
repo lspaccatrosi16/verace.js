@@ -3,7 +3,7 @@ Set Width 1600
 Set Height 900
 Set TypingSpeed 200ms 
 Set PlaybackSpeed 0.8
-Output docs/images/create-exe.gif
+Output media/create-exe.gif
 
 Hide
 Type "rm vhs-temp -rf"
