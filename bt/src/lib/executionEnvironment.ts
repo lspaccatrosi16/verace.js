@@ -16,9 +16,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 */
 
-import type { APICONFIG } from "src/verace";
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, Ok } = rustic;
+import type { APICONFIG } from "src/api_int";
 import { LoggerType, make_logger } from "./log";
 import type { BaseConfig } from "./veraceConfig";
+
+import fs from "fs-extra";
 
 import path from "path";
 
@@ -45,7 +50,9 @@ export default class GetExecutionEnv {
 	}
 
 	static purge() {
-		console.log(`Purging execution instance. ID: ${this.instance.id}`);
+		this.instance.log(
+			`Purging execution instance. ID: ${this.instance.id}`
+		);
 		this.instance = null;
 	}
 }
@@ -57,7 +64,7 @@ class InternalExecutionEnvironment {
 	private _apiMode: boolean;
 	private _config: BaseConfig;
 	private _apiExecutionConfig: APICONFIG;
-	private _veraceConfigPath: string = "./verace.json";
+	private _veraceConfigPath = "";
 	private _skipTest = false;
 	private _setupDone = false;
 	private _apiResult: APIResult;
@@ -67,16 +74,22 @@ class InternalExecutionEnvironment {
 	private _goOverrides = {};
 	private _verboseMode: boolean;
 
-	setupInstance(testMode: boolean, apiMode: boolean, verboseMode: boolean) {
+	setupInstance(
+		testMode: boolean,
+		apiMode: boolean,
+		verboseMode: boolean
+	): Result<void, string> {
 		if (!this._setupDone) {
-			console.log(`Setting up execution instance. ID: ${this._id}`);
 			const log = make_logger(testMode, apiMode, verboseMode);
 			this._log = log;
+			this._log(`Setting up execution instance. ID: ${this._id}`);
 			this._apiMode = apiMode;
 			this._setupDone = true;
 			this._verboseMode = true;
+			this.detectConfigType();
+			return Ok(null);
 		} else {
-			throw new Error(
+			return Err(
 				"Can't create more than one instance at a time. Ensure that the promise to the previous api action is resolved before trying again ID: " +
 					this._id
 			);
@@ -105,9 +118,18 @@ class InternalExecutionEnvironment {
 	}
 
 	setConfigPath(cpath: string) {
-		this._veraceConfigPath = cpath;
+		this._veraceConfigPath = cpath; // Detech whether is using a js or a json config and then test with bb
 
 		this._log(`Config path: ${this.absolutePath(cpath)}. ID: ${this._id}`);
+	}
+
+	detectConfigType() {
+		//defineconfig or json
+		if (fs.existsSync(this.absolutePath("verace.config.mjs"))) {
+			this.setConfigPath("verace.config.mjs");
+		} else if (fs.existsSync(this.absolutePath("verace.json"))) {
+			this.setConfigPath("verace.json");
+		}
 	}
 
 	setSkipTest(skip: boolean) {
@@ -165,8 +187,15 @@ class InternalExecutionEnvironment {
 		return dn;
 	}
 
-	get confPath() {
-		return this._veraceConfigPath;
+	get confPath(): Result<string, string> {
+		if (
+			typeof this._veraceConfigPath == "string" &&
+			this._veraceConfigPath != ""
+		) {
+			return Ok(this._veraceConfigPath);
+		} else {
+			return Err("No config path was provided");
+		}
 	}
 
 	get skipTest() {
@@ -184,7 +213,11 @@ class InternalExecutionEnvironment {
 			parsedConfig: this._config,
 			configLocation: this._veraceConfigPath,
 			apiExecConfig: this.apiExecutionConfig,
-			configOverrides: this._configOverrides,
+			configOverrides: {
+				...this._configOverrides,
+				ts: { ...this._tsOverrides },
+				go: { ...this._goOverrides },
+			},
 			verbose: this._verboseMode,
 		};
 	}

@@ -17,15 +17,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import fs from "fs-extra";
-import path from "path";
-import { BaseConfig, validate } from "./veraceConfig";
+import { validate } from "./veraceConfig";
 import envWrapper from "lib/executionEnvironment";
-
-export function parseConfig(command: string): Promise<void> {
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { Err, isOk, Ok } = rustic;
+export function parseConfig(command: string): Promise<Result<void, string>> {
 	const env = envWrapper.getInstance();
 	const { log } = env;
 	return new Promise((resolve, reject) => {
-		const expectedPath = env.absolutePath(env.confPath);
+		const cpath = env.confPath;
+		if (!isOk(cpath)) {
+			reject("No config path provided and could not detect one");
+			return;
+		}
+		const expectedPath = env.absolutePath(cpath.data);
 
 		if (!fs.existsSync(expectedPath)) {
 			reject("not found: " + expectedPath);
@@ -38,11 +44,10 @@ export function parseConfig(command: string): Promise<void> {
 		}
 
 		try {
-			const unparsed: unknown = JSON.parse(
-				fs.readFileSync(expectedPath).toString()
-			);
-
-			validate(unparsed)
+			findConfig(expectedPath)
+				.then((unparsed: unknown) => {
+					return validate(unparsed);
+				})
 				.then(config => {
 					log().multi([
 						[log().info().context, `${command}: `],
@@ -51,16 +56,47 @@ export function parseConfig(command: string): Promise<void> {
 
 					env.setConfig(config);
 
-					resolve();
+					resolve(Ok(null));
 					return;
 				})
 				.catch(e => {
-					reject(e);
+					resolve(Err(e));
 					return;
 				});
 		} catch (e) {
-			if (e) log().danger(e.toString());
-			reject(e);
+			resolve(Err(e));
+			return;
+		}
+	});
+}
+
+function findConfig(expectedPath: string): Promise<unknown> {
+	return new Promise((resolve, reject) => {
+		if (expectedPath.endsWith(".json")) {
+			resolve(JSON.parse(fs.readFileSync(expectedPath).toString()));
+		} else if (expectedPath.endsWith(".mjs")) {
+			console.log("thinking about importing it");
+			import(expectedPath)
+				.then((unparsed: undefined | Record<string, unknown>) => {
+					console.log("Imported file");
+					if (
+						typeof unparsed != "undefined" &&
+						"default" in unparsed
+					) {
+						resolve(unparsed.default);
+					} else {
+						reject(
+							"Must use the defineConfig function for a js config file and default export it"
+						);
+					}
+				})
+				.catch(e => {
+					reject(e);
+				});
+		} else {
+			reject(
+				`config file must either be a .js or a .json, not: ${expectedPath}`
+			);
 			return;
 		}
 	});

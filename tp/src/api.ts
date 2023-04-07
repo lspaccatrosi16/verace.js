@@ -17,8 +17,22 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import ThreadPool from "./lib/threadPool";
-import type { Fork, OptionalConfig } from "./lib/threadPool";
+import type {
+	Fork,
+	OptionalConfig,
+	PromiseResolver,
+	PromiseRejecter,
+	Worker,
+	InteralConfig,
+} from "./lib/threadPool";
 
 export default ThreadPool;
 
-export type { Fork, OptionalConfig };
+export type {
+	Fork,
+	OptionalConfig,
+	PromiseResolver,
+	PromiseRejecter,
+	Worker,
+	InteralConfig,
+};

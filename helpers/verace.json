@@ -1,0 +1,9 @@
+{
+	"name": "helper",
+	"version": "1.0.2",
+	"targets": ["win64", "linux64"],
+	"ts": {
+		"produceTypes": true
+	},
+	"lang": "ts"
+}

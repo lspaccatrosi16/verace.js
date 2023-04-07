@@ -1,0 +1,44 @@
+{
+	"entryPointStrategy": "packages",
+	"entryPoints": ["./bt", "./helpers", "./tp"],
+	"out": "docgen",
+	"plugin": [
+		"typedoc-plugin-zod",
+		"@mxssfd/typedoc-theme",
+		"@knodes/typedoc-plugin-pages"
+		// "typedoc-plugin-missing-exports"
+	],
+	"media": "media",
+	"readme": "pages/TYPEDOC_README.md",
+	"theme": "my-theme",
+	"includeVersion": true,
+	"pluginPages": {
+		"pages": [
+			{
+				"name": "verace.js/bt",
+				"moduleRoot": true,
+				"source": "BUILD_TOOL.md",
+				"children": [
+					{
+						"name": "Advanced Usage",
+						"source": "ADVANCED_USAGE.md"
+					},
+					{
+						"name": "Build Pipelines",
+						"source": "BUILD_PIPELINES.md"
+					},
+					{
+						"name": "Configuring",
+						"source": "CONFIGURING.md"
+					}
+				]
+			},
+			{
+				"name": "verace.js/tp",
+				"moduleRoot": true,
+				"source": "THREADING_POOLS.md",
+				"children": []
+			}
+		]
+	}
+}

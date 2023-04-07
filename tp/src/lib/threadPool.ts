@@ -23,20 +23,20 @@ export interface Fork {
 	args: string[];
 }
 
-interface Worker {
+export interface Worker {
 	no: number;
 	busy: boolean;
 }
 
-type PromiseResolver<T> = (value: T[] | PromiseLike<T[]>) => void;
+export type PromiseResolver<T> = (value: T[] | PromiseLike<T[]>) => void;
 
-type PromiseRejecter = (reason?: any) => void;
+export type PromiseRejecter = (reason?: any) => void;
 
 export interface OptionalConfig {
 	debug: boolean;
 }
 
-interface InteralConfig {
+export interface InteralConfig {
 	threads: number;
 	workers: Worker[];
 	toRun: Fork[];

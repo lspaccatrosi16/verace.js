@@ -24,7 +24,8 @@ test("Check basic config generation", async (t) => {
 			test: "",
 			produceTypes: false,
 			cleanAfterBuild: false,
-			assets: "assets"
+			assets: "assets",
+			noBytecode: false
 		},
 		version: "1.0.0",
 		go: {
@@ -92,7 +93,8 @@ test("Allow data values", async (t) => {
 			test: "",
 			produceTypes: false,
 			cleanAfterBuild: false,
-			assets: "assets"
+			assets: "assets",
+			noBytecode: false
 		},
 		version: "1.0.0",
 		go: {

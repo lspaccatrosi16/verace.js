@@ -1,77 +1,101 @@
 {
-  "name": "verace.js",
-  "version": "1.0.1",
-  "keywords": [
-    "cli",
-    "pkg",
-    "binary",
-    "go",
-    "golang",
-    "exe",
-    "thread",
-    "multithread",
-    "worker",
-    "pool"
-  ],
-  "repository": "github:lspaccatrosi16/verace.js",
-  "license": "AGPL-3.0-only",
-  "author": {
-    "name": "Luca Spaccatrosi",
-    "email": "luca@spaccatrosi.co.uk"
-  },
-  "type": "module",
-  "exports": {
-    "./bt": "./bt/tsc-build/api.js",
-    "./tp": "./tp/tsc-build/api.js"
-  },
-  "typesVersions": {
-    "*": {
-      "bt": [
-        "./bt/tsc-build/api.d.ts"
-      ],
-      "tp": [
-        "./tp/tsc-build/api.d.ts"
-      ]
-    }
-  },
-  "bin": {
-    "tp": "./tp/dist/thingpool.cjs",
-    "verace": "./bt/dist/verace.cjs"
-  },
-  "scripts": {
-    "build:ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
-    "lint": "prettier --write tp/src bt/src",
-    "test": "npm run test:bt && npm run test:tp",
-    "test:bt": "cd examples/ts-example && npm ci && cd ../.. && c8 ava bt/tests",
-    "test:tp": "cd tp && c8 ava tests",
-    "dep": "cd bt && npm i && cd ../tp && npm i",
-    "vhs": "vhs vhs/create-exe.tape"
-  },
-  "dependencies": {
-    "chalk": "^5.2.0",
-    "commander": "^10.0.0",
-    "figlet": "^1.5.2",
-    "fs-extra": "^11.1.0",
-    "inquirer": "^9.1.4",
-    "semver": "^7.3.8",
-    "spinnies": "^0.5.1",
-    "tsc-alias": "^1.8.2",
-    "zod": "^3.21.0"
-  },
-  "devDependencies": {
-    "@types/figlet": "^1.5.5",
-    "@types/fs-extra": "^9.0.13",
-    "@types/inquirer": "^9.0.3",
-    "@types/node": "^16.17.0",
-    "@types/semver": "^7.3.13",
-    "@types/spinnies": "^0.5.0",
-    "ava": "^5.2.0",
-    "c8": "^7.13.0",
-    "pkg": "^5.8.0",
-    "prettier": "^2.8.4",
-    "typescript": "^4.9.4"
-  },
-  "engines": {
-    "node": "16.x || 18.x"
-  }
+	"name": "verace.js",
+	"version": "1.0.2",
+	"keywords": [
+		"cli",
+		"pkg",
+		"binary",
+		"go",
+		"golang",
+		"exe",
+		"thread",
+		"multithread",
+		"worker",
+		"pool"
+	],
+	"repository": "github:lspaccatrosi16/verace.js",
+	"license": "AGPL-3.0-only",
+	"author": {
+		"name": "Luca Spaccatrosi",
+		"email": "luca@spaccatrosi.co.uk"
+	},
+	"type": "module",
+	"exports": {
+		"./bt": "./bt/tsc-build/api.js",
+		"./helpers": "./helpers/tsc-build/api.js",
+		"./tp": "./tp/tsc-build/api.js",
+		"./bb": "./bb/runner/tsc-build/api.js"
+	},
+	"typesVersions": {
+		"*": {
+			"bt": [
+				"./bt/tsc-build/api.d.ts"
+			],
+			"tp": [
+				"./tp/tsc-build/api.d.ts"
+			],
+			"bb": [
+				"./bb/runner/tsc-build/api.d.ts"
+			],
+			"helpers": [
+				"./helpers/tsc-build/api.d.ts"
+			]
+		}
+	},
+	"bin": {
+		"tp": "./tp/dist/thingpool.cjs",
+		"verace": "./bt/dist/verace.cjs"
+	},
+	"scripts": {
+		"build:bt": "cd bt && verace build",
+		"build:helpers": "cd helpers && verace build",
+		"build:tp": "cd tp && verace build",
+		"build": "run-s build:**",
+		"ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg && cd ../helpers && ../ci/verace build-exe --skipPkg",
+		"dep": "npm i",
+		"doc": "typedoc",
+		"lint": "prettier --write tp/src bt/src helpers/src",
+		"predep": "npm run lint && npm run build && npm run test && npm run vhs && npm run doc",
+		"test:bt": "cd examples/ts-example && npm ci && cd ../.. && cd bt && c8 ava tests",
+		"test:helpers": "cd helpers && c8 ava tests",
+		"test:tp": "cd tp && c8 ava tests",
+		"test": "run-s test:**",
+		"vhs": "vhs vhs/create-exe.tape"
+	},
+	"dependencies": {
+		"arcsecond": "^5.0.0",
+		"chalk": "^5.2.0",
+		"commander": "^10.0.0",
+		"dayjs": "^1.11.7",
+		"figlet": "^1.5.2",
+		"fs-extra": "^11.1.0",
+		"inquirer": "^9.1.4",
+		"rustic": "^1.2.2",
+		"semver": "^7.3.8",
+		"spinnies": "^0.5.1",
+		"tsc-alias": "^1.8.2",
+		"zod": "^3.21.0"
+	},
+	"devDependencies": {
+		"@knodes/typedoc-plugin-pages": "^0.23.2",
+		"@mxssfd/typedoc-theme": "^1.0.6",
+		"@types/figlet": "^1.5.5",
+		"@types/fs-extra": "^9.0.13",
+		"@types/inquirer": "^9.0.3",
+		"@types/node": "^16.17.0",
+		"@types/semver": "^7.3.13",
+		"@types/spinnies": "^0.5.0",
+		"ava": "^5.2.0",
+		"c8": "^7.13.0",
+		"npm-run-all": "^4.1.5",
+		"pkg": "^5.8.0",
+		"prettier": "^2.8.4",
+		"typedoc": "^0.23.28",
+		"typedoc-plugin-missing-exports": "^1.0.0",
+		"typedoc-plugin-zod": "^1.0.1",
+		"typescript": "^4.9.4"
+	},
+	"engines": {
+		"node": "16.x || 18.x"
+	}
 }

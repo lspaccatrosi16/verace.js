@@ -19,13 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Command } from "commander";
 import fs from "fs-extra";
 import inquirer from "inquirer";
-import { parseConfig } from "lib/parseConfig";
-
 import envWrapper from "lib/executionEnvironment";
+import { parseConfig } from "lib/parseConfig";
+import zodWrapper from "lib/zodParserWithResult";
+import rustic from "rustic";
+import semver from "semver";
+import z from "zod";
 
 import type { BaseConfig } from "lib/veraceConfig";
-import semver from "semver";
-
 export default function () {
 	const v = new Command("version").description("Manage package versions");
 	v.action(() => {
@@ -36,39 +37,63 @@ export default function () {
 
 const version = (): Promise<void> => {
 	return new Promise((resolve, reject) => {
-		const env = envWrapper.getInstance();
-		parseConfig("Version").then(() => {
-			const { config: cfg } = env;
-			const { version } = cfg;
-			inquirer
-				.prompt({
-					type: "list",
-					message: "Select version increment type",
-					choices: [
-						"patch",
-						"minor",
-						"major",
-						"prepatch",
-						"preminor",
-						"premajor",
-					],
-					name: "increment",
-				})
-				.then(({ increment }) => {
-					const newVer = semver.inc(version, increment);
-
-					const newConfig: BaseConfig = { ...cfg, version: newVer };
-
-					const configLoc = env.resolveFromRoot("verace.json");
-
-					fs.writeFileSync(
-						configLoc,
-						JSON.stringify(newConfig, null, "\t")
-					);
-
+		inquirer
+			.prompt({
+				type: "list",
+				message: "Select version increment type",
+				choices: [
+					"patch",
+					"minor",
+					"major",
+					"prepatch",
+					"preminor",
+					"premajor",
+				],
+				name: "increment",
+			})
+			.then(({ increment }) => {
+				incrementVersion(increment).then(() => {
 					resolve();
-				})
-				.catch(reject);
-		});
+				});
+			})
+			.catch(reject);
 	});
 };
+
+const versionIncrementParser = z.union([
+	z.literal("patch"),
+	z.literal("minor"),
+	z.literal("major"),
+	z.literal("prepatch"),
+	z.literal("preminor"),
+	z.literal("premajor"),
+]);
+
+export type VersionApi = z.infer<typeof versionIncrementParser>;
+
+export async function versionApi(
+	increment: unknown
+): Promise<rustic.Result<null, string>> {
+	const parsedIncrement = zodWrapper(versionIncrementParser, increment);
+
+	if (parsedIncrement.isErr()) {
+		return rustic.Err(parsedIncrement.unwrapErr());
+	}
+	await incrementVersion(parsedIncrement.unwrap());
+
+	return rustic.Ok(null);
+}
+
+async function incrementVersion(increment: VersionApi) {
+	await parseConfig("Version");
+	const env = envWrapper.getInstance();
+	const { config: cfg } = env;
+	const { version } = cfg;
+	const newVer = semver.inc(version, increment);
+
+	const newConfig: BaseConfig = { ...cfg, version: newVer };
+
+	const configLoc = env.resolveFromRoot("verace.json");
+
+	fs.writeFileSync(configLoc, JSON.stringify(newConfig, null, "\t"));
+}

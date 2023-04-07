@@ -19,10 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { execSync } from "child_process";
 import { Command } from "commander";
 import buildTs from "lib/buildTs";
-import { parseConfig } from "lib/parseConfig";
 import { handleExecError } from "lib/common";
-
 import envWrapper from "lib/executionEnvironment";
+import { parseConfig } from "lib/parseConfig";
+import zodWrapper from "lib/zodParserWithResult";
+import rustic from "rustic";
+import z from "zod";
 
 export default function () {
 	const re = new Command("run-exe").description("Runs the current project");
@@ -33,6 +35,30 @@ export default function () {
 		return run(args);
 	});
 	return re;
+}
+
+const runApiParser = z.array(z.string());
+
+export type RunApi = z.infer<typeof runApiParser>;
+
+export async function runApi(
+	args: unknown
+): Promise<rustic.Result<null, string>> {
+	const argsResult = zodWrapper(runApiParser, args);
+
+	if (argsResult.isErr()) {
+		return rustic.Err(argsResult.unwrapErr());
+	}
+
+	const parsedArgs = argsResult.unwrap();
+
+	try {
+		await run(parsedArgs);
+
+		return rustic.Ok(null);
+	} catch (e) {
+		return rustic.Err(e);
+	}
 }
 
 const run = (args: string[]): Promise<void> => {
@@ -47,7 +73,7 @@ const run = (args: string[]): Promise<void> => {
 						log(`\n\nRun Start:`);
 						execSync(
 							`cd ${env.wk} && go run ${
-								cfg.entrypoint
+								env.entryPointPath
 							} ${args.join(" ")}`,
 							{
 								stdio: "inherit",

@@ -25,6 +25,10 @@ import figlet from "figlet";
 import Standard from "font/Standard";
 import executionEnv from "lib/executionEnvironment";
 
+import rustic from "rustic";
+import type { Result } from "rustic";
+const { isOk, Ok } = rustic;
+
 import type {
 	APIResult,
 	Commands,
@@ -71,7 +75,12 @@ export default function (env: VeraceEnv) {
 	});
 
 	const topProgram = createPrimaryProgram(false, false, env);
-	topProgram.parseAsync(process.argv).then(() => {
+
+	if (!isOk(topProgram)) {
+		throw topProgram.data;
+	}
+
+	topProgram.data.parseAsync(process.argv).then(() => {
 		const executionEnvironment = executionEnv.getInstance();
 		const { log } = executionEnvironment;
 		init(env.version, executionEnvironment).then(() => {
@@ -102,31 +111,40 @@ export function api(config: APICONFIG, testMode: boolean): Promise<APIResult> {
 			primDummyArgv.push("--verbose");
 		}
 		const topProg = createPrimaryProgram(testMode, true);
-		topProg.parseAsync(primDummyArgv).then(() => {
-			const env = executionEnv.getInstance();
-			const program = createMainProgram();
-			if (config.command != "build-exe") {
-				throw new Error(
-					"Only command build-exe is currently supported"
-				);
-			}
 
-			program
-				.parseAsync(["", "", config.command])
-				.then(() => {
-					const execData = { ...env.apiExecResult };
-					console.log(execData);
-					executionEnv.purge();
-					resolve(execData);
-				})
-				.catch(() => {
-					const { log } = env;
-					log("Env config:");
-					log(env.ErrorExecContext);
+		if (!isOk(topProg)) {
+			reject(topProg.data);
+			return;
+		}
 
-					reject();
-				});
-		});
+		topProg.data
+			.parseAsync(primDummyArgv)
+			.then(() => {
+				const env = executionEnv.getInstance();
+				const program = createMainProgram();
+				if (config.command != "build-exe") {
+					throw new Error(
+						"Only command build-exe is currently supported"
+					);
+				}
+
+				program
+					.parseAsync(["", "", config.command])
+					.then(() => {
+						const execData = { ...env.apiExecResult };
+						console.log(execData);
+						executionEnv.purge();
+						resolve(execData);
+					})
+					.catch(() => {
+						const { log } = env;
+						log("Env config:");
+						log(env.ErrorExecContext);
+
+						reject();
+					});
+			})
+			.catch(reject);
 	});
 }
 
@@ -134,7 +152,7 @@ function createPrimaryProgram(
 	testMode: boolean,
 	apiMode: boolean,
 	env?: VeraceEnv
-): Command {
+): Result<Command, string> {
 	const topProgram = new Command();
 	if (env) {
 		topProgram
@@ -155,7 +173,10 @@ function createPrimaryProgram(
 			verbose = true;
 		}
 		const env = executionEnv.getInstance();
-		env.setupInstance(testMode, apiMode, verbose);
+		const res = env.setupInstance(testMode, apiMode, verbose);
+		if (!isOk(res)) {
+			throw res.data;
+		}
 
 		if (opts.path && opts.path != "") {
 			env.setConfigPath(opts.path);
@@ -164,7 +185,7 @@ function createPrimaryProgram(
 		return;
 	});
 
-	return topProgram;
+	return Ok(topProgram);
 }
 
 function createMainProgram(env?: VeraceEnv): Command {

@@ -3,15 +3,15 @@
 bin
 build
 ci
-coverage
-dist
-hooks
-docs
-node_modules
-examples
-src
-tests
-tools
+**/coverage
+**/hooks
+**/node_modules
+**/examples
+**/src
+**/tests
+**/tools
+
+vhs
 
 .gitingore
 .npmignore
@@ -23,3 +23,15 @@ tsconfig.json
 verace.json
 
 *.tgz
+
+bb/worker
+bb/runner/assets/
+
+typedoc.json
+docgen
+media
+
+**/pages
+
+
+**/dist

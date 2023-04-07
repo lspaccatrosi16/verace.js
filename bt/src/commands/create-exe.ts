@@ -25,15 +25,22 @@ import {
 	goFile,
 	goGI,
 	makePackageJson,
+	makeVeraceConfig,
 	tsConfig,
 	tsFile,
 	tsGI,
 } from "lib/baseConfig";
 import envWrapper from "lib/executionEnvironment";
-
+import zodWrapper from "lib/zodParserWithResult";
 import path from "path";
+import rustic from "rustic";
+import { z } from "zod";
+
+import type { Result } from "rustic";
+const { Ok, Err } = rustic;
 
 import type { BaseConfig } from "lib/veraceConfig";
+import type { APICONFIG } from "api_int";
 
 export default function () {
 	const env = envWrapper.getInstance();
@@ -41,28 +48,10 @@ export default function () {
 	ce.alias("create");
 	ce.action(() => {
 		const opts = ce.optsWithGlobals();
-
-		let dirPath = "";
-
 		if (opts.path && opts.path != "") {
 			const input = opts.path as string;
-			if (fs.existsSync(input)) {
-				if (fs.lstatSync(input).isFile()) {
-					dirPath = path.dirname(input);
-				} else {
-					dirPath = input;
-				}
-			} else {
-				if (input.endsWith(".json")) {
-					dirPath = path.dirname(input);
-					fs.mkdirSync(dirPath, { recursive: true });
-				} else {
-					fs.mkdirSync(input, { recursive: true });
-					dirPath = input;
-				}
-			}
 
-			const newPath = path.join(dirPath, "verace.json");
+			const newPath = pathWalk(input);
 
 			env.setConfigPath(newPath);
 		}
@@ -71,12 +60,37 @@ export default function () {
 	return ce;
 }
 
+function pathWalk(input: string) {
+	let dirPath;
+	if (fs.existsSync(input)) {
+		if (fs.lstatSync(input).isFile()) {
+			dirPath = path.dirname(input);
+		} else {
+			dirPath = input;
+		}
+	} else {
+		if (input.endsWith(".json") || input.endsWith(".mjs")) {
+			dirPath = path.dirname(input);
+			fs.mkdirSync(dirPath, { recursive: true });
+		} else {
+			fs.mkdirSync(input, { recursive: true });
+			dirPath = input;
+		}
+	}
+
+	return path.join(dirPath, "verace.config.js");
+}
+
 const errorDeleteFile = (files: string[]): Promise<void> => {
+	const env = envWrapper.getInstance();
+
 	return new Promise(resolve => {
-		files.forEach(file => {
-			if (fs.existsSync(file))
-				fs.rmSync(file, { force: true, recursive: true });
-		});
+		files
+			.map(f => env.resolveFromRoot(f))
+			.forEach(file => {
+				if (fs.existsSync(file))
+					fs.rmSync(file, { force: true, recursive: true });
+			});
 
 		resolve();
 	});
@@ -112,12 +126,19 @@ const collectInfo = async () => {
 
 	const userSelection: BaseConfig = { ...baseconfig, ...answers };
 
-	console.log(
+	if (userSelection.lang == "ts") {
+		delete userSelection.go;
+	} else if (userSelection.lang == "go") {
+		delete userSelection.ts;
+	}
+
+	log(
 		`Will create a project in ${path.dirname(
-			env.resolveFromRoot("verace.json")
+			env.resolveFromRoot("verace.config.js")
 		)} with config:\n\n`
 	);
-	console.log(userSelection, "\n\n");
+	log(userSelection);
+	log("\n");
 
 	const { confirm } = await inquirer.prompt({
 		type: "list",
@@ -131,32 +152,103 @@ const collectInfo = async () => {
 		return;
 	}
 
+	await doCreation(userSelection);
+	return;
+};
+
+const createApiParser = z
+	.object({
+		lang: z.union([z.literal("ts"), z.literal("go")]),
+		name: z.string(),
+		gomod: z.optional(z.string()),
+	})
+	.strict();
+
+export type CreateApi = z.infer<typeof createApiParser>;
+
+export async function createApi(
+	config: unknown,
+	apiConfig: APICONFIG
+): Promise<Result<null, string>> {
+	const env = envWrapper.getInstance();
+	const { log } = env;
+	const parsedConfig = zodWrapper(createApiParser, config);
+
+	if (parsedConfig.isErr()) {
+		return Err(parsedConfig.unwrapErr());
+	}
+
+	const cfg = parsedConfig.unwrap();
+
+	const userSelection: BaseConfig = {
+		...baseconfig,
+		...cfg,
+	};
+
+	const newPath = pathWalk(apiConfig.path);
+	env.setConfigPath(newPath);
+
+	if (userSelection.lang == "ts") {
+		delete userSelection.go;
+	} else if (userSelection.lang == "go") {
+		delete userSelection.ts;
+		userSelection.go.gomod = cfg.gomod;
+	}
+
+	if ("gomod" in userSelection) {
+		delete userSelection["gomod" as keyof BaseConfig];
+	}
+
+	try {
+		log(
+			`Will create a project in ${path.dirname(
+				env.resolveFromRoot("verace.config.js")
+			)} with config:\n\n`
+		);
+
+		log(userSelection);
+		await doCreation(userSelection);
+		return Ok(null);
+	} catch (e) {
+		return Err(e);
+	}
+}
+
+async function doCreation(userSelection: BaseConfig) {
+	const env = envWrapper.getInstance();
+	const { log } = env;
 	switch (userSelection.lang) {
 		case "go": {
 			try {
-				child_process.execSync("go version");
-				child_process.execSync(
+				await child_process.execSync("go version");
+				await child_process.execSync(
 					`cd ${env.wk} && go mod init ${userSelection.go.gomod}`
 				);
 
 				await fs.writeFile(env.resolveFromRoot("main.go"), goFile);
 				await fs.writeFile(env.resolveFromRoot(".gitignore"), goGI);
+
+				await fs.writeFile(
+					env.resolveFromRoot("verace.json"),
+					JSON.stringify(userSelection, null, "\t")
+				);
+
 				log().success("Successfully initialised the Go project");
-			} catch {
+			} catch (e) {
 				log().danger(
 					"Go binary could not be found on the current system."
 				);
 
 				await errorDeleteFile(["go.mod", "main.go", ".gitignore"]);
 
-				return;
+				throw e;
 			}
 			break;
 		}
 
 		case "ts": {
 			try {
-				const pkg = makePackageJson(userSelection);
+				const pkg = await makePackageJson(userSelection);
 				await fs.writeFile(
 					env.resolveFromRoot("package.json"),
 					JSON.stringify(pkg, null, "\t")
@@ -166,17 +258,22 @@ const collectInfo = async () => {
 					JSON.stringify(tsConfig, null, "\t")
 				);
 
-				await child_process.execSync("npm i");
+				await child_process.execSync(`cd ${env.wk} && npm i`);
 				await fs.mkdir(env.resolveFromRoot("src"), { recursive: true });
 				await fs.writeFile(env.resolveFromRoot("src/index.ts"), tsFile);
 				await fs.writeFile(env.resolveFromRoot(".gitignore"), tsGI);
 
-				await log().success(
+				await fs.writeFile(
+					env.resolveFromRoot("verace.config.mjs"),
+					makeVeraceConfig(userSelection)
+				);
+
+				log().success(
 					"Successfully initialised the Typescript project"
 				);
 			} catch (e) {
+				log().danger("Error occurred");
 				if (e) log().danger(e.toString());
-
 				await errorDeleteFile([
 					"tsconfig.json",
 					"package.json",
@@ -186,16 +283,12 @@ const collectInfo = async () => {
 					"package-lock.json",
 				]);
 
-				return;
+				throw e;
 			}
 			break;
 		}
+		default: {
+			throw `Unrecognized language ${userSelection.lang}`;
+		}
 	}
-
-	await fs.writeFile(
-		env.resolveFromRoot("verace.json"),
-		JSON.stringify(userSelection, null, "\t")
-	);
-
-	return;
-};
+}

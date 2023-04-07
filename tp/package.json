@@ -1,0 +1,9 @@
+{
+	"name": "tp",
+	"type": "module",
+	"typedoc": {
+		"entryPoint": "./src/api.ts",
+		"displayName": "verace.js/tp",
+		"tsconfig": "tsconfig.json"
+	}
+}

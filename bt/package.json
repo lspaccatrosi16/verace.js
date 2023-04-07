@@ -1,0 +1,9 @@
+{
+	"name": "bt",
+	"type": "module",
+	"typedoc": {
+		"entryPoint": "./src/api.ts",
+		"displayName": "verace.js/bt",
+		"tsconfig": "tsconfig.json"
+	}
+}

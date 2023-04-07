@@ -1,6 +1,6 @@
 # Verace.js
 
-<img src="./docs/images/verace.svg">
+<img src="/media/verace.svg">
 
 An assorted collection of tools
 
@@ -8,31 +8,8 @@ An assorted collection of tools
 [![CI](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml/badge.svg)](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml)
 [![npm version](https://badge.fury.io/js/verace.js.svg)](https://badge.fury.io/js/verace.js)
 
-## Compontents
+## See [the documentation](https://verace.spaccatrosi.co.uk) for more information
 
-### Build Tool `/bt`
+## Licence
 
--   Compatable with typescript and go
--   Produces a self-container executable from typescript
--   Asset embedding
--   Typescript API
-
-#### Running
-
-```bash
-$ npx verace -p verace.js
-```
-
-See the [specific docs](/docs/BUILD_TOOL.md) for more.
-
-### Threading Pools `/tp`
-
--   Easy multithreading from a worker
-
-#### Running
-
-```bash
-$ npx tp -p verace.js
-```
-
-See the [specific docs](/docs/THREADING_POOLS.md) for more.
+This project is released under the AGPL v3 licence. See [ `LICENCE` ](/LICENCE) for details.

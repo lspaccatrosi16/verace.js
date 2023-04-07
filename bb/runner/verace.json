@@ -1,0 +1,24 @@
+{
+	"lang": "ts",
+	"name": "bb",
+	"version": "0.0.1",
+	"targets": [
+		"win64",
+		"linux64"
+	],
+	"data": {
+		"foo": "bar"
+	},
+	"ts": {
+		"assets": "assets",
+		"produceTypes": true
+	},
+	"go": {},
+	"hooks": {
+		"preBuild": {
+			"file": "hooks/prebuild.js"
+		},
+		"postBuild": "",
+		"prePkg": ""
+	}
+}

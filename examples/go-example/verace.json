@@ -1,15 +1,30 @@
 {
 	"lang": "go",
 	"name": "go-example",
-	"version": "0.0.1",
+	"version": "0.0.11",
 	"targets": [
 		"win64",
 		"linux64"
 	],
+	"hooks": {
+		"preBuild": "",
+		"postBuild": "echo I did a build",
+		"prePkg": ""
+	},
 	"data": {
 		"foo": "bar"
 	},
-	"ts": {},
+	"outDir": "bin",
+	"entrypoint": "",
+	"ts": {
+		"buildDir": "tsc-build",
+		"cleanAfterBuild": false,
+		"produceTypes": false,
+		"skipPkg": false,
+		"test": "",
+		"assets": "assets",
+		"noBytecode": false
+	},
 	"go": {
 		"gomod": "lspaccatrosi16/verace.js/examples/go-example"
 	}
