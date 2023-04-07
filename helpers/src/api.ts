@@ -1,4 +1,4 @@
-import type { BaseConfig } from "../../bt/tsc-build/api";
+import type { BaseConfig } from "../../bt/tsc-build/api_int";
 
 function _(c: BaseConfig): BaseConfig {
 	return c;

@@ -1,7 +1,7 @@
 {
 	"lang": "ts",
 	"name": "my-awesome-package",
-	"version": "0.0.10",
+	"version": "0.0.11",
 	"targets": [
 		"win64",
 		"linux64"

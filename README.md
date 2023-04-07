@@ -8,7 +8,7 @@ An assorted collection of tools
 [![CI](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml/badge.svg)](https://github.com/lspaccatrosi16/verace.js/actions/workflows/test.yml)
 [![npm version](https://badge.fury.io/js/verace.js.svg)](https://badge.fury.io/js/verace.js)
 
-## See [the documentation](https://lspaccatrosi16.github.io/verace.js/) for more information
+## See [the documentation](https://verace.spaccatrosi.co.uk) for more information
 
 ## Licence
 

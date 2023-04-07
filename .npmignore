@@ -3,15 +3,13 @@
 bin
 build
 ci
-coverage
-dist
-hooks
-docs
-node_modules
-examples
-src
-tests
-tools
+**/coverage
+**/hooks
+**/node_modules
+**/examples
+**/src
+**/tests
+**/tools
 
 vhs
 
@@ -28,3 +26,12 @@ verace.json
 
 bb/worker
 bb/runner/assets/
+
+typedoc.json
+docgen
+media
+
+**/pages
+
+
+**/dist
