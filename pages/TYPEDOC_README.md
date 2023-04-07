@@ -1,6 +1,6 @@
 # Verace.js
 
-<img src="/verace.js/media/verace.svg">
+<img src="/media/verace.svg">
 
 An assorted collection of tools
 
