@@ -3,8 +3,6 @@ name: Deploy static content to Pages
 
 on:
     # Runs on pushes targeting the default branch
-    push:
-        branches: ["newfeatures"]
     pull_request:
         branches: ["master"]
 

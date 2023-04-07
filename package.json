@@ -51,7 +51,7 @@
 		"build:helpers": "cd helpers && verace build",
 		"build:tp": "cd tp && verace build",
 		"build": "run-s build:**",
-		"ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg",
+		"ci": "cd bt && ../ci/verace build-exe --skipPkg && cd ../tp && ../ci/verace build-exe --skipPkg && cd ../helpers && ../ci/verace build-exe --skipPkg",
 		"dep": "npm i",
 		"doc": "typedoc",
 		"lint": "prettier --write tp/src bt/src helpers/src",
