@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import rustic from "rustic";
 import type { Result } from "rustic";
 const { Err, Ok } = rustic;
-import type { APICONFIG } from "src/api";
+import type { APICONFIG } from "src/api_int";
 import { LoggerType, make_logger } from "./log";
 import type { BaseConfig } from "./veraceConfig";
 

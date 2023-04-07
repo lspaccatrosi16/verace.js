@@ -19,17 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { Command } from "commander";
 import fs from "fs-extra";
 import inquirer from "inquirer";
-import { parseConfig } from "lib/parseConfig";
-
-import z from "zod";
-import rustic from "rustic";
-
 import envWrapper from "lib/executionEnvironment";
+import { parseConfig } from "lib/parseConfig";
+import zodWrapper from "lib/zodParserWithResult";
+import rustic from "rustic";
+import semver from "semver";
+import z from "zod";
 
 import type { BaseConfig } from "lib/veraceConfig";
-import semver from "semver";
-import zodWrapper from "src/lib/zodParserWithResult";
-
 export default function () {
 	const v = new Command("version").description("Manage package versions");
 	v.action(() => {

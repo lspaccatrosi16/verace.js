@@ -1,6 +1,6 @@
 # Verace.js
 
-<img src="./docs/images/verace.svg">
+<img src="https://github.com/lspaccatrosi16/verace.js/blob/6d1486327dccb02c3579d921b9a375c1cec04856/docs/images/verace.svg">
 
 An assorted collection of tools
 
@@ -23,7 +23,7 @@ An assorted collection of tools
 $ npx verace -p verace.js
 ```
 
-See the [specific docs](/docs/BUILD_TOOL.md) for more.
+See the [specific docs](./BUILD_TOOL.md) for more.
 
 ### Threading Pools `/tp`
 
@@ -35,8 +35,8 @@ See the [specific docs](/docs/BUILD_TOOL.md) for more.
 $ npx tp -p verace.js
 ```
 
-See the [specific docs](/docs/THREADING_POOLS.md) for more.
+See the [specific docs](./THREADING_POOLS.md) for more.
 
 ## API Reference
 
-See the [full api reference](/docs/pages/index.md) for detailed information
+See the [full api reference](./pages/index.md) for detailed information

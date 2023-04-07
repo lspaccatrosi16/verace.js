@@ -1,0 +1,12 @@
+{
+	"entryPointStrategy": "packages",
+	"entryPoints": ["./bt", "./helpers", "./tp"],
+	"out": "generated",
+	"plugin": [
+		"typedoc-plugin-zod",
+		// "@mxssfd/typedoc-theme",
+		"typedoc-plugin-missing-exports",
+		"@convex-dev/typedoc-plugin-markdown"
+	],
+	"includeVersion": true
+}

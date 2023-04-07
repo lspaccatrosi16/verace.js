@@ -31,17 +31,16 @@ import {
 	tsGI,
 } from "lib/baseConfig";
 import envWrapper from "lib/executionEnvironment";
-
+import zodWrapper from "lib/zodParserWithResult";
 import path from "path";
-
 import rustic from "rustic";
+import { z } from "zod";
+
 import type { Result } from "rustic";
 const { Ok, Err } = rustic;
 
 import type { BaseConfig } from "lib/veraceConfig";
-import { z } from "zod";
-import zodWrapper from "src/lib/zodParserWithResult";
-import type { APICONFIG } from "src/api";
+import type { APICONFIG } from "api_int";
 
 export default function () {
 	const env = envWrapper.getInstance();
@@ -49,9 +48,6 @@ export default function () {
 	ce.alias("create");
 	ce.action(() => {
 		const opts = ce.optsWithGlobals();
-
-		let dirPath = "";
-
 		if (opts.path && opts.path != "") {
 			const input = opts.path as string;
 

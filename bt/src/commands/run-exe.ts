@@ -17,17 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import { execSync } from "child_process";
-
-import rustic from "rustic";
 import { Command } from "commander";
 import buildTs from "lib/buildTs";
-import { parseConfig } from "lib/parseConfig";
 import { handleExecError } from "lib/common";
-
-import z from "zod";
-
 import envWrapper from "lib/executionEnvironment";
-import zodWrapper from "src/lib/zodParserWithResult";
+import { parseConfig } from "lib/parseConfig";
+import zodWrapper from "lib/zodParserWithResult";
+import rustic from "rustic";
+import z from "zod";
 
 export default function () {
 	const re = new Command("run-exe").description("Runs the current project");

@@ -20,16 +20,14 @@ import { Command } from "commander";
 import buildGo from "lib/buildGo";
 import buildTs from "lib/buildTs";
 import envWrapper from "lib/executionEnvironment";
-import { parseConfig } from "lib/parseConfig";
-
 import { parseHook } from "lib/hooks";
+import { infallablePromise } from "lib/infallable";
+import { parseConfig } from "lib/parseConfig";
+import rustic from "rustic";
 
 import type { BaseConfig } from "lib/veraceConfig";
-import rustic from "rustic";
 import type { Result } from "rustic";
 const { Err, isOk, Ok } = rustic;
-
-import { infallablePromise } from "src/lib/infallable";
 export default function () {
 	const env = envWrapper.getInstance();
 
