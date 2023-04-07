@@ -1,6 +1,6 @@
 # The Build Tool
 
-<img src="/media/create-exe.gif" />
+<img src="/verace.js/media/create-exe.gif" />
 
 > The multi-platform multi-language build tool.
 
@@ -17,7 +17,7 @@ $ npx verace -p verace.js create-exe
 ```
 
 <p align="center">
-<img src="/media/create-exe.png" width="500">
+<img src="/verace.js/media/create-exe.png" width="500">
 </p>
 
 2. Run it
@@ -27,7 +27,7 @@ $ npx verace -p verace.js run-exe
 ```
 
 <p align="center">
-<img src="/media/run-exe.png" width="500">
+<img src="/verace.js/media/run-exe.png" width="500">
 </p>
 
 3. Develop your app
@@ -38,7 +38,7 @@ $ npx verace -p verace.js build-exe
 ```
 
 <p align="center">
-<img src="/media/build-exe.png" width="500">
+<img src="/verace.js/media/build-exe.png" width="500">
 </p>
 
 ## Why
