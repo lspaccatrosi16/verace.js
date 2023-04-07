@@ -1,10 +1,7 @@
 {
 	"name": "helper",
-	"version": "0.0.1",
-	"targets": [
-		"win64",
-		"linux64"
-	],
+	"version": "1.0.2",
+	"targets": ["win64", "linux64"],
 	"ts": {
 		"produceTypes": true
 	},

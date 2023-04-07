@@ -1,11 +1,8 @@
 {
 	"lang": "ts",
 	"name": "verace",
-	"version": "1.0.1",
-	"targets": [
-		"win64",
-		"linux64"
-	],
+	"version": "1.0.2",
+	"targets": ["win64", "linux64"],
 	"hooks": {
 		"preBuild": {
 			"file": "hooks/preBuild.js",
