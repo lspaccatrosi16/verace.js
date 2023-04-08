@@ -20,7 +20,13 @@ export default class {
 	run(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			if (this.backend) {
-				runner(this.backend, this.filename).then(resolve).catch(reject);
+				runner(this.backend, this.filename).then(r => {
+					if (r.isOk()) {
+						resolve();
+					} else {
+						reject(r.unwrapErr());
+					}
+				});
 			} else {
 				reject("Must provide a backend");
 			}
