@@ -92,15 +92,21 @@ const verace = new api({
 	path: "path/to/verace/config",
 });
 
-const envResult = verace.setupEnvironment();
-if (envResult.isErr()) {
-	throw envResult.unwrapErr();
-}
+try {
+	const envResult = verace.setupEnvironment();
+	if (envResult.isErr()) {
+		throw envResult.unwrapErr();
+	}
 
-const res = await cfgResult.unwrap().buildExe();
+	const res = await cfgResult.unwrap().buildExe();
 
-if (res.isErr()) {
-	throw res.unwrapErr();
+	if (res.isErr()) {
+		throw res.unwrapErr();
+	}
+} catch (e) {
+	///handle it
+} finally {
+	verace.purgeEnvironment(); // The environment must be purged otherwise subsequent execution runs will not be able to happen.
 }
 ```
 
@@ -115,21 +121,27 @@ const verace = new api({
 	path: "path/to/verace/config",
 });
 
-const envResult = verace.setupEnvironment();
-if (envResult.isErr()) {
-	throw envResult.unwrapErr();
-}
-verace
-	.setConfigOverrides({ entrypoint: "foo" })
-	.setTsConfigOverride({
-		test: "bar",
-	})
-	.setGoConfigOverride({ gomod: "baz" });
+try {
+	const envResult = verace.setupEnvironment();
+	if (envResult.isErr()) {
+		throw envResult.unwrapErr();
+	}
+	verace
+		.setConfigOverrides({ entrypoint: "foo" })
+		.setTsConfigOverride({
+			test: "bar",
+		})
+		.setGoConfigOverride({ gomod: "baz" });
 
-const res = await verace.buildExe();
+	const res = await verace.buildExe();
 
-if (res.isErr()) {
-	throw res.unwrapErr();
+	if (res.isErr()) {
+		throw res.unwrapErr();
+	}
+} catch (e) {
+	//handle it
+} finally {
+	verace.purgeEnvironment(); // The environment must be purged otherwise subsequent execution runs will not be able to happen.
 }
 ```
 
