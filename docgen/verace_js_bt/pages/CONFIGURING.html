@@ -263,7 +263,7 @@
 
 <td>
 
-<p>Static assets can be embedded into the binary for one-file packaging. They should be places in the folder specified by <code>assets</code>, and should be accessed with <code>path.join(__dirname, &quot;assets/my/path&quot;)</code>. Note as files are compiled to <code>commonjs</code>, <code>__dirname</code> is used instead. See the <a href="https://github.com/vercel/pkg#snapshot-filesystem"><code>pkg</code></a> docs for more details.</p>
+<p>Static assets can be embedded into the binary for one-file packaging. They should be places in the folder specified by <code>assets</code>, and should be accessed with <code>path.join(process.cwd(), &quot;assets/my/path&quot;)</code>. See the <a href="https://github.com/vercel/pkg#snapshot-filesystem"><code>pkg</code></a> docs for more details.</p>
 <td>
 
 <p><code>assets</code></p>
