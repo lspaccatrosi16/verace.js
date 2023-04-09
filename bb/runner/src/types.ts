@@ -18,4 +18,4 @@ export interface ManifestItem {
 
 export type WorkerReturn = [string, ManifestItem, Metadata];
 
-export type OutputBackend = (input: WorkerReturn[]) => Promise<void>;
+export type OutputBackend<T> = (input: WorkerReturn[]) => Promise<T>;

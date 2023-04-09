@@ -6,14 +6,14 @@ import type {
 	Metadata,
 } from "./types";
 
-export default class {
+export default class<T> {
 	private filename?: string;
-	private backend?: OutputBackend;
+	private backend?: OutputBackend<T>;
 	constructor(filename?: string) {
 		this.filename = filename;
 	}
 
-	useBackend(backend: OutputBackend) {
+	useBackend(backend: OutputBackend<T>) {
 		this.backend = backend;
 	}
 

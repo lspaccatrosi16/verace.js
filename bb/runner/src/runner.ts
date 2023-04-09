@@ -9,10 +9,10 @@ import ThreadPool, { Fork } from "../../../tp/tsc-build/api";
 import type { OutputBackend, WorkerReturn } from "./types";
 import rustic from "rustic";
 
-export default async function (
-	backend: OutputBackend,
+export default async function <T>(
+	backend: OutputBackend<T>,
 	fileName?: string
-): Promise<rustic.ResultEquipped<null, string>> {
+): Promise<rustic.ResultEquipped<T, string>> {
 	if (fileName) {
 		try {
 			const splitted = fileName.split("/");
@@ -49,10 +49,10 @@ export default async function (
 			const manifest = await runFile(6, forks);
 			rmD("worker.cjs");
 
-			await backend(manifest);
+			const result: T = await backend(manifest);
 
 			console.log("Directory build completed");
-			return rustic.equip(rustic.Ok(null));
+			return rustic.equip(rustic.Ok(result));
 		} catch (e) {
 			console.error(e);
 			return rustic.equip(rustic.Err(e));
