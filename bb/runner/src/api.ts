@@ -17,12 +17,12 @@ export default class<T> {
 		this.backend = backend;
 	}
 
-	run(): Promise<void> {
+	run(): Promise<T> {
 		return new Promise((resolve, reject) => {
 			if (this.backend) {
-				runner(this.backend, this.filename).then(r => {
+				runner<T>(this.backend, this.filename).then(r => {
 					if (r.isOk()) {
-						resolve();
+						resolve(r.unwrap());
 					} else {
 						reject(r.unwrapErr());
 					}

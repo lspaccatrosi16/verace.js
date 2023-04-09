@@ -15,6 +15,10 @@ export default async function <T>(
 ): Promise<rustic.ResultEquipped<T, string>> {
 	if (fileName) {
 		try {
+			output(
+				"worker.cjs",
+				Buffer.from(worker, "base64").toString("ascii")
+			).unwrap();
 			const splitted = fileName.split("/");
 			const baseFileName = splitted[splitted.length - 1].slice(0, -3);
 
@@ -22,8 +26,11 @@ export default async function <T>(
 				file: "worker.cjs",
 				args: [fileName, baseFileName],
 			};
-			await runFile(1, [fork]);
-			return rustic.equip(rustic.Ok(null));
+			const manifest = await runFile(1, [fork]);
+
+			rmD("worker.cjs");
+			const result: T = await backend(manifest);
+			return rustic.equip(rustic.Ok(result));
 		} catch (e) {
 			console.error(e);
 			return rustic.equip(rustic.Err(e));
