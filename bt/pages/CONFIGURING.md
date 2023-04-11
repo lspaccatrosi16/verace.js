@@ -281,7 +281,7 @@ Similar to build hooks in purpose. Instead of being run before/after the build p
 
 <td>
 
-Static assets can be embedded into the binary for one-file packaging. They should be places in the folder specified by `assets`, and should be accessed with `path.join(process.cwd(), "assets/my/path")`. See the [`pkg`](https://github.com/vercel/pkg#snapshot-filesystem) docs for more details.
+Static assets can be embedded into the binary for one-file packaging. They should be places in the folder specified by `assets`, and should be accessed with `path.join(__dirname, "assets/my/path")`. See the [`pkg`](https://github.com/vercel/pkg#snapshot-filesystem) docs for more details. It should be noted that assets are only injected into the binary if `skipPkg` is `false`.
 
 <td>
 
