@@ -25,7 +25,8 @@ export type TokenType =
 	| "BOLD" //DONE
 	| "ITALIC" //DONE
 	| "INLINE" //DONE
-	| "LINK";
+	| "LINK"
+	| "CODE";
 
 export interface Token {
 	type: TokenType;
@@ -66,6 +67,12 @@ export interface LinkToken extends LinearToken {
 	type: "LINK";
 	url: string;
 	subToken: Token;
+}
+
+export interface CodeToken extends Token {
+	type: "CODE";
+	contents: string;
+	langCode: string;
 }
 
 const punctuation = [
@@ -143,9 +150,7 @@ export function lastEl<T>(arr: T[]): T {
 
 export default function (fileContents: string): Token[] {
 	const lines = fileContents.split("\n");
-
 	const tree: Token[] = [];
-
 	const listItems: ListToken[] = [];
 
 	for (let i = 0, len = lines.length; i < len; i++) {
@@ -153,7 +158,25 @@ export default function (fileContents: string): Token[] {
 		const trimmed = thisLine.trim();
 		if (trimmed == "") continue;
 		// console.log("=".repeat(100));
-		const token = parseLine(trimmed);
+		let token: Token;
+
+		if (trimmed.startsWith("```")) {
+			const langCode = trimmed.slice(3);
+			const codeLines = [];
+			for (let j = i + 1; j < len; j++) {
+				const thisLine = lines[j];
+				if (thisLine.trim() == "```") {
+					i = j;
+					break;
+				}
+				codeLines.push(thisLine);
+			}
+			token = {
+				type: "CODE",
+				contents: codeLines.join("\n"),
+				langCode,
+			} as CodeToken;
+		} else token = parseLine(trimmed);
 
 		if (lastEl(listItems) && !lastEl(listItems).closed) {
 			const latestItem = lastEl(listItems);
@@ -190,8 +213,6 @@ export default function (fileContents: string): Token[] {
 	}
 
 	const debugTree = util.inspect(tree, false, null, true);
-
-	// console.log(debugTree);
 
 	return tree;
 }

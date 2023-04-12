@@ -6,11 +6,18 @@ import type {
 	Metadata,
 } from "./types";
 
+interface BBConfig {
+	filename?: string;
+	dirname?: string;
+}
+
 export default class<T> {
 	private filename?: string;
+	private dirname?: string;
 	private backend?: OutputBackend<T>;
-	constructor(filename?: string) {
-		this.filename = filename;
+	constructor(cfg: BBConfig) {
+		this.filename = cfg.filename;
+		this.dirname = cfg.dirname;
 	}
 
 	useBackend(backend: OutputBackend<T>) {
@@ -20,7 +27,10 @@ export default class<T> {
 	run(): Promise<T> {
 		return new Promise((resolve, reject) => {
 			if (this.backend) {
-				runner<T>(this.backend, this.filename).then(r => {
+				runner<T>(
+					this.backend,
+					this.filename ? this.filename : this.dirname
+				).then(r => {
 					if (r.isOk()) {
 						resolve(r.unwrap());
 					} else {

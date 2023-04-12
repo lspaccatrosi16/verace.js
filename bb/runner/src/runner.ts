@@ -1,19 +1,23 @@
-import { output, rmD } from "./io";
-
-import directory from "./directory";
-
+import fs from "fs-extra";
+import path from "path";
+import rustic from "rustic";
 import worker from "worker";
 
 import ThreadPool, { Fork } from "../../../tp/tsc-build/api";
+import directory from "./directory";
+import { output, rmD } from "./io";
 
 import type { OutputBackend, WorkerReturn } from "./types";
-import rustic from "rustic";
-
 export default async function <T>(
 	backend: OutputBackend<T>,
-	fileName?: string
+	fileName: string
 ): Promise<rustic.ResultEquipped<T, string>> {
-	if (fileName) {
+	if (!fs.existsSync(fileName))
+		return rustic.equip(rustic.Err("File not found"));
+
+	const isDir = fs.statSync(fileName).isDirectory();
+
+	if (!isDir) {
 		try {
 			output(
 				"worker.cjs",
@@ -45,9 +49,8 @@ export default async function <T>(
 				"worker.cjs",
 				Buffer.from(worker, "base64").toString("ascii")
 			).unwrap();
-			rmD("pages/blog");
 
-			const runList = directory("blog");
+			const runList = directory(fileName);
 
 			const forks: Fork[] = runList
 				.unwrap()
